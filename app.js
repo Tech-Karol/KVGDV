@@ -2,9 +2,46 @@
    ADGVMaker
    by Tech Karol
    app.js
+   Mobile-first editor
 ========================================================= */
 
 "use strict";
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const CONFIG = {
+    version: 1,
+    defaultDuration: 10,
+    defaultFPS: 30,
+
+    formats: {
+        "1920x1080": {
+            width: 1920,
+            height: 1080,
+            ratio: "16:9"
+        },
+
+        "1080x1920": {
+            width: 1080,
+            height: 1920,
+            ratio: "9:16"
+        },
+
+        "1080x1080": {
+            width: 1080,
+            height: 1080,
+            ratio: "1:1"
+        },
+
+        "1280x720": {
+            width: 1280,
+            height: 720,
+            ratio: "16:9"
+        }
+    }
+};
 
 
 /* =========================================================
@@ -12,69 +49,89 @@
 ========================================================= */
 
 const state = {
+    project: {
+        version: CONFIG.version,
+        name: "Moja reklama",
+        duration: CONFIG.defaultDuration,
+        fps: CONFIG.defaultFPS,
+
+        format: {
+            width: 1080,
+            height: 1920,
+            ratio: "9:16"
+        }
+    },
+
     elements: [],
+
     selectedId: null,
-    projectName: "Moja reklama",
-    duration: 10,
-    currentTime: 0,
-    isPlaying: false,
-    format: {
-        width: 1920,
-        height: 1080
+
+    playback: {
+        playing: false,
+        currentTime: 0,
+        lastFrame: 0
+    },
+
+    history: {
+        undo: [],
+        redo: []
     }
 };
 
 
 /* =========================================================
-   DOM
+   DOM CACHE
 ========================================================= */
 
-const canvas = document.getElementById("canvas");
-const canvasPlaceholder = document.getElementById("canvasPlaceholder");
+const DOM = {
+    canvas: document.getElementById("canvas"),
+    placeholder: document.getElementById("canvasPlaceholder"),
 
-const propertiesPanel = document.getElementById("propertiesPanel");
+    properties:
+        document.getElementById("propertiesPanel"),
 
-const mediaTrack = document.getElementById("mediaTrack");
-const textTrack = document.getElementById("textTrack");
-const graphicsTrack = document.getElementById("graphicsTrack");
+    mediaTrack:
+        document.getElementById("mediaTrack"),
 
-const imageInput = document.getElementById("imageInput");
-const videoInput = document.getElementById("videoInput");
-const logoInput = document.getElementById("logoInput");
+    textTrack:
+        document.getElementById("textTrack"),
 
-const formatSelect = document.getElementById("formatSelect");
+    graphicsTrack:
+        document.getElementById("graphicsTrack"),
 
-const currentTimeElement = document.getElementById("currentTime");
-const durationElement = document.getElementById("duration");
+    imageInput:
+        document.getElementById("imageInput"),
+
+    videoInput:
+        document.getElementById("videoInput"),
+
+    logoInput:
+        document.getElementById("logoInput"),
+
+    formatSelect:
+        document.getElementById("formatSelect"),
+
+    currentTime:
+        document.getElementById("currentTime"),
+
+    duration:
+        document.getElementById("duration")
+};
 
 
 /* =========================================================
-   UTILS
+   UTILITIES
 ========================================================= */
 
-function generateId() {
-    return "element-" + Date.now() + "-" +
-        Math.random().toString(36).substring(2, 8);
-}
-
-
-function formatTime(seconds) {
-    seconds = Math.max(0, Number(seconds) || 0);
-
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-
+function uid(prefix = "el") {
     return (
-        String(minutes).padStart(2, "0") +
-        ":" +
-        String(secs).padStart(2, "0")
-    );
-}
-
-
-function getSelectedElement() {
-    return state.elements.find(
-        element => element.id === state.selectedId
+        prefix +
+        "_" +
+        Date.now().toString(36) +
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2, 8)
     );
 }
 
@@ -84,111 +141,294 @@ function clamp(value, min, max) {
 }
 
 
+function formatTime(seconds) {
+
+    seconds = Math.max(
+        0,
+        Number(seconds) || 0
+    );
+
+    const minutes =
+        Math.floor(seconds / 60);
+
+    const secs =
+        Math.floor(seconds % 60);
+
+    return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(secs).padStart(2, "0")
+    );
+}
+
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function getElement(id) {
+
+    return state.elements.find(
+        element => element.id === id
+    );
+}
+
+
+function getSelected() {
+
+    return getElement(
+        state.selectedId
+    );
+}
+
+
 /* =========================================================
-   ELEMENT CREATION
+   HISTORY
 ========================================================= */
 
-function createElement(type, data = {}) {
+function createSnapshot() {
+
+    return JSON.stringify({
+        project: state.project,
+        elements: state.elements
+    });
+}
+
+
+function restoreSnapshot(snapshot) {
+
+    if (!snapshot) {
+        return;
+    }
+
+    const data =
+        JSON.parse(snapshot);
+
+    state.project =
+        data.project;
+
+    state.elements =
+        data.elements;
+
+    state.selectedId = null;
+
+    renderAll();
+}
+
+
+function saveHistory() {
+
+    state.history.undo.push(
+        createSnapshot()
+    );
+
+    if (state.history.undo.length > 30) {
+        state.history.undo.shift();
+    }
+
+    state.history.redo.length = 0;
+}
+
+
+function undo() {
+
+    if (
+        state.history.undo.length === 0
+    ) {
+        return;
+    }
+
+    state.history.redo.push(
+        createSnapshot()
+    );
+
+    const snapshot =
+        state.history.undo.pop();
+
+    restoreSnapshot(snapshot);
+}
+
+
+function redo() {
+
+    if (
+        state.history.redo.length === 0
+    ) {
+        return;
+    }
+
+    state.history.undo.push(
+        createSnapshot()
+    );
+
+    const snapshot =
+        state.history.redo.pop();
+
+    restoreSnapshot(snapshot);
+}
+
+
+/* =========================================================
+   ELEMENT FACTORY
+========================================================= */
+
+function createElement(type, options = {}) {
 
     const element = {
-        id: generateId(),
+
+        id: uid(type),
 
         type,
 
-        x: data.x ?? 100,
-        y: data.y ?? 100,
+        name:
+            options.name ||
+            type,
 
-        width: data.width ?? 400,
-        height: data.height ?? 200,
+        x:
+            options.x ??
+            state.project.format.width / 2 - 200,
 
-        rotation: data.rotation ?? 0,
+        y:
+            options.y ??
+            state.project.format.height / 2 - 100,
 
-        opacity: data.opacity ?? 1,
+        width:
+            options.width ??
+            400,
 
-        start: data.start ?? 0,
-        duration: data.duration ?? state.duration,
+        height:
+            options.height ??
+            200,
 
-        text: data.text ?? "Nowy tekst",
+        rotation:
+            options.rotation ??
+            0,
 
-        fontSize: data.fontSize ?? 64,
-        fontFamily: data.fontFamily ?? "Arial",
-        fontWeight: data.fontWeight ?? "700",
+        opacity:
+            options.opacity ??
+            1,
 
-        color: data.color ?? "#ffffff",
+        start:
+            options.start ??
+            0,
 
-        src: data.src ?? null,
+        duration:
+            options.duration ??
+            state.project.duration,
 
-        name: data.name ?? type
+        text:
+            options.text ??
+            "Nowy tekst",
+
+        fontSize:
+            options.fontSize ??
+            64,
+
+        fontFamily:
+            options.fontFamily ??
+            "Arial",
+
+        fontWeight:
+            options.fontWeight ??
+            700,
+
+        color:
+            options.color ??
+            "#ffffff",
+
+        src:
+            options.src ??
+            null,
+
+        objectFit:
+            options.objectFit ??
+            "contain"
     };
-
-    state.elements.push(element);
-
-    selectElement(element.id);
-
-    render();
 
     return element;
 }
 
 
 /* =========================================================
-   RENDER
+   ADD ELEMENT
 ========================================================= */
 
-function render() {
+function addElement(type, options = {}) {
 
-    renderCanvas();
+    saveHistory();
 
-    renderTimeline();
+    const element =
+        createElement(
+            type,
+            options
+        );
 
-    renderProperties();
+    state.elements.push(element);
 
-    updatePlaceholder();
+    state.selectedId =
+        element.id;
 
-    updateTimeDisplay();
+    renderAll();
+
+    return element;
 }
 
 
 /* =========================================================
-   CANVAS
+   CANVAS RENDER
 ========================================================= */
 
 function renderCanvas() {
 
-    const oldElements = canvas.querySelectorAll(
-        ".adgvmaker-element"
-    );
+    if (!DOM.canvas) {
+        return;
+    }
 
-    oldElements.forEach(element => element.remove());
+    const fragment =
+        document.createDocumentFragment();
 
 
-    state.elements.forEach(element => {
+    for (const element of state.elements) {
 
-        const node = document.createElement("div");
+        const node =
+            document.createElement("div");
 
-        node.className = "adgvmaker-element";
+        node.className =
+            "adgvmaker-element";
 
-        node.dataset.id = element.id;
+        node.dataset.id =
+            element.id;
 
-        node.style.position = "absolute";
+        node.style.left =
+            `${element.x}px`;
 
-        node.style.left = element.x + "px";
-        node.style.top = element.y + "px";
+        node.style.top =
+            `${element.y}px`;
 
-        node.style.width = element.width + "px";
-        node.style.height = element.height + "px";
+        node.style.width =
+            `${element.width}px`;
 
-        node.style.opacity = element.opacity;
+        node.style.height =
+            `${element.height}px`;
+
+        node.style.opacity =
+            element.opacity;
 
         node.style.transform =
             `rotate(${element.rotation}deg)`;
 
-        node.style.cursor = "move";
 
-        node.style.boxSizing = "border-box";
-
-
-        if (element.id === state.selectedId) {
+        if (
+            element.id ===
+            state.selectedId
+        ) {
 
             node.style.outline =
                 "2px solid #4da3ff";
@@ -202,19 +442,8 @@ function renderCanvas() {
 
         if (element.type === "text") {
 
-            node.textContent = element.text;
-
-            node.style.fontSize =
-                element.fontSize + "px";
-
-            node.style.fontFamily =
-                element.fontFamily;
-
-            node.style.fontWeight =
-                element.fontWeight;
-
-            node.style.color =
-                element.color;
+            node.textContent =
+                element.text;
 
             node.style.display =
                 "flex";
@@ -228,33 +457,56 @@ function renderCanvas() {
             node.style.textAlign =
                 "center";
 
+            node.style.color =
+                element.color;
+
+            node.style.fontSize =
+                `${element.fontSize}px`;
+
+            node.style.fontFamily =
+                element.fontFamily;
+
+            node.style.fontWeight =
+                element.fontWeight;
+
             node.style.userSelect =
                 "none";
-
-            node.style.overflow =
-                "hidden";
         }
 
 
-        /* IMAGE */
+        /* IMAGE / LOGO */
 
-        if (
+        else if (
             element.type === "image" ||
             element.type === "logo"
         ) {
 
-            const image = document.createElement("img");
+            const image =
+                document.createElement("img");
 
-            image.src = element.src;
+            image.src =
+                element.src;
 
-            image.draggable = false;
+            image.alt =
+                element.name;
 
-            image.style.width = "100%";
-            image.style.height = "100%";
+            image.draggable =
+                false;
 
-            image.style.objectFit = "contain";
+            image.decoding =
+                "async";
 
-            image.style.pointerEvents = "none";
+            image.style.width =
+                "100%";
+
+            image.style.height =
+                "100%";
+
+            image.style.objectFit =
+                element.objectFit;
+
+            image.style.pointerEvents =
+                "none";
 
             node.appendChild(image);
         }
@@ -262,24 +514,36 @@ function renderCanvas() {
 
         /* VIDEO */
 
-        if (element.type === "video") {
+        else if (
+            element.type === "video"
+        ) {
 
-            const video = document.createElement("video");
+            const video =
+                document.createElement("video");
 
-            video.src = element.src;
+            video.src =
+                element.src;
 
-            video.muted = true;
+            video.muted =
+                true;
 
-            video.loop = true;
+            video.playsInline =
+                true;
 
-            video.controls = false;
+            video.preload =
+                "metadata";
 
-            video.style.width = "100%";
-            video.style.height = "100%";
+            video.style.width =
+                "100%";
 
-            video.style.objectFit = "cover";
+            video.style.height =
+                "100%";
 
-            video.style.pointerEvents = "none";
+            video.style.objectFit =
+                element.objectFit;
+
+            video.style.pointerEvents =
+                "none";
 
             node.appendChild(video);
         }
@@ -287,12 +551,33 @@ function renderCanvas() {
 
         node.addEventListener(
             "pointerdown",
-            startDragging
+            onElementPointerDown,
+            {
+                passive: false
+            }
         );
 
 
-        canvas.appendChild(node);
-    });
+        fragment.appendChild(node);
+    }
+
+
+    const old =
+        DOM.canvas.querySelectorAll(
+            ".adgvmaker-element"
+        );
+
+    old.forEach(
+        node => node.remove()
+    );
+
+
+    DOM.canvas.appendChild(
+        fragment
+    );
+
+
+    updatePlaceholder();
 }
 
 
@@ -302,85 +587,129 @@ function renderCanvas() {
 
 function updatePlaceholder() {
 
-    if (!canvasPlaceholder) {
+    if (!DOM.placeholder) {
         return;
     }
 
-    canvasPlaceholder.style.display =
-        state.elements.length === 0
-            ? "flex"
-            : "none";
+    DOM.placeholder.style.display =
+        state.elements.length
+            ? "none"
+            : "flex";
 }
 
 
 /* =========================================================
-   DRAGGING
+   POINTER / TOUCH DRAG
 ========================================================= */
 
-let dragging = null;
+let drag = null;
 
 
-function startDragging(event) {
+function onElementPointerDown(event) {
 
     event.preventDefault();
 
     const id =
         event.currentTarget.dataset.id;
 
-    selectElement(id);
-
     const element =
-        getSelectedElement();
+        getElement(id);
 
     if (!element) {
         return;
     }
 
+    state.selectedId =
+        id;
 
     const rect =
-        canvas.getBoundingClientRect();
+        DOM.canvas.getBoundingClientRect();
 
 
-    dragging = {
+    /*
+       Przeliczamy pozycję ekranu
+       na współrzędne projektu.
+    */
+
+    const scaleX =
+        state.project.format.width /
+        rect.width;
+
+    const scaleY =
+        state.project.format.height /
+        rect.height;
+
+
+    drag = {
 
         id,
 
+        pointerId:
+            event.pointerId,
+
         offsetX:
-            event.clientX -
-            rect.left -
+            (
+                event.clientX -
+                rect.left
+            ) *
+            scaleX -
             element.x,
 
         offsetY:
-            event.clientY -
-            rect.top -
-            element.y
+            (
+                event.clientY -
+                rect.top
+            ) *
+            scaleY -
+            element.y,
+
+        scaleX,
+
+        scaleY
     };
 
 
-    window.addEventListener(
-        "pointermove",
-        dragElement
+    event.currentTarget.setPointerCapture(
+        event.pointerId
     );
 
-    window.addEventListener(
+
+    renderCanvas();
+
+    renderProperties();
+
+
+    event.currentTarget.addEventListener(
+        "pointermove",
+        onElementPointerMove
+    );
+
+    event.currentTarget.addEventListener(
         "pointerup",
-        stopDragging
+        onElementPointerUp,
+        {
+            once: true
+        }
     );
 }
 
 
-function dragElement(event) {
+function onElementPointerMove(event) {
 
-    if (!dragging) {
+    if (!drag) {
+        return;
+    }
+
+    if (
+        event.pointerId !==
+        drag.pointerId
+    ) {
         return;
     }
 
 
     const element =
-        state.elements.find(
-            item => item.id === dragging.id
-        );
-
+        getElement(drag.id);
 
     if (!element) {
         return;
@@ -388,25 +717,31 @@ function dragElement(event) {
 
 
     const rect =
-        canvas.getBoundingClientRect();
+        DOM.canvas.getBoundingClientRect();
 
 
     let x =
-        event.clientX -
-        rect.left -
-        dragging.offsetX;
+        (
+            event.clientX -
+            rect.left
+        ) *
+        drag.scaleX -
+        drag.offsetX;
 
 
     let y =
-        event.clientY -
-        rect.top -
-        dragging.offsetY;
+        (
+            event.clientY -
+            rect.top
+        ) *
+        drag.scaleY -
+        drag.offsetY;
 
 
     x = clamp(
         x,
         0,
-        state.format.width -
+        state.project.format.width -
         element.width
     );
 
@@ -414,7 +749,7 @@ function dragElement(event) {
     y = clamp(
         y,
         0,
-        state.format.height -
+        state.project.format.height -
         element.height
     );
 
@@ -423,51 +758,82 @@ function dragElement(event) {
     element.y = y;
 
 
-    render();
+    /*
+       Tylko canvas.
+       Nie odświeżamy całego interfejsu
+       przy każdym ruchu palca.
+    */
+
+    updateElementNode(
+        element
+    );
 }
 
 
-function stopDragging() {
+function onElementPointerUp(event) {
 
-    dragging = null;
+    if (!drag) {
+        return;
+    }
 
-    window.removeEventListener(
-        "pointermove",
-        dragElement
-    );
 
-    window.removeEventListener(
-        "pointerup",
-        stopDragging
-    );
+    saveHistory();
+
+    drag = null;
+
+    renderProperties();
+
+    renderTimeline();
+}
+
+
+function updateElementNode(element) {
+
+    const node =
+        DOM.canvas.querySelector(
+            `[data-id="${element.id}"]`
+        );
+
+    if (!node) {
+        return;
+    }
+
+    node.style.left =
+        `${element.x}px`;
+
+    node.style.top =
+        `${element.y}px`;
 }
 
 
 /* =========================================================
-   SELECTION
+   SELECT
 ========================================================= */
 
 function selectElement(id) {
 
-    state.selectedId = id;
+    state.selectedId =
+        id;
 
-    render();
+    renderCanvas();
+
+    renderProperties();
 }
 
 
 /* =========================================================
-   PROPERTIES PANEL
+   PROPERTIES
 ========================================================= */
 
 function renderProperties() {
 
     const element =
-        getSelectedElement();
+        getSelected();
 
 
     if (!element) {
 
-        propertiesPanel.innerHTML = `
+        DOM.properties.innerHTML = `
             <div class="no-selection">
                 <div class="no-selection-icon">⚙️</div>
 
@@ -482,145 +848,128 @@ function renderProperties() {
     }
 
 
-    propertiesPanel.innerHTML = `
-        <div class="property-group">
+    DOM.properties.innerHTML = `
 
+        <div class="property-group">
             <label>Nazwa</label>
 
             <input
-                id="propertyName"
+                id="propName"
                 type="text"
-                value="${escapeHtml(element.name)}"
+                value="${escapeHTML(element.name)}"
             >
-
         </div>
 
 
         <div class="property-group">
-
             <label>X</label>
 
             <input
-                id="propertyX"
+                id="propX"
                 type="number"
                 value="${Math.round(element.x)}"
             >
-
         </div>
 
 
         <div class="property-group">
-
             <label>Y</label>
 
             <input
-                id="propertyY"
+                id="propY"
                 type="number"
                 value="${Math.round(element.y)}"
             >
-
         </div>
 
 
         <div class="property-group">
-
             <label>Szerokość</label>
 
             <input
-                id="propertyWidth"
+                id="propWidth"
                 type="number"
                 min="1"
                 value="${Math.round(element.width)}"
             >
-
         </div>
 
 
         <div class="property-group">
-
             <label>Wysokość</label>
 
             <input
-                id="propertyHeight"
+                id="propHeight"
                 type="number"
                 min="1"
                 value="${Math.round(element.height)}"
             >
-
         </div>
 
 
         <div class="property-group">
+            <label>Obrót</label>
 
+            <input
+                id="propRotation"
+                type="number"
+                value="${element.rotation}"
+            >
+        </div>
+
+
+        <div class="property-group">
             <label>Przezroczystość</label>
 
             <input
-                id="propertyOpacity"
+                id="propOpacity"
                 type="range"
                 min="0"
                 max="1"
                 step="0.01"
                 value="${element.opacity}"
             >
-
-        </div>
-
-
-        <div class="property-group">
-
-            <label>Obrót</label>
-
-            <input
-                id="propertyRotation"
-                type="number"
-                value="${element.rotation}"
-            >
-
         </div>
 
 
         ${
             element.type === "text"
-            ? `
-                <div class="property-group">
+                ? `
 
+                <div class="property-group">
                     <label>Tekst</label>
 
                     <textarea
-                        id="propertyText"
+                        id="propText"
                         rows="4"
-                    >${escapeHtml(element.text)}</textarea>
-
+                    >${escapeHTML(element.text)}</textarea>
                 </div>
 
 
                 <div class="property-group">
-
                     <label>Rozmiar tekstu</label>
 
                     <input
-                        id="propertyFontSize"
+                        id="propFontSize"
                         type="number"
                         min="1"
                         value="${element.fontSize}"
                     >
-
                 </div>
 
 
                 <div class="property-group">
-
                     <label>Kolor</label>
 
                     <input
-                        id="propertyColor"
+                        id="propColor"
                         type="color"
                         value="${element.color}"
                     >
-
                 </div>
-            `
-            : ""
+
+                `
+                : ""
         }
 
 
@@ -633,76 +982,76 @@ function renderProperties() {
     `;
 
 
-    connectPropertyEvents();
+    connectProperties(element);
 }
 
 
-function connectPropertyEvents() {
+/* =========================================================
+   PROPERTY EVENTS
+========================================================= */
 
-    const element =
-        getSelectedElement();
+function connectProperties(element) {
 
-    if (!element) {
-        return;
-    }
-
-
-    const bind = (
-        id,
-        callback
-    ) => {
-
-        const input =
-            document.getElementById(id);
-
-        if (!input) {
-            return;
-        }
-
-        input.addEventListener(
-            "input",
-            callback
-        );
-    };
+    const input =
+        id => document.getElementById(id);
 
 
-    bind(
-        "propertyName",
+    const update =
+        (id, callback) => {
+
+            const field =
+                input(id);
+
+            if (!field) {
+                return;
+            }
+
+            field.addEventListener(
+                "input",
+                callback
+            );
+        };
+
+
+    update(
+        "propName",
         event => {
             element.name =
                 event.target.value;
 
-            renderCanvas();
             renderTimeline();
         }
     );
 
 
-    bind(
-        "propertyX",
+    update(
+        "propX",
         event => {
+
             element.x =
                 Number(event.target.value) || 0;
 
-            renderCanvas();
+            updateElementNode(element);
         }
     );
 
 
-    bind(
-        "propertyY",
+    update(
+        "propY",
         event => {
+
             element.y =
                 Number(event.target.value) || 0;
 
-            renderCanvas();
+            updateElementNode(element);
         }
     );
 
 
-    bind(
-        "propertyWidth",
+    update(
+        "propWidth",
         event => {
+
             element.width =
                 Math.max(
                     1,
@@ -714,9 +1063,10 @@ function connectPropertyEvents() {
     );
 
 
-    bind(
-        "propertyHeight",
+    update(
+        "propHeight",
         event => {
+
             element.height =
                 Math.max(
                     1,
@@ -728,20 +1078,10 @@ function connectPropertyEvents() {
     );
 
 
-    bind(
-        "propertyOpacity",
+    update(
+        "propRotation",
         event => {
-            element.opacity =
-                Number(event.target.value);
 
-            renderCanvas();
-        }
-    );
-
-
-    bind(
-        "propertyRotation",
-        event => {
             element.rotation =
                 Number(event.target.value) || 0;
 
@@ -750,38 +1090,77 @@ function connectPropertyEvents() {
     );
 
 
-    bind(
-        "propertyText",
+    update(
+        "propOpacity",
         event => {
-            element.text =
-                event.target.value;
+
+            element.opacity =
+                Number(event.target.value);
 
             renderCanvas();
         }
     );
 
 
-    bind(
-        "propertyFontSize",
+    update(
+        "propText",
         event => {
+
+            element.text =
+                event.target.value;
+
+            const node =
+                DOM.canvas.querySelector(
+                    `[data-id="${element.id}"]`
+                );
+
+            if (node) {
+                node.textContent =
+                    element.text;
+            }
+        }
+    );
+
+
+    update(
+        "propFontSize",
+        event => {
+
             element.fontSize =
                 Math.max(
                     1,
                     Number(event.target.value) || 1
                 );
 
-            renderCanvas();
+            const node =
+                DOM.canvas.querySelector(
+                    `[data-id="${element.id}"]`
+                );
+
+            if (node) {
+                node.style.fontSize =
+                    `${element.fontSize}px`;
+            }
         }
     );
 
 
-    bind(
-        "propertyColor",
+    update(
+        "propColor",
         event => {
+
             element.color =
                 event.target.value;
 
-            renderCanvas();
+            const node =
+                DOM.canvas.querySelector(
+                    `[data-id="${element.id}"]`
+                );
+
+            if (node) {
+                node.style.color =
+                    element.color;
+            }
         }
     );
 
@@ -794,11 +1173,35 @@ function connectPropertyEvents() {
 
     if (deleteButton) {
 
-        deleteButton.addEventListener(
-            "click",
-            deleteSelectedElement
-        );
+        deleteButton.onclick =
+            deleteSelected;
     }
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+function deleteSelected() {
+
+    if (!state.selectedId) {
+        return;
+    }
+
+    saveHistory();
+
+    state.elements =
+        state.elements.filter(
+            element =>
+                element.id !==
+                state.selectedId
+        );
+
+    state.selectedId =
+        null;
+
+    renderAll();
 }
 
 
@@ -808,23 +1211,22 @@ function connectPropertyEvents() {
 
 document
     .getElementById("addTextBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
         () => {
 
-            createElement(
+            addElement(
                 "text",
                 {
                     name: "Tekst",
                     text: "PROMOCJA!",
-                    x: 200,
-                    y: 200,
-                    width: 700,
-                    height: 120,
-                    fontSize: 72
+                    x: 240,
+                    y: 250,
+                    width: 600,
+                    height: 140,
+                    fontSize: 80
                 }
             );
-
         }
     );
 
@@ -835,44 +1237,41 @@ document
 
 document
     .getElementById("addImageBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
         () => {
-            imageInput.click();
+            DOM.imageInput.click();
         }
     );
 
 
-imageInput.addEventListener(
+DOM.imageInput?.addEventListener(
     "change",
     event => {
 
         const file =
-            event.target.files[0];
+            event.target.files?.[0];
 
         if (!file) {
             return;
         }
 
-
         const url =
             URL.createObjectURL(file);
 
-
-        createElement(
+        addElement(
             "image",
             {
                 name: file.name,
                 src: url,
-                x: 150,
-                y: 150,
-                width: 600,
-                height: 400
+                x: 100,
+                y: 200,
+                width: 700,
+                height: 500
             }
         );
 
-
-        imageInput.value = "";
+        event.target.value = "";
     }
 );
 
@@ -883,44 +1282,43 @@ imageInput.addEventListener(
 
 document
     .getElementById("addVideoBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
         () => {
-            videoInput.click();
+            DOM.videoInput.click();
         }
     );
 
 
-videoInput.addEventListener(
+DOM.videoInput?.addEventListener(
     "change",
     event => {
 
         const file =
-            event.target.files[0];
+            event.target.files?.[0];
 
         if (!file) {
             return;
         }
 
-
         const url =
             URL.createObjectURL(file);
 
-
-        createElement(
+        addElement(
             "video",
             {
                 name: file.name,
                 src: url,
                 x: 0,
                 y: 0,
-                width: state.format.width,
-                height: state.format.height
+                width:
+                    state.project.format.width,
+                height:
+                    state.project.format.height
             }
         );
 
-
-        videoInput.value = "";
+        event.target.value = "";
     }
 );
 
@@ -931,44 +1329,41 @@ videoInput.addEventListener(
 
 document
     .getElementById("addLogoBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
         () => {
-            logoInput.click();
+            DOM.logoInput.click();
         }
     );
 
 
-logoInput.addEventListener(
+DOM.logoInput?.addEventListener(
     "change",
     event => {
 
         const file =
-            event.target.files[0];
+            event.target.files?.[0];
 
         if (!file) {
             return;
         }
 
-
         const url =
             URL.createObjectURL(file);
 
-
-        createElement(
+        addElement(
             "logo",
             {
                 name: "Logo",
                 src: url,
-                x: 100,
-                y: 100,
-                width: 300,
-                height: 150
+                x: 60,
+                y: 60,
+                width: 250,
+                height: 130
             }
         );
 
-
-        logoInput.value = "";
+        event.target.value = "";
     }
 );
 
@@ -979,182 +1374,59 @@ logoInput.addEventListener(
 
 document
     .getElementById("addIconBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
         () => {
 
-            createElement(
+            addElement(
                 "text",
                 {
                     name: "Ikona",
                     text: "★",
-                    x: 300,
-                    y: 300,
+                    x: 400,
+                    y: 400,
                     width: 150,
                     height: 150,
-                    fontSize: 120,
-                    color: "#ffffff"
+                    fontSize: 110
                 }
             );
-
         }
     );
-
-
-/* =========================================================
-   DELETE
-========================================================= */
-
-function deleteSelectedElement() {
-
-    if (!state.selectedId) {
-        return;
-    }
-
-
-    state.elements =
-        state.elements.filter(
-            element =>
-                element.id !== state.selectedId
-        );
-
-
-    state.selectedId = null;
-
-    render();
-}
-
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Delete" ||
-            event.key === "Backspace"
-        ) {
-
-            const active =
-                document.activeElement;
-
-            const isInput =
-                active &&
-                (
-                    active.tagName === "INPUT" ||
-                    active.tagName === "TEXTAREA" ||
-                    active.tagName === "SELECT"
-                );
-
-
-            if (!isInput) {
-                deleteSelectedElement();
-            }
-        }
-    }
-);
-
-
-/* =========================================================
-   TIMELINE
-========================================================= */
-
-function renderTimeline() {
-
-    mediaTrack.innerHTML = "";
-    textTrack.innerHTML = "";
-    graphicsTrack.innerHTML = "";
-
-
-    state.elements.forEach(element => {
-
-        const item =
-            document.createElement("div");
-
-
-        item.className =
-            "timeline-item";
-
-
-        item.textContent =
-            element.name;
-
-
-        item.dataset.id =
-            element.id;
-
-
-        item.style.left =
-            (
-                element.start /
-                state.duration *
-                100
-            ) + "%";
-
-
-        item.style.width =
-            (
-                element.duration /
-                state.duration *
-                100
-            ) + "%";
-
-
-        item.addEventListener(
-            "click",
-            () => selectElement(element.id)
-        );
-
-
-        if (element.type === "text") {
-
-            textTrack.appendChild(item);
-
-        } else if (
-            element.type === "image" ||
-            element.type === "logo"
-        ) {
-
-            graphicsTrack.appendChild(item);
-
-        } else {
-
-            mediaTrack.appendChild(item);
-        }
-    });
-}
 
 
 /* =========================================================
    FORMAT
 ========================================================= */
 
-formatSelect.addEventListener(
+DOM.formatSelect?.addEventListener(
     "change",
     event => {
 
-        const [width, height] =
-            event.target.value
-                .split("x")
-                .map(Number);
+        const format =
+            CONFIG.formats[
+                event.target.value
+            ];
 
+        if (!format) {
+            return;
+        }
 
-        state.format.width =
-            width;
+        saveHistory();
 
-        state.format.height =
-            height;
+        state.project.format = {
+            width: format.width,
+            height: format.height,
+            ratio: format.ratio
+        };
 
+        DOM.canvas.dataset.width =
+            format.width;
 
-        canvas.dataset.width =
-            width;
+        DOM.canvas.dataset.height =
+            format.height;
 
-        canvas.dataset.height =
-            height;
-
-
-        canvas.style.aspectRatio =
-            `${width} / ${height}`;
-
+        DOM.canvas.style.aspectRatio =
+            `${format.width} / ${format.height}`;
 
         renderCanvas();
     }
@@ -1167,29 +1439,30 @@ formatSelect.addEventListener(
 
 document
     .getElementById("newProjectBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
         () => {
 
-            const confirmed =
-                state.elements.length === 0 ||
-                confirm(
-                    "Czy na pewno utworzyć nowy projekt?"
-                );
-
-
-            if (!confirmed) {
+            if (
+                state.elements.length > 0 &&
+                !confirm(
+                    "Utworzyć nowy projekt?"
+                )
+            ) {
                 return;
             }
-
 
             state.elements = [];
 
             state.selectedId = null;
 
-            state.currentTime = 0;
+            state.playback.currentTime = 0;
 
-            render();
+            state.history.undo = [];
+
+            state.history.redo = [];
+
+            renderAll();
         }
     );
 
@@ -1200,7 +1473,7 @@ document
 
 document
     .getElementById("saveProjectBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
         saveProject
     );
@@ -1209,20 +1482,20 @@ document
 function saveProject() {
 
     const project = {
+        format: "ADGV",
+        version: CONFIG.version,
+        type: "project",
 
-        version: 1,
+        project: {
+            ...state.project
+        },
 
-        name: state.projectName,
-
-        duration: state.duration,
-
-        format: state.format,
-
-        elements: state.elements.map(
-            element => ({
-                ...element
-            })
-        )
+        elements:
+            state.elements.map(
+                element => ({
+                    ...element
+                })
+            )
     };
 
 
@@ -1248,17 +1521,18 @@ function saveProject() {
     const link =
         document.createElement("a");
 
-
     link.href = url;
 
     link.download =
-        "adgvmaker-project.json";
-
+        "ADGVMaker-project.adgv";
 
     link.click();
 
 
-    URL.revokeObjectURL(url);
+    setTimeout(
+        () => URL.revokeObjectURL(url),
+        1000
+    );
 }
 
 
@@ -1268,75 +1542,92 @@ function saveProject() {
 
 document
     .getElementById("playBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
-        () => {
-
-            state.isPlaying = true;
-
-            startPlayback();
-        }
+        startPlayback
     );
 
 
 document
     .getElementById("pauseBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
-        () => {
-
-            state.isPlaying = false;
-        }
+        pausePlayback
     );
 
 
 document
     .getElementById("stopBtn")
-    .addEventListener(
+    ?.addEventListener(
         "click",
-        () => {
-
-            state.isPlaying = false;
-
-            state.currentTime = 0;
-
-            updateTimeDisplay();
-        }
+        stopPlayback
     );
 
 
-let playbackLastTime = null;
+function startPlayback() {
+
+    if (state.playback.playing) {
+        return;
+    }
+
+    state.playback.playing = true;
+
+    state.playback.lastFrame =
+        performance.now();
+
+    requestAnimationFrame(
+        playbackLoop
+    );
+}
 
 
-function startPlayback(timestamp) {
+function pausePlayback() {
 
-    if (!state.isPlaying) {
-        playbackLastTime = null;
+    state.playback.playing =
+        false;
+}
+
+
+function stopPlayback() {
+
+    state.playback.playing =
+        false;
+
+    state.playback.currentTime =
+        0;
+
+    updateTimeDisplay();
+}
+
+
+function playbackLoop(timestamp) {
+
+    if (!state.playback.playing) {
         return;
     }
 
 
-    if (playbackLastTime === null) {
-        playbackLastTime = timestamp;
-    }
-
-
     const delta =
-        (timestamp - playbackLastTime) / 1000;
+        (timestamp -
+            state.playback.lastFrame) /
+        1000;
 
 
-    playbackLastTime = timestamp;
+    state.playback.lastFrame =
+        timestamp;
 
 
-    state.currentTime += delta;
+    state.playback.currentTime +=
+        delta;
 
 
     if (
-        state.currentTime >=
-        state.duration
+        state.playback.currentTime >=
+        state.project.duration
     ) {
 
-        state.currentTime = 0;
+        state.playback.currentTime =
+            0;
     }
 
 
@@ -1344,24 +1635,270 @@ function startPlayback(timestamp) {
 
 
     requestAnimationFrame(
-        startPlayback
+        playbackLoop
     );
 }
 
 
+/* =========================================================
+   TIME DISPLAY
+========================================================= */
+
 function updateTimeDisplay() {
 
-    currentTimeElement.textContent =
-        formatTime(state.currentTime);
+    if (DOM.currentTime) {
 
-    durationElement.textContent =
-        formatTime(state.duration);
+        DOM.currentTime.textContent =
+            formatTime(
+                state.playback.currentTime
+            );
+    }
+
+
+    if (DOM.duration) {
+
+        DOM.duration.textContent =
+            formatTime(
+                state.project.duration
+            );
+    }
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+function renderTimeline() {
+
+    const tracks = [
+        DOM.mediaTrack,
+        DOM.textTrack,
+        DOM.graphicsTrack
+    ];
+
+    tracks.forEach(
+        track => {
+            if (track) {
+                track.replaceChildren();
+            }
+        }
+    );
+
+
+    for (const element of state.elements) {
+
+        let track;
+
+        if (element.type === "text") {
+            track = DOM.textTrack;
+        }
+
+        else if (
+            element.type === "image" ||
+            element.type === "logo"
+        ) {
+            track = DOM.graphicsTrack;
+        }
+
+        else {
+            track = DOM.mediaTrack;
+        }
+
+
+        if (!track) {
+            continue;
+        }
+
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "timeline-item";
+
+        item.dataset.id =
+            element.id;
+
+        item.textContent =
+            element.name;
+
+
+        item.style.left =
+            `${(
+                element.start /
+                state.project.duration
+            ) * 100}%`;
+
+
+        item.style.width =
+            `${(
+                element.duration /
+                state.project.duration
+            ) * 100}%`;
+
+
+        if (
+            element.id ===
+            state.selectedId
+        ) {
+            item.style.outline =
+                "2px solid #ffffff";
+        }
+
+
+        item.addEventListener(
+            "click",
+            () => {
+                selectElement(
+                    element.id
+                );
+            }
+        );
+
+
+        track.appendChild(item);
+    }
 }
 
 
 /* =========================================================
    TEMPLATES
 ========================================================= */
+
+const templates = {
+
+    sale: {
+        name: "Promocja",
+
+        elements: [
+
+            {
+                type: "text",
+                name: "Nagłówek",
+                text: "PROMOCJA!",
+                x: 150,
+                y: 250,
+                width: 780,
+                height: 150,
+                fontSize: 100
+            },
+
+            {
+                type: "text",
+                name: "Rabat",
+                text: "-30%",
+                x: 200,
+                y: 500,
+                width: 680,
+                height: 200,
+                fontSize: 160
+            },
+
+            {
+                type: "text",
+                name: "CTA",
+                text: "KUP TERAZ",
+                x: 250,
+                y: 850,
+                width: 580,
+                height: 120,
+                fontSize: 60
+            }
+        ]
+    },
+
+
+    product: {
+        name: "Produkt",
+
+        elements: [
+
+            {
+                type: "text",
+                name: "Tytuł",
+                text: "NOWY PRODUKT",
+                x: 150,
+                y: 200,
+                width: 780,
+                height: 150,
+                fontSize: 80
+            },
+
+            {
+                type: "text",
+                name: "Opis",
+                text: "Poznaj nową jakość",
+                x: 200,
+                y: 400,
+                width: 680,
+                height: 100,
+                fontSize: 45
+            }
+        ]
+    },
+
+
+    gaming: {
+        name: "Gaming",
+
+        elements: [
+
+            {
+                type: "text",
+                name: "Gaming",
+                text: "GAME ON!",
+                x: 100,
+                y: 500,
+                width: 880,
+                height: 200,
+                fontSize: 120
+            },
+
+            {
+                type: "text",
+                name: "CTA",
+                text: "PLAY NOW",
+                x: 250,
+                y: 850,
+                width: 580,
+                height: 120,
+                fontSize: 60
+            }
+        ]
+    },
+
+
+    business: {
+        name: "Firma",
+
+        elements: [
+
+            {
+                type: "text",
+                name: "Firma",
+                text: "TWOJA FIRMA",
+                x: 150,
+                y: 300,
+                width: 780,
+                height: 150,
+                fontSize: 80
+            },
+
+            {
+                type: "text",
+                name: "Slogan",
+                text: "Profesjonalne rozwiązania",
+                x: 150,
+                y: 520,
+                width: 780,
+                height: 120,
+                fontSize: 42
+            }
+        ]
+    }
+};
+
 
 document
     .querySelectorAll(".template-button")
@@ -1371,190 +1908,182 @@ document
             "click",
             () => {
 
-                const template =
+                const name =
                     button.dataset.template;
 
-                loadTemplate(template);
+                loadTemplate(name);
             }
         );
     });
 
 
-function loadTemplate(template) {
+function loadTemplate(name) {
 
-    state.elements = [];
+    const template =
+        templates[name];
 
-    state.selectedId = null;
-
-
-    switch (template) {
-
-        case "product":
-
-            createElement(
-                "text",
-                {
-                    name: "Nagłówek",
-                    text: "NOWY PRODUKT!",
-                    x: 200,
-                    y: 150,
-                    width: 900,
-                    height: 150,
-                    fontSize: 80
-                }
-            );
-
-            createElement(
-                "text",
-                {
-                    name: "Opis",
-                    text: "Sprawdź już teraz",
-                    x: 300,
-                    y: 350,
-                    width: 700,
-                    height: 100,
-                    fontSize: 48
-                }
-            );
-
-            break;
-
-
-        case "sale":
-
-            createElement(
-                "text",
-                {
-                    name: "Promocja",
-                    text: "PROMOCJA -30%",
-                    x: 200,
-                    y: 200,
-                    width: 1000,
-                    height: 180,
-                    fontSize: 96
-                }
-            );
-
-            createElement(
-                "text",
-                {
-                    name: "Call to action",
-                    text: "KUP TERAZ!",
-                    x: 500,
-                    y: 450,
-                    width: 600,
-                    height: 120,
-                    fontSize: 64
-                }
-            );
-
-            break;
-
-
-        case "business":
-
-            createElement(
-                "text",
-                {
-                    name: "Firma",
-                    text: "TWOJA FIRMA",
-                    x: 300,
-                    y: 200,
-                    width: 900,
-                    height: 150,
-                    fontSize: 80
-                }
-            );
-
-            createElement(
-                "text",
-                {
-                    name: "Slogan",
-                    text: "Profesjonalne rozwiązania",
-                    x: 300,
-                    y: 400,
-                    width: 900,
-                    height: 100,
-                    fontSize: 48
-                }
-            );
-
-            break;
-
-
-        case "gaming":
-
-            createElement(
-                "text",
-                {
-                    name: "Gaming",
-                    text: "GAME ON!",
-                    x: 300,
-                    y: 250,
-                    width: 1000,
-                    height: 200,
-                    fontSize: 120
-                }
-            );
-
-            break;
+    if (!template) {
+        return;
     }
 
 
-    render();
+    saveHistory();
+
+
+    state.elements =
+        template.elements.map(
+            data =>
+                createElement(
+                    data.type,
+                    data
+                )
+        );
+
+
+    state.selectedId =
+        state.elements[0]?.id ||
+        null;
+
+
+    renderAll();
 }
 
 
 /* =========================================================
-   EXPORT
+   UNDO / REDO
 ========================================================= */
 
 document
-    .getElementById("exportBtn")
-    .addEventListener(
+    .getElementById("undoBtn")
+    ?.addEventListener(
         "click",
-        () => {
+        undo
+    );
 
-            alert(
-                "Eksport MP4 dodamy w kolejnym etapie z użyciem FFmpeg.wasm."
-            );
-        }
+
+document
+    .getElementById("redoBtn")
+    ?.addEventListener(
+        "click",
+        redo
     );
 
 
 /* =========================================================
-   CANVAS CLICK
+   DELETE KEY
 ========================================================= */
 
-canvas.addEventListener(
-    "pointerdown",
+document.addEventListener(
+    "keydown",
     event => {
 
+        const active =
+            document.activeElement;
+
+
+        const editing =
+            active &&
+            (
+                active.tagName === "INPUT" ||
+                active.tagName === "TEXTAREA" ||
+                active.tagName === "SELECT"
+            );
+
+
         if (
-            event.target === canvas ||
-            event.target === canvasPlaceholder
+            !editing &&
+            (
+                event.key === "Delete" ||
+                event.key === "Backspace"
+            )
         ) {
 
-            state.selectedId = null;
+            deleteSelected();
+        }
 
-            render();
+
+        if (
+            !editing &&
+            event.ctrlKey &&
+            event.key.toLowerCase() === "z"
+        ) {
+
+            event.preventDefault();
+
+            undo();
+        }
+
+
+        if (
+            !editing &&
+            event.ctrlKey &&
+            event.key.toLowerCase() === "y"
+        ) {
+
+            event.preventDefault();
+
+            redo();
         }
     }
 );
 
 
 /* =========================================================
-   HTML ESCAPE
+   CANVAS DESELECT
 ========================================================= */
 
-function escapeHtml(value) {
+DOM.canvas?.addEventListener(
+    "pointerdown",
+    event => {
 
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        if (
+            event.target ===
+            DOM.canvas ||
+            event.target ===
+            DOM.placeholder
+        ) {
+
+            state.selectedId =
+                null;
+
+            renderCanvas();
+
+            renderProperties();
+        }
+    }
+);
+
+
+/* =========================================================
+   EXPORT PLACEHOLDER
+========================================================= */
+
+document
+    .getElementById("exportBtn")
+    ?.addEventListener(
+        "click",
+        () => {
+
+            alert(
+                "Eksport MP4 zostanie podłączony przez FFmpeg.wasm."
+            );
+        }
+    );
+
+
+/* =========================================================
+   GLOBAL RENDER
+========================================================= */
+
+function renderAll() {
+
+    renderCanvas();
+
+    renderTimeline();
+
+    renderProperties();
+
+    updateTimeDisplay();
 }
 
 
@@ -1564,15 +2093,37 @@ function escapeHtml(value) {
 
 function initialize() {
 
-    canvas.style.aspectRatio =
-        `${state.format.width} / ${state.format.height}`;
+    const format =
+        state.project.format;
 
-    render();
+
+    if (DOM.canvas) {
+
+        DOM.canvas.dataset.width =
+            format.width;
+
+        DOM.canvas.dataset.height =
+            format.height;
+
+        DOM.canvas.style.aspectRatio =
+            `${format.width} / ${format.height}`;
+    }
+
+
+    if (DOM.formatSelect) {
+
+        DOM.formatSelect.value =
+            `${format.width}x${format.height}`;
+    }
+
+
+    renderAll();
+
 
     console.log(
-        "ADGVMaker initialized — by Tech Karol"
+        "🎬 ADGVMaker initialized — Tech Karol"
     );
 }
 
 
-initialize();
+initialize();q
