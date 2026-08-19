@@ -1,6 +1,6 @@
 # 🎬 ADGVMaker
 
-**ADGVMaker by BBKTX** to internetowy kreator reklam i materiałów promocyjnych działający bezpośrednio w przeglądarce.
+**ADGVMaker by Tech Karol to internetowy kreator reklam i materiałów promocyjnych działający bezpośrednio w przeglądarce.
 
 Twórz własne reklamy, spoty i grafiki, łącząc **filmy MP4, zdjęcia, teksty, ikony, logo oraz efekty** w jednym prostym edytorze.
 
