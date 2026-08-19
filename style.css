@@ -1,0 +1,913 @@
+/* =========================================================
+   ADGVMaker
+   by Tech Karol
+   style.css
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+:root {
+    --bg: #0b0d11;
+    --panel: #11141a;
+    --panel-light: #181c23;
+    --panel-hover: #20252e;
+
+    --border: #292e38;
+
+    --text: #f2f4f7;
+    --text-muted: #8d95a3;
+
+    --accent: #4da3ff;
+    --accent-hover: #6bb3ff;
+
+    --danger: #ff4d67;
+
+    --canvas-bg: #050608;
+
+    --sidebar-width: 220px;
+    --properties-width: 280px;
+}
+
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+
+body {
+    background: var(--bg);
+    color: var(--text);
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button,
+select,
+input,
+textarea {
+    font: inherit;
+}
+
+
+button {
+    border: 0;
+    color: var(--text);
+
+    background: var(--panel-light);
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease,
+        opacity 0.15s ease;
+}
+
+
+button:hover {
+    background: var(--panel-hover);
+}
+
+
+button:active {
+    transform: scale(0.97);
+}
+
+
+button.primary {
+    background: var(--accent);
+    color: white;
+}
+
+
+button.primary:hover {
+    background: var(--accent-hover);
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar {
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 18px;
+
+    background: var(--panel);
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+/* BRAND */
+
+.brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+
+.brand-name {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+
+.brand-by {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+
+.project-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.project-actions button {
+    padding: 8px 13px;
+
+    border-radius: 7px;
+
+    border: 1px solid var(--border);
+}
+
+
+/* =========================================================
+   MAIN APP
+========================================================= */
+
+.app {
+    width: 100%;
+    height: calc(100vh - 64px);
+
+    display: grid;
+
+    grid-template-columns:
+        var(--sidebar-width)
+        minmax(0, 1fr)
+        var(--properties-width);
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    background: var(--panel);
+
+    border-right: 1px solid var(--border);
+
+    padding: 18px 12px;
+
+    overflow-y: auto;
+}
+
+
+.sidebar h2,
+.properties h2 {
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: var(--text-muted);
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.7px;
+
+    margin-bottom: 10px;
+}
+
+
+.sidebar hr {
+    border: 0;
+
+    border-top: 1px solid var(--border);
+
+    margin: 18px 0;
+}
+
+
+/* =========================================================
+   TOOL BUTTONS
+========================================================= */
+
+.tool-button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px 12px;
+
+    margin-bottom: 5px;
+
+    background: transparent;
+
+    border-radius: 8px;
+
+    text-align: left;
+
+    color: var(--text);
+}
+
+
+.tool-button:hover {
+    background: var(--panel-light);
+}
+
+
+.tool-icon {
+    width: 25px;
+
+    text-align: center;
+
+    font-size: 18px;
+}
+
+
+.template-button {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    margin-bottom: 5px;
+
+    background: transparent;
+
+    border-radius: 8px;
+
+    text-align: left;
+}
+
+
+.template-button:hover {
+    background: var(--panel-light);
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+.editor {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #090b0f;
+}
+
+
+/* =========================================================
+   EDITOR TOOLBAR
+========================================================= */
+
+.editor-toolbar {
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 0 12px;
+
+    background: var(--panel);
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.editor-toolbar button {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 6px;
+
+    border: 1px solid var(--border);
+}
+
+
+.editor-toolbar label {
+    color: var(--text-muted);
+
+    font-size: 13px;
+
+    margin-left: 4px;
+}
+
+
+.editor-toolbar select {
+    height: 32px;
+
+    padding: 0 8px;
+
+    margin-left: 4px;
+
+    border-radius: 6px;
+
+    border: 1px solid var(--border);
+
+    background: var(--panel-light);
+
+    color: var(--text);
+}
+
+
+.toolbar-separator {
+    width: 1px;
+
+    height: 24px;
+
+    background: var(--border);
+
+    margin: 0 5px;
+}
+
+
+/* =========================================================
+   CANVAS AREA
+========================================================= */
+
+.canvas-area {
+    flex: 1;
+
+    min-height: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    overflow: auto;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #151922 0%,
+            #090b0f 65%
+        );
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+.canvas {
+    position: relative;
+
+    width: min(
+        80vw,
+        900px
+    );
+
+    max-height: 65vh;
+
+    aspect-ratio: 16 / 9;
+
+    background: var(--canvas-bg);
+
+    border: 1px solid #333945;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.canvas-placeholder {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: var(--text-muted);
+
+    pointer-events: none;
+}
+
+
+.placeholder-icon {
+    font-size: 52px;
+
+    margin-bottom: 14px;
+}
+
+
+.canvas-placeholder h3 {
+    color: var(--text);
+
+    font-size: 20px;
+
+    margin-bottom: 7px;
+}
+
+
+.canvas-placeholder p {
+    max-width: 420px;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   CANVAS ELEMENTS
+========================================================= */
+
+.adgvmaker-element {
+    position: absolute;
+
+    user-select: none;
+
+    touch-action: none;
+
+    overflow: hidden;
+}
+
+
+.adgvmaker-element:hover {
+    outline: 1px solid rgba(77, 163, 255, 0.6);
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+.timeline {
+    height: 220px;
+
+    flex-shrink: 0;
+
+    background: var(--panel);
+
+    border-top: 1px solid var(--border);
+
+    overflow: hidden;
+}
+
+
+.timeline-header {
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 12px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.timeline-controls {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+}
+
+
+.timeline-controls button {
+    width: 28px;
+    height: 28px;
+
+    border-radius: 6px;
+
+    border: 1px solid var(--border);
+}
+
+
+#currentTime {
+    margin-left: 8px;
+
+    color: var(--text);
+}
+
+
+.timeline-ruler {
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.timeline-tracks {
+    height: calc(100% - 78px);
+
+    overflow-y: auto;
+}
+
+
+.track {
+    height: 42px;
+
+    display: flex;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.track-name {
+    width: 95px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+
+    padding-left: 10px;
+
+    color: var(--text-muted);
+
+    font-size: 12px;
+
+    border-right: 1px solid var(--border);
+}
+
+
+.track-content {
+    position: relative;
+
+    flex: 1;
+
+    min-width: 0;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0,
+            transparent 49px,
+            rgba(255, 255, 255, 0.035) 50px
+        );
+}
+
+
+.timeline-item {
+    position: absolute;
+
+    top: 6px;
+
+    height: 29px;
+
+    min-width: 35px;
+
+    padding: 0 8px;
+
+    display: flex;
+    align-items: center;
+
+    border-radius: 5px;
+
+    background: var(--accent);
+
+    color: white;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    cursor: pointer;
+}
+
+
+.timeline-item:hover {
+    filter: brightness(1.1);
+}
+
+
+/* =========================================================
+   PROPERTIES
+========================================================= */
+
+.properties {
+    background: var(--panel);
+
+    border-left: 1px solid var(--border);
+
+    padding: 18px 14px;
+
+    overflow-y: auto;
+}
+
+
+.no-selection {
+    min-height: 180px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: var(--text-muted);
+
+    padding: 20px;
+}
+
+
+.no-selection-icon {
+    font-size: 32px;
+
+    margin-bottom: 12px;
+}
+
+
+.no-selection p {
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   PROPERTY GROUPS
+========================================================= */
+
+.property-group {
+    margin-bottom: 15px;
+}
+
+
+.property-group label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: var(--text-muted);
+
+    font-size: 12px;
+}
+
+
+.property-group input,
+.property-group textarea,
+.property-group select {
+    width: 100%;
+
+    border: 1px solid var(--border);
+
+    border-radius: 6px;
+
+    background: var(--panel-light);
+
+    color: var(--text);
+
+    outline: none;
+}
+
+
+.property-group input[type="text"],
+.property-group input[type="number"],
+.property-group textarea {
+    padding: 8px 9px;
+}
+
+
+.property-group textarea {
+    resize: vertical;
+
+    min-height: 80px;
+}
+
+
+.property-group input:focus,
+.property-group textarea:focus,
+.property-group select:focus {
+    border-color: var(--accent);
+}
+
+
+.property-group input[type="color"] {
+    height: 38px;
+
+    padding: 3px;
+
+    cursor: pointer;
+}
+
+
+.property-group input[type="range"] {
+    accent-color: var(--accent);
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+========================================================= */
+
+.danger-button {
+    width: 100%;
+
+    padding: 10px;
+
+    margin-top: 5px;
+
+    border-radius: 7px;
+
+    background: rgba(255, 77, 103, 0.12);
+
+    color: var(--danger);
+
+    border: 1px solid rgba(255, 77, 103, 0.25);
+}
+
+
+.danger-button:hover {
+    background: rgba(255, 77, 103, 0.2);
+}
+
+
+/* =========================================================
+   SCROLLBARS
+========================================================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background: #303642;
+
+    border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+    background: #414957;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    :root {
+        --sidebar-width: 180px;
+        --properties-width: 230px;
+    }
+
+    .canvas-area {
+        padding: 15px;
+    }
+
+}
+
+
+@media (max-width: 760px) {
+
+    body {
+        overflow: auto;
+    }
+
+
+    .app {
+        height: auto;
+
+        min-height: calc(100vh - 64px);
+
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .sidebar {
+        width: 100%;
+
+        border-right: 0;
+
+        border-bottom: 1px solid var(--border);
+
+        display: flex;
+
+        gap: 5px;
+
+        overflow-x: auto;
+
+        padding: 8px;
+    }
+
+
+    .sidebar h2,
+    .sidebar hr {
+        display: none;
+    }
+
+
+    .tool-button,
+    .template-button {
+        width: auto;
+
+        flex-shrink: 0;
+
+        margin: 0;
+
+        white-space: nowrap;
+    }
+
+
+    .editor {
+        min-height: 700px;
+    }
+
+
+    .properties {
+        border-left: 0;
+
+        border-top: 1px solid var(--border);
+    }
+
+
+    .project-actions button {
+        padding: 7px 9px;
+    }
+
+
+    .brand-by {
+        display: none;
+    }
+
+}
