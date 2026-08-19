@@ -1,49 +1,32 @@
-# 🎬 ADGVMaker
+# KVGDV 🛡️
 
-**ADGVMaker by Tech Karol to internetowy kreator reklam i materiałów promocyjnych działający bezpośrednio w przeglądarce.
+**KVGDV** to otwarty projekt rozwijany przez **Tech Karol**, którego celem jest ułatwianie tworzenia własnych systemów bezpieczeństwa.
 
-Twórz własne reklamy, spoty i grafiki, łącząc **filmy MP4, zdjęcia, teksty, ikony, logo oraz efekty** w jednym prostym edytorze.
+Projekt skupia się na:
+- 🗄️ publicznych bazach danych,
+- 🔍 informacjach o zagrożeniach,
+- 🧩 narzędziach i przykładach dla programistów,
+- 📚 dokumentacji i wiedzy o tworzeniu systemów bezpieczeństwa.
 
-## ✨ Funkcje
+KVGDV nie jest gotowym antywirusem. Jest zbiorem zasobów, które mogą pomóc w tworzeniu własnych rozwiązań.
 
-* 🎥 Dodawanie materiałów wideo
-* 🖼️ Import własnych zdjęć
-* ✏️ Dodawanie i edycja tekstów
-* 🔷 Dodawanie ikon i logo
-* 🎨 Personalizacja kolorów i czcionek
-* ⏱️ Timeline do ustawiania czasu elementów
-* 📐 Obsługa różnych formatów reklam
-* ▶️ Podgląd projektu
-* 💾 Zapisywanie projektu lokalnie
-* 📤 Eksport gotowego materiału
-* 🧩 Gotowe szablony reklam
+## 📦 KVGDV Database
 
-## 🌐 Działa w przeglądarce
+Publiczna baza danych może być wykorzystywana przez inne projekty zgodnie z warunkami licencji.
 
-ADGVMaker jest tworzony jako aplikacja webowa i może być uruchamiany za pomocą **GitHub Pages**.
+Podanie autora **nie jest wymagane**, jeśli licencja danego zasobu tego nie wymaga, ale będzie miło, jeśli wspomnisz o projekcie KVGDV. ❤️
 
-Nie wymaga instalowania programu na komputerze.
+## 👨‍💻 Twórca
 
-## 🛠️ Technologie
+**Tech Karol**
 
-* HTML5
-* CSS3
-* JavaScript
-* Canvas API
-* FFmpeg.wasm
+KVGDV jest projektem hobbystycznym rozwijanym w celu nauki, eksperymentowania i udostępniania przydatnych zasobów innym programistom.
 
-## 🚧 Status
+## 📜 Licencja
 
-**W trakcie rozwoju — wersja Beta**
-
-Nowe funkcje i ulepszenia będą dodawane wraz z rozwojem projektu.
-
-## 👤 Autor
-
-Tech Karol
-
-Projekt: **ADGVMaker**
+Sprawdź plik `LICENSE`, aby zobaczyć dokładne warunki korzystania z danego zasobu.
 
 ---
 
-🎬 **ADGVMaker — Create. Customize. Advertise.**
+**KVGDV — Open Security Project**  
+Created by Tech Karol.
