@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KVGDV Hash Generator</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0b0f14;
+        color: #fff;
+        font-family: Arial, sans-serif;
+    }
+
+    .box {
+        width: min(700px, 92%);
+        padding: 30px;
+        border: 1px solid #27313d;
+        border-radius: 20px;
+        background: #111821;
+        box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    h1 {
+        margin-top: 0;
+        font-size: 32px;
+    }
+
+    p {
+        color: #9da9b5;
+    }
+
+    input[type="file"] {
+        width: 100%;
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px dashed #3a4653;
+        border-radius: 12px;
+        color: #fff;
+        background: #0d131a;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border: 0;
+        border-radius: 12px;
+        background: #fff;
+        color: #111;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+
+    button:hover {
+        opacity: .85;
+    }
+
+    .result {
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 12px;
+        background: #0a0f14;
+        border: 1px solid #27313d;
+        word-break: break-all;
+    }
+
+    .hash {
+        font-family: monospace;
+        color: #c9d4df;
+        line-height: 1.6;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>KVGDV Hash Generator</h1>
+
+    <p>
+        Oblicz SHA-256 dowolnego pliku lokalnie w przeglądarce.
+        Plik nie jest wysyłany na serwer.
+    </p>
+
+    <input id="file" type="file">
+
+    <button onclick="calculateHash()">
+        🔐 Oblicz SHA-256
+    </button>
+
+    <div id="result" class="result hidden">
+        <strong>SHA-256:</strong>
+        <div id="hash" class="hash"></div>
+
+        <button onclick="copyHash()">
+            📋 Kopiuj hash
+        </button>
+    </div>
+
+</div>
+
+<script>
+let currentHash = "";
+
+async function calculateHash() {
+
+    const input = document.getElementById("file");
+    const result = document.getElementById("result");
+    const hashElement = document.getElementById("hash");
+
+    if (!input.files.length) {
+        alert("Najpierw wybierz plik.");
+        return;
+    }
+
+    const file = input.files[0];
+
+    try {
+        const buffer = await file.arrayBuffer();
+
+        const hashBuffer = await crypto.subtle.digest(
+            "SHA-256",
+            buffer
+        );
+
+        const hashArray = Array.from(
+            new Uint8Array(hashBuffer)
+        );
+
+        currentHash = hashArray
+            .map(byte => byte.toString(16).padStart(2, "0"))
+            .join("");
+
+        hashElement.textContent = currentHash;
+
+        result.classList.remove("hidden");
+
+    } catch (error) {
+        alert("Nie udało się obliczyć SHA-256.");
+        console.error(error);
+    }
+}
+
+async function copyHash() {
+
+    if (!currentHash) return;
+
+    await navigator.clipboard.writeText(currentHash);
+
+    alert("Hash skopiowany.");
+}
+</script>
+
+</body>
+</html>
