@@ -2,506 +2,314 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width,
-        initial-scale=1,
-        maximum-scale=1,
-        viewport-fit=cover"
-    >
+    <title>ADGVMaker</title>
 
-    <meta
-        name="theme-color"
-        content="#09090b"
-    >
-
-    <title>ADGVMaker — Tech Karol</title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="app">
+    <div class="app">
 
-    <!-- HEADER -->
+        <!-- TOP BAR -->
+        <header class="topbar">
 
-    <header class="topbar">
+            <div class="brand">
+                <div class="brand-logo">A</div>
 
-        <div class="brand">
-
-            <div class="brand-icon">
-                🎬
+                <div>
+                    <div class="brand-name">ADGVMaker</div>
+                    <div class="brand-subtitle">Web Video Editor</div>
+                </div>
             </div>
 
-            <div>
-                <strong>
-                    ADGVMaker
-                </strong>
+            <nav class="menu">
+                <button>File</button>
+                <button>Edit</button>
+                <button>View</button>
+            </nav>
 
-                <span>
-                    by Tech Karol
-                </span>
+            <div class="top-actions">
+                <button id="undoBtn" class="icon-button" title="Undo">↶</button>
+                <button id="redoBtn" class="icon-button" title="Redo">↷</button>
+
+                <button id="exportBtn" class="export-button">
+                    Export
+                </button>
             </div>
 
-        </div>
+        </header>
 
 
-        <div class="top-actions">
+        <!-- MAIN WORKSPACE -->
+        <main class="workspace">
 
-            <button
-                id="undoBtn"
-                class="icon-btn"
-                aria-label="Cofnij"
-            >
-                ↶
-            </button>
+            <!-- LEFT SIDEBAR -->
+            <aside class="sidebar">
 
-            <button
-                id="redoBtn"
-                class="icon-btn"
-                aria-label="Ponów"
-            >
-                ↷
-            </button>
+                <button class="tool active" data-panel="media">
+                    <span>▣</span>
+                    <label>Media</label>
+                </button>
 
-            <button
-                id="saveProjectBtn"
-                class="icon-btn"
-                aria-label="Zapisz"
-            >
-                💾
-            </button>
+                <button class="tool" data-panel="audio">
+                    <span>♫</span>
+                    <label>Audio</label>
+                </button>
 
-        </div>
+                <button class="tool" data-panel="text">
+                    <span>T</span>
+                    <label>Text</label>
+                </button>
 
-    </header>
+                <button class="tool" data-panel="effects">
+                    <span>✦</span>
+                    <label>Effects</label>
+                </button>
 
+                <button class="tool" data-panel="transitions">
+                    <span>◈</span>
+                    <label>Transitions</label>
+                </button>
 
-    <!-- PROJECT -->
-
-    <main class="workspace">
+            </aside>
 
 
-        <!-- PREVIEW -->
+            <!-- MEDIA PANEL -->
+            <section class="media-panel">
 
-        <section class="preview-section">
+                <div class="panel-header">
+                    <h2>Media</h2>
 
-            <div class="preview-header">
+                    <button id="importBtn" class="small-button">
+                        + Import
+                    </button>
 
-                <span>
-                    Podgląd
-                </span>
-
-                <span
-                    id="currentTime"
-                >
-                    00:00
-                </span>
-
-                <span>/</span>
-
-                <span
-                    id="duration"
-                >
-                    00:10
-                </span>
-
-            </div>
-
-
-            <div class="preview-wrapper">
-
-                <div
-                    id="canvas"
-                    class="canvas"
-                >
-
-                    <div
-                        id="canvasPlaceholder"
-                        class="canvas-placeholder"
+                    <input
+                        type="file"
+                        id="fileInput"
+                        accept="video/*,audio/*,image/*"
+                        multiple
+                        hidden
                     >
+                </div>
 
-                        <div>
-                            🎬
-                        </div>
+                <div id="mediaLibrary" class="media-library">
+
+                    <div id="emptyMedia" class="empty-media">
+                        <div class="empty-icon">＋</div>
+
+                        <strong>Import media</strong>
 
                         <span>
-                            Dodaj element
+                            Drag files here or click Import
+                        </span>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- CENTER -->
+            <section class="editor">
+
+                <!-- PREVIEW -->
+                <div class="preview-area">
+
+                    <div class="preview-container">
+
+                        <video
+                            id="videoPreview"
+                            preload="metadata"
+                        ></video>
+
+                        <div
+                            id="previewPlaceholder"
+                            class="preview-placeholder"
+                        >
+                            <div class="placeholder-logo">
+                                A
+                            </div>
+
+                            <strong>
+                                ADGVMaker
+                            </strong>
+
+                            <span>
+                                Import a video to start editing
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTROLS -->
+                <div class="player-controls">
+
+                    <span id="currentTime">
+                        00:00
+                    </span>
+
+                    <button
+                        id="playBtn"
+                        class="play-button"
+                    >
+                        ▶
+                    </button>
+
+                    <div class="player-progress">
+
+                        <input
+                            type="range"
+                            id="seekBar"
+                            min="0"
+                            max="100"
+                            value="0"
+                            step="0.01"
+                        >
+
+                    </div>
+
+                    <span id="duration">
+                        00:00
+                    </span>
+
+                </div>
+
+
+                <!-- TIMELINE -->
+                <section class="timeline">
+
+                    <div class="timeline-header">
+
+                        <div class="timeline-title">
+                            Timeline
+                        </div>
+
+                        <div class="timeline-actions">
+
+                            <button
+                                id="splitBtn"
+                                title="Split clip"
+                            >
+                                ✂ Split
+                            </button>
+
+                            <button
+                                id="deleteBtn"
+                                title="Delete selected clip"
+                            >
+                                🗑 Delete
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-body">
+
+                        <div class="time-ruler" id="timeRuler">
+                            <span>00:00</span>
+                            <span>00:10</span>
+                            <span>00:20</span>
+                            <span>00:30</span>
+                            <span>00:40</span>
+                            <span>00:50</span>
+                        </div>
+
+
+                        <div class="track">
+
+                            <div class="track-label">
+                                🎬 Video
+                            </div>
+
+                            <div
+                                id="videoTrack"
+                                class="track-content"
+                            ></div>
+
+                        </div>
+
+
+                        <div class="track">
+
+                            <div class="track-label">
+                                🔊 Audio
+                            </div>
+
+                            <div
+                                id="audioTrack"
+                                class="track-content"
+                            ></div>
+
+                        </div>
+
+
+                        <div class="track">
+
+                            <div class="track-label">
+                                T Text
+                            </div>
+
+                            <div
+                                id="textTrack"
+                                class="track-content"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+            <!-- RIGHT SIDEBAR -->
+            <aside class="properties">
+
+                <div class="properties-header">
+                    <h2>Properties</h2>
+                </div>
+
+                <div
+                    id="propertiesContent"
+                    class="properties-content"
+                >
+
+                    <div class="no-selection">
+
+                        <div class="no-selection-icon">
+                            ◇
+                        </div>
+
+                        <strong>
+                            Nothing selected
+                        </strong>
+
+                        <span>
+                            Select a clip to edit its properties.
                         </span>
 
                     </div>
 
                 </div>
 
-            </div>
+            </aside>
 
+        </main>
 
-            <!-- PLAYBACK -->
+    </div>
 
-            <div class="playback">
 
-                <button
-                    id="stopBtn"
-                    class="play-btn secondary"
-                >
-                    ■
-                </button>
-
-                <button
-                    id="playBtn"
-                    class="play-btn main"
-                >
-                    ▶
-                </button>
-
-                <button
-                    id="pauseBtn"
-                    class="play-btn secondary"
-                >
-                    ❚❚
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- TOOLS -->
-
-        <section class="tools-section">
-
-            <div class="section-title">
-                Dodaj
-            </div>
-
-
-            <div class="tool-grid">
-
-                <button
-                    id="addImageBtn"
-                    class="tool"
-                >
-                    <span>🖼️</span>
-                    <small>Zdjęcie</small>
-                </button>
-
-
-                <button
-                    id="addVideoBtn"
-                    class="tool"
-                >
-                    <span>🎥</span>
-                    <small>Video</small>
-                </button>
-
-
-                <button
-                    id="addTextBtn"
-                    class="tool"
-                >
-                    <span>✏️</span>
-                    <small>Tekst</small>
-                </button>
-
-
-                <button
-                    id="addLogoBtn"
-                    class="tool"
-                >
-                    <span>🏷️</span>
-                    <small>Logo</small>
-                </button>
-
-
-                <button
-                    id="addIconBtn"
-                    class="tool"
-                >
-                    <span>⭐</span>
-                    <small>Ikona</small>
-                </button>
-
-
-                <button
-                    id="aiBtn"
-                    class="tool ai-tool"
-                >
-                    <span>✨</span>
-                    <small>AI</small>
-                </button>
-
-            </div>
-
-
-            <!-- HIDDEN FILE INPUTS -->
-
-            <input
-                id="imageInput"
-                type="file"
-                accept="image/*"
-                hidden
-            >
-
-            <input
-                id="videoInput"
-                type="file"
-                accept="video/*"
-                hidden
-            >
-
-            <input
-                id="logoInput"
-                type="file"
-                accept="image/png,image/svg+xml,image/webp"
-                hidden
-            >
-
-        </section>
-
-
-        <!-- TEMPLATES -->
-
-        <section class="templates-section">
-
-            <div class="section-header">
-
-                <div class="section-title">
-                    🧩 Szablony
-                </div>
-
-                <span class="template-count">
-                    10 sekund
-                </span>
-
-            </div>
-
-
-            <div class="templates">
-
-                <button
-                    class="template-card"
-                    data-template="sale"
-                >
-
-                    <div class="template-preview sale">
-                        🔥
-                    </div>
-
-                    <strong>
-                        Promocja
-                    </strong>
-
-                    <small>
-                        -30%
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="template-card"
-                    data-template="product"
-                >
-
-                    <div class="template-preview product">
-                        📱
-                    </div>
-
-                    <strong>
-                        Produkt
-                    </strong>
-
-                    <small>
-                        Premium
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="template-card"
-                    data-template="gaming"
-                >
-
-                    <div class="template-preview gaming">
-                        🎮
-                    </div>
-
-                    <strong>
-                        Gaming
-                    </strong>
-
-                    <small>
-                        Dynamic
-                    </small>
-
-                </button>
-
-
-                <button
-                    class="template-card"
-                    data-template="business"
-                >
-
-                    <div class="template-preview business">
-                        💼
-                    </div>
-
-                    <strong>
-                        Firma
-                    </strong>
-
-                    <small>
-                        Business
-                    </small>
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- TIMELINE -->
-
-        <section class="timeline-section">
-
-            <div class="section-header">
-
-                <div class="section-title">
-                    Timeline
-                </div>
-
-                <select id="formatSelect">
-
-                    <option value="1080x1920">
-                        📱 9:16
-                    </option>
-
-                    <option value="1080x1080">
-                        ⬜ 1:1
-                    </option>
-
-                    <option value="1920x1080">
-                        🖥️ 16:9
-                    </option>
-
-                    <option value="1280x720">
-                        ▶️ 720p
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="timeline">
-
-                <div class="track">
-
-                    <span>
-                        🎥
-                    </span>
-
-                    <div
-                        id="mediaTrack"
-                        class="track-content"
-                    ></div>
-
-                </div>
-
-
-                <div class="track">
-
-                    <span>
-                        T
-                    </span>
-
-                    <div
-                        id="textTrack"
-                        class="track-content"
-                    ></div>
-
-                </div>
-
-
-                <div class="track">
-
-                    <span>
-                        ✨
-                    </span>
-
-                    <div
-                        id="graphicsTrack"
-                        class="track-content"
-                    ></div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- PROPERTIES -->
-
-        <section
-            id="propertiesPanel"
-            class="properties"
-        >
-
-            <div class="no-selection">
-
-                <div>
-                    ⚙️
-                </div>
-
-                <p>
-                    Wybierz element,
-                    aby go edytować.
-                </p>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- BOTTOM BAR -->
-
-    <nav class="bottom-bar">
-
-        <button
-            id="newProjectBtn"
-        >
-            <span>＋</span>
-            Nowy
-        </button>
-
-
-        <button
-            id="exportBtn"
-            class="export-button"
-        >
-            <span>📤</span>
-            Eksport
-        </button>
-
-    </nav>
-
-</div>
-
-
-<script
-    type="module"
-    src="app.js"
-></script>
+    <script src="app.js"></script>
 
 </body>
 </html>
