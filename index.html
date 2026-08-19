@@ -1,315 +1,2424 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-    <title>ADGVMaker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="style.css">
+<meta
+name="description"
+content="KVGDV — otwarty projekt Tech Karol poświęcony tworzeniu narzędzi, baz danych i wiedzy potrzebnej do budowania własnych systemów bezpieczeństwa."
+>
+
+<meta name="theme-color" content="#070a12">
+
+<title>KVGDV — Open Security Project</title>
+
+<style>
+
+/* =========================================================
+   KVGDV
+   Open Security Project
+   Created by Tech Karol
+========================================================= */
+
+:root {
+
+    --background: #070a12;
+    --background2: #0c1120;
+
+    --card: rgba(18,25,42,.78);
+    --card-hover: rgba(25,34,55,.92);
+
+    --border: rgba(255,255,255,.09);
+
+    --text: #f5f7ff;
+    --muted: #9aa7bd;
+
+    --blue: #5aa7ff;
+    --blue-light: #8dc5ff;
+
+    --purple: #8c7cff;
+
+    --green: #45d483;
+
+    --red: #ff6378;
+
+    --radius: 20px;
+
+    --max-width: 1150px;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color: var(--text);
+
+    line-height: 1.6;
+
+    background:
+
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(90,167,255,.15),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(140,124,255,.13),
+            transparent 28%
+        ),
+
+        var(--background);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font-family: inherit;
+}
+
+.container {
+
+    width:
+        min(
+            calc(100% - 32px),
+            var(--max-width)
+        );
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+nav {
+
+    position: sticky;
+    top: 0;
+
+    z-index: 100;
+
+    background:
+        rgba(7,10,18,.72);
+
+    backdrop-filter:
+        blur(18px);
+
+    border-bottom:
+        1px solid var(--border);
+}
+
+.nav-inner {
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    letter-spacing: -.02em;
+}
+
+.logo-icon {
+
+    width: 39px;
+    height: 39px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--blue),
+            var(--purple)
+        );
+
+    box-shadow:
+        0 8px 28px
+        rgba(90,167,255,.25);
+}
+
+.nav-links {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+.nav-links a {
+
+    padding: 9px 12px;
+
+    border-radius: 10px;
+
+    transition: .2s ease;
+}
+
+.nav-links a:hover {
+
+    color: white;
+
+    background:
+        rgba(255,255,255,.06);
+}
+
+.menu-button {
+
+    display: none;
+
+    padding: 8px 11px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+
+    padding:
+        110px 0 85px;
+
+    text-align: center;
+}
+
+.badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 7px 12px;
+
+    margin-bottom: 24px;
+
+    border:
+        1px solid
+        rgba(90,167,255,.22);
+
+    border-radius: 999px;
+
+    background:
+        rgba(90,167,255,.07);
+
+    color: #b8d8ff;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+.status-dot {
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background:
+        var(--green);
+
+    box-shadow:
+        0 0 13px
+        var(--green);
+}
+
+h1 {
+
+    max-width: 920px;
+
+    margin: 0 auto;
+
+    font-size:
+        clamp(
+            45px,
+            7vw,
+            80px
+        );
+
+    line-height: .98;
+
+    letter-spacing: -.065em;
+}
+
+.gradient {
+
+    background:
+
+        linear-gradient(
+            110deg,
+            white,
+            #9dcaff,
+            #9d90ff
+        );
+
+    -webkit-background-clip: text;
+
+    background-clip: text;
+
+    color: transparent;
+}
+
+.hero-description {
+
+    max-width: 760px;
+
+    margin: 25px auto 0;
+
+    color: var(--muted);
+
+    font-size: 18px;
+}
+
+.buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+
+    margin-top: 32px;
+}
+
+.button {
+
+    min-height: 46px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 19px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 12px;
+
+    font-size: 14px;
+
+    font-weight: 750;
+
+    transition: .2s ease;
+}
+
+.button:hover {
+
+    transform:
+        translateY(-2px);
+}
+
+.primary {
+
+    color: #06101e;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--blue-light),
+            #9d91ff
+        );
+
+    border: none;
+}
+
+.secondary {
+
+    background:
+        rgba(255,255,255,.04);
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 12px;
+
+    margin-bottom: 90px;
+}
+
+.stat {
+
+    padding: 23px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 18px;
+
+    background: var(--card);
+}
+
+.stat strong {
+
+    display: block;
+
+    font-size: 27px;
+
+    letter-spacing: -.04em;
+}
+
+.stat span {
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+section {
+
+    padding:
+        45px 0 90px;
+
+    scroll-margin-top: 85px;
+}
+
+.section-title {
+
+    margin-bottom: 32px;
+}
+
+.kicker {
+
+    margin-bottom: 8px;
+
+    color: #82bdff;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .15em;
+
+    font-weight: 800;
+}
+
+h2 {
+
+    font-size:
+        clamp(
+            30px,
+            4vw,
+            46px
+        );
+
+    line-height: 1.05;
+
+    letter-spacing: -.045em;
+}
+
+.section-title p {
+
+    max-width: 780px;
+
+    margin-top: 12px;
+
+    color: var(--muted);
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 15px;
+}
+
+.card {
+
+    padding: 26px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(20,29,48,.9),
+            rgba(13,20,35,.85)
+        );
+
+    transition: .25s ease;
+}
+
+.card:hover {
+
+    transform:
+        translateY(-4px);
+
+    background:
+        var(--card-hover);
+
+    border-color:
+        rgba(90,167,255,.2);
+}
+
+.icon {
+
+    width: 45px;
+    height: 45px;
+
+    display: grid;
+
+    place-items: center;
+
+    margin-bottom: 17px;
+
+    border-radius: 13px;
+
+    background:
+        rgba(90,167,255,.09);
+
+    font-size: 21px;
+}
+
+.card h3 {
+
+    margin-bottom: 7px;
+
+    font-size: 18px;
+}
+
+.card p {
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   DATABASE
+========================================================= */
+
+.database {
+
+    display: grid;
+
+    grid-template-columns:
+        1.1fr .9fr;
+
+    gap: 18px;
+}
+
+.code {
+
+    overflow: hidden;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: #050810;
+}
+
+.code-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 13px 17px;
+
+    border-bottom:
+        1px solid var(--border);
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+pre {
+
+    padding: 23px;
+
+    overflow-x: auto;
+
+    font:
+        13px/1.8
+        Consolas,
+        "Courier New",
+        monospace;
+
+    color: #cbd6e9;
+}
+
+.json-key {
+    color: #82c3ff;
+}
+
+.json-string {
+    color: #9de2ac;
+}
+
+.json-number {
+    color: #d3adff;
+}
+
+.info {
+
+    display: grid;
+
+    gap: 11px;
+}
+
+.info-item {
+
+    display: flex;
+
+    gap: 12px;
+
+    padding: 15px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+.info-item b {
+
+    display: block;
+
+    font-size: 14px;
+}
+
+.info-item span {
+
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.steps {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 12px;
+}
+
+.step {
+
+    padding: 23px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 18px;
+
+    background: var(--card);
+}
+
+.step-number {
+
+    margin-bottom: 15px;
+
+    color: #83bcff;
+
+    font:
+        800 13px
+        monospace;
+}
+
+.step h3 {
+
+    margin-bottom: 6px;
+
+    font-size: 16px;
+}
+
+.step p {
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   CREATOR
+========================================================= */
+
+.creator {
+
+    display: grid;
+
+    grid-template-columns:
+        .9fr 1.1fr;
+
+    gap: 18px;
+}
+
+.creator-card {
+
+    padding: 30px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--card);
+}
+
+.creator-avatar {
+
+    width: 65px;
+    height: 65px;
+
+    display: grid;
+
+    place-items: center;
+
+    margin-bottom: 18px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--blue),
+            var(--purple)
+        );
+
+    font-size: 28px;
+}
+
+.creator-card h3 {
+
+    margin-bottom: 8px;
+
+    font-size: 23px;
+}
+
+.creator-card p {
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   LICENSE
+========================================================= */
+
+.license {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr .8fr;
+
+    gap: 18px;
+}
+
+.license-box {
+
+    padding: 30px;
+
+    border:
+        1px solid
+        rgba(90,167,255,.2);
+
+    border-radius: var(--radius);
+
+    background:
+        rgba(16,24,42,.9);
+}
+
+.license-box h3 {
+
+    margin-bottom: 10px;
+
+    font-size: 23px;
+}
+
+.license-box p,
+.license-box li {
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+.license-box ul {
+
+    display: grid;
+
+    gap: 8px;
+
+    margin:
+        18px 0 0 20px;
+}
+
+.notice {
+
+    padding: 25px;
+
+    border:
+        1px solid
+        rgba(69,212,131,.2);
+
+    border-radius: var(--radius);
+
+    background:
+        rgba(69,212,131,.05);
+}
+
+.notice h3 {
+
+    margin-bottom: 8px;
+}
+
+.notice p {
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FAQ
+========================================================= */
+
+.faq {
+
+    display: grid;
+
+    gap: 10px;
+}
+
+details {
+
+    overflow: hidden;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 15px;
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+summary {
+
+    padding: 17px;
+
+    cursor: pointer;
+
+    font-weight: 700;
+
+    font-size: 14px;
+}
+
+details p {
+
+    padding:
+        0 17px 18px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+
+    margin-top: 20px;
+
+    padding:
+        40px 0 50px;
+
+    border-top:
+        1px solid var(--border);
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 25px;
+}
+
+.footer-links {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+
+    padding:
+        8px 10px;
+
+    border-radius: 9px;
+
+    transition: .2s ease;
+}
+
+.footer-links a:hover {
+
+    color: white;
+
+    background:
+        rgba(255,255,255,.05);
+}
+
+
+/* =========================================================
+   YOUTUBE
+========================================================= */
+
+.youtube {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding:
+        9px 13px !important;
+
+    border:
+        1px solid
+        rgba(255,80,80,.2);
+
+    border-radius: 10px;
+
+    color: #ff7777 !important;
+
+    background:
+        rgba(255,80,80,.05);
+
+    transition: .2s ease;
+}
+
+.youtube:hover {
+
+    transform:
+        translateY(-2px);
+
+    background:
+        rgba(255,80,80,.1) !important;
+}
+
+.youtube-icon {
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:850px) {
+
+    .menu-button {
+        display: block;
+    }
+
+    .nav-links {
+
+        display: none;
+
+        position: absolute;
+
+        left: 15px;
+        right: 15px;
+
+        top: 70px;
+
+        flex-direction: column;
+
+        padding: 10px;
+
+        border:
+            1px solid var(--border);
+
+        border-radius: 15px;
+
+        background: #0c1220;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .stats,
+    .cards,
+    .steps {
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .database,
+    .license,
+    .creator {
+
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media(max-width:580px) {
+
+    .container {
+
+        width:
+            calc(100% - 22px);
+    }
+
+    .hero {
+
+        padding:
+            75px 0 65px;
+    }
+
+    h1 {
+
+        font-size: 48px;
+    }
+
+    .hero-description {
+
+        font-size: 16px;
+    }
+
+    .stats,
+    .cards,
+    .steps {
+
+        grid-template-columns: 1fr;
+    }
+
+    .footer {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+}
+
+</style>
 </head>
+
 
 <body>
 
-    <div class="app">
 
-        <!-- TOP BAR -->
-        <header class="topbar">
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
 
-            <div class="brand">
-                <div class="brand-logo">A</div>
+<nav>
 
-                <div>
-                    <div class="brand-name">ADGVMaker</div>
-                    <div class="brand-subtitle">Web Video Editor</div>
-                </div>
-            </div>
+<div class="container nav-inner">
 
-            <nav class="menu">
-                <button>File</button>
-                <button>Edit</button>
-                <button>View</button>
-            </nav>
 
-            <div class="top-actions">
-                <button id="undoBtn" class="icon-button" title="Undo">↶</button>
-                <button id="redoBtn" class="icon-button" title="Redo">↷</button>
+<a href="#home" class="logo">
 
-                <button id="exportBtn" class="export-button">
-                    Export
-                </button>
-            </div>
+<span class="logo-icon">
+🛡️
+</span>
 
-        </header>
+<span>
+KVGDV
+</span>
 
+</a>
 
-        <!-- MAIN WORKSPACE -->
-        <main class="workspace">
 
-            <!-- LEFT SIDEBAR -->
-            <aside class="sidebar">
+<button
+class="menu-button"
+id="menuButton"
+aria-label="Otwórz menu">
 
-                <button class="tool active" data-panel="media">
-                    <span>▣</span>
-                    <label>Media</label>
-                </button>
+☰
 
-                <button class="tool" data-panel="audio">
-                    <span>♫</span>
-                    <label>Audio</label>
-                </button>
+</button>
 
-                <button class="tool" data-panel="text">
-                    <span>T</span>
-                    <label>Text</label>
-                </button>
 
-                <button class="tool" data-panel="effects">
-                    <span>✦</span>
-                    <label>Effects</label>
-                </button>
+<div
+class="nav-links"
+id="navLinks">
 
-                <button class="tool" data-panel="transitions">
-                    <span>◈</span>
-                    <label>Transitions</label>
-                </button>
+<a href="#about">
+O projekcie
+</a>
 
-            </aside>
+<a href="#database">
+Baza
+</a>
 
+<a href="#how">
+Co znajdziesz
+</a>
 
-            <!-- MEDIA PANEL -->
-            <section class="media-panel">
+<a href="#creator">
+Twórca
+</a>
 
-                <div class="panel-header">
-                    <h2>Media</h2>
+<a href="#license">
+Licencja
+</a>
 
-                    <button id="importBtn" class="small-button">
-                        + Import
-                    </button>
+<a href="#faq">
+FAQ
+</a>
 
-                    <input
-                        type="file"
-                        id="fileInput"
-                        accept="video/*,audio/*,image/*"
-                        multiple
-                        hidden
-                    >
-                </div>
+</div>
 
-                <div id="mediaLibrary" class="media-library">
+</div>
 
-                    <div id="emptyMedia" class="empty-media">
-                        <div class="empty-icon">＋</div>
+</nav>
 
-                        <strong>Import media</strong>
 
-                        <span>
-                            Drag files here or click Import
-                        </span>
-                    </div>
 
-                </div>
+<main>
 
-            </section>
 
+<!-- =========================================================
+     HERO
+========================================================= -->
 
-            <!-- CENTER -->
-            <section class="editor">
+<section
+class="hero"
+id="home">
 
-                <!-- PREVIEW -->
-                <div class="preview-area">
+<div class="container">
 
-                    <div class="preview-container">
 
-                        <video
-                            id="videoPreview"
-                            preload="metadata"
-                        ></video>
+<div class="badge">
 
-                        <div
-                            id="previewPlaceholder"
-                            class="preview-placeholder"
-                        >
-                            <div class="placeholder-logo">
-                                A
-                            </div>
+<span class="status-dot"></span>
 
-                            <strong>
-                                ADGVMaker
-                            </strong>
+Open • Free • Community
 
-                            <span>
-                                Import a video to start editing
-                            </span>
-                        </div>
+</div>
 
-                    </div>
 
-                </div>
+<h1>
 
+Twórz własne
+<span class="gradient">
+systemy bezpieczeństwa.
+</span>
 
-                <!-- CONTROLS -->
-                <div class="player-controls">
+</h1>
 
-                    <span id="currentTime">
-                        00:00
-                    </span>
 
-                    <button
-                        id="playBtn"
-                        class="play-button"
-                    >
-                        ▶
-                    </button>
+<p class="hero-description">
 
-                    <div class="player-progress">
+<strong>KVGDV</strong> to otwarty projekt tworzony przez
+<strong>Tech Karol</strong>, którego celem jest rozwijanie
+wiedzy, narzędzi i publicznych zasobów pomagających
+programistom tworzyć własne antywirusy oraz inne
+systemy bezpieczeństwa.
 
-                        <input
-                            type="range"
-                            id="seekBar"
-                            min="0"
-                            max="100"
-                            value="0"
-                            step="0.01"
-                        >
+</p>
 
-                    </div>
 
-                    <span id="duration">
-                        00:00
-                    </span>
+<div class="buttons">
 
-                </div>
 
+<!--
+ZMIEŃ LINK NA SWOJE REPOZYTORIUM GITHUB
+-->
 
-                <!-- TIMELINE -->
-                <section class="timeline">
+<a
+class="button primary"
+href="https://github.com/"
+target="_blank"
+rel="noopener">
 
-                    <div class="timeline-header">
+↗ GitHub projektu
 
-                        <div class="timeline-title">
-                            Timeline
-                        </div>
+</a>
 
-                        <div class="timeline-actions">
 
-                            <button
-                                id="splitBtn"
-                                title="Split clip"
-                            >
-                                ✂ Split
-                            </button>
+<a
+class="button secondary"
+href="#about">
 
-                            <button
-                                id="deleteBtn"
-                                title="Delete selected clip"
-                            >
-                                🗑 Delete
-                            </button>
+Dowiedz się więcej ↓
 
-                        </div>
+</a>
 
-                    </div>
 
+</div>
 
-                    <div class="timeline-body">
+</div>
 
-                        <div class="time-ruler" id="timeRuler">
-                            <span>00:00</span>
-                            <span>00:10</span>
-                            <span>00:20</span>
-                            <span>00:30</span>
-                            <span>00:40</span>
-                            <span>00:50</span>
-                        </div>
+</section>
 
 
-                        <div class="track">
 
-                            <div class="track-label">
-                                🎬 Video
-                            </div>
+<!-- =========================================================
+     STATS
+========================================================= -->
 
-                            <div
-                                id="videoTrack"
-                                class="track-content"
-                            ></div>
+<div class="container stats">
 
-                        </div>
 
+<div class="stat">
 
-                        <div class="track">
+<strong>
+0 zł
+</strong>
 
-                            <div class="track-label">
-                                🔊 Audio
-                            </div>
+<span>
+Darmowe zasoby
+</span>
 
-                            <div
-                                id="audioTrack"
-                                class="track-content"
-                            ></div>
+</div>
 
-                        </div>
 
+<div class="stat">
 
-                        <div class="track">
+<strong>
+Open
+</strong>
 
-                            <div class="track-label">
-                                T Text
-                            </div>
+<span>
+Publiczny projekt
+</span>
 
-                            <div
-                                id="textTrack"
-                                class="track-content"
-                            ></div>
+</div>
 
-                        </div>
 
-                    </div>
+<div class="stat">
 
-                </section>
+<strong>
+JSON
+</strong>
 
-            </section>
+<span>
+Otwarte dane
+</span>
 
+</div>
 
-            <!-- RIGHT SIDEBAR -->
-            <aside class="properties">
 
-                <div class="properties-header">
-                    <h2>Properties</h2>
-                </div>
+<div class="stat">
 
-                <div
-                    id="propertiesContent"
-                    class="properties-content"
-                >
+<strong>
+Tech Karol
+</strong>
 
-                    <div class="no-selection">
+<span>
+Twórca projektu
+</span>
 
-                        <div class="no-selection-icon">
-                            ◇
-                        </div>
+</div>
 
-                        <strong>
-                            Nothing selected
-                        </strong>
 
-                        <span>
-                            Select a clip to edit its properties.
-                        </span>
+</div>
 
-                    </div>
 
-                </div>
 
-            </aside>
+<!-- =========================================================
+     ABOUT
+========================================================= -->
 
-        </main>
+<section id="about">
 
-    </div>
+<div class="container">
 
 
-    <script src="app.js"></script>
+<div class="section-title">
+
+<div class="kicker">
+01 / O projekcie
+</div>
+
+
+<h2>
+
+Miejsce do nauki,
+eksperymentowania
+i tworzenia.
+
+</h2>
+
+
+<p>
+
+KVGDV nie jest kolejnym gotowym antywirusem.
+To projekt skupiający się na problemach związanych
+z tworzeniem oprogramowania bezpieczeństwa.
+
+<br><br>
+
+Projekt ma dostarczać programistom wiedzy,
+przykładów, publicznych danych i narzędzi,
+które mogą wykorzystać podczas tworzenia
+własnych rozwiązań.
+
+</p>
+
+</div>
+
+
+
+<div class="cards">
+
+
+<article class="card">
+
+<div class="icon">
+📚
+</div>
+
+<h3>
+Wiedza
+</h3>
+
+<p>
+
+Materiały dotyczące tworzenia antywirusów,
+systemów detekcji, sygnatur, hashy,
+analizy plików oraz innych zagadnień
+związanych z bezpieczeństwem.
+
+</p>
+
+</article>
+
+
+
+<article class="card">
+
+<div class="icon">
+🗄️
+</div>
+
+<h3>
+Bazy danych
+</h3>
+
+<p>
+
+Publiczne i uporządkowane dane,
+które mogą zostać wykorzystane
+przez inne projekty bezpieczeństwa
+zgodnie z warunkami licencji.
+
+</p>
+
+</article>
+
+
+
+<article class="card">
+
+<div class="icon">
+🧩
+</div>
+
+<h3>
+Narzędzia
+</h3>
+
+<p>
+
+Przykłady, eksperymenty oraz narzędzia
+pomagające programistom budować
+własne rozwiązania ochronne.
+
+</p>
+
+</article>
+
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================================
+     DATABASE
+========================================================= -->
+
+<section id="database">
+
+<div class="container">
+
+
+<div class="section-title">
+
+<div class="kicker">
+02 / KVGDV Database
+</div>
+
+
+<h2>
+
+Publiczna baza
+dla twórców.
+
+</h2>
+
+
+<p>
+
+Jednym z elementów KVGDV jest publiczna baza
+informacji o zagrożeniach.
+
+<br><br>
+
+Programista może pobrać dane i wykorzystać je
+we własnym projekcie. Baza sama w sobie nie
+musi otrzymywać plików użytkownika ani wyników
+skanowania.
+
+</p>
+
+</div>
+
+
+
+<div class="database">
+
+
+<div class="code">
+
+
+<div class="code-header">
+
+<span>
+database.json
+</span>
+
+<span>
+KVGDV v0.1.0
+</span>
+
+</div>
+
+
+<pre>{
+  <span class="json-key">"name"</span>:
+    <span class="json-string">"Example.Malware"</span>,
+
+  <span class="json-key">"type"</span>:
+    <span class="json-string">"trojan"</span>,
+
+  <span class="json-key">"sha256"</span>:
+    <span class="json-string">"example_hash"</span>,
+
+  <span class="json-key">"severity"</span>:
+    <span class="json-string">"high"</span>,
+
+  <span class="json-key">"author"</span>:
+    <span class="json-string">"KVGDV"</span>,
+
+  <span class="json-key">"version"</span>:
+    <span class="json-number">1</span>
+}</pre>
+
+
+</div>
+
+
+
+<div class="info">
+
+
+<div class="info-item">
+
+<div>
+📦
+</div>
+
+<div>
+
+<b>
+Prosty format
+</b>
+
+<span>
+
+JSON pozwala łatwo wykorzystać
+dane w różnych językach programowania.
+
+</span>
+
+</div>
+
+</div>
+
+
+
+<div class="info-item">
+
+<div>
+🔄
+</div>
+
+<div>
+
+<b>
+Aktualizacje
+</b>
+
+<span>
+
+Baza może być regularnie rozwijana
+i otrzymywać nowe wpisy.
+
+</span>
+
+</div>
+
+</div>
+
+
+
+<div class="info-item">
+
+<div>
+🌐
+</div>
+
+<div>
+
+<b>
+Publiczny dostęp
+</b>
+
+<span>
+
+Dane mogą być udostępniane przez
+publiczne repozytorium projektu.
+
+</span>
+
+</div>
+
+</div>
+
+
+
+<div class="info-item">
+
+<div>
+👨‍💻
+</div>
+
+<div>
+
+<b>
+Dla programistów
+</b>
+
+<span>
+
+Twórcy mogą wykorzystywać bazę
+w swoich projektach zgodnie z licencją.
+
+</span>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================================
+     WHAT YOU CAN FIND
+========================================================= -->
+
+<section id="how">
+
+<div class="container">
+
+
+<div class="section-title">
+
+<div class="kicker">
+03 / Co znajdziesz
+</div>
+
+
+<h2>
+
+Wszystko związane
+z tworzeniem systemów ochrony.
+
+</h2>
+
+
+<p>
+
+KVGDV będzie stopniowo rozwijane.
+Kolejne elementy projektu mogą pojawiać się
+wraz z jego rozwojem.
+
+</p>
+
+</div>
+
+
+
+<div class="steps">
+
+
+<article class="step">
+
+<div class="step-number">
+01
+</div>
+
+<h3>
+Dokumentacja
+</h3>
+
+<p>
+
+Materiały pomagające zrozumieć,
+jak działają poszczególne elementy
+systemów bezpieczeństwa.
+
+</p>
+
+</article>
+
+
+
+<article class="step">
+
+<div class="step-number">
+02
+</div>
+
+<h3>
+Bazy danych
+</h3>
+
+<p>
+
+Publiczne dane możliwe do wykorzystania
+przez własne narzędzia.
+
+</p>
+
+</article>
+
+
+
+<article class="step">
+
+<div class="step-number">
+03
+</div>
+
+<h3>
+Projekty
+</h3>
+
+<p>
+
+Eksperymenty i przykładowe rozwiązania
+związane z bezpieczeństwem.
+
+</p>
+
+</article>
+
+
+
+<article class="step">
+
+<div class="step-number">
+04
+</div>
+
+<h3>
+Społeczność
+</h3>
+
+<p>
+
+Projekt może być rozwijany przez
+osoby zainteresowane programowaniem
+i cyberbezpieczeństwem.
+
+</p>
+
+</article>
+
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================================
+     CREATOR
+========================================================= -->
+
+<section id="creator">
+
+<div class="container">
+
+
+<div class="section-title">
+
+<div class="kicker">
+04 / Twórca
+</div>
+
+
+<h2>
+KVGDV tworzy Tech Karol.
+</h2>
+
+
+<p>
+
+KVGDV jest niezależnym projektem hobbystycznym
+rozwijanym przez <strong>Tech Karol</strong>.
+
+<br><br>
+
+Celem projektu jest eksperymentowanie z tworzeniem
+oprogramowania, baz danych oraz rozwiązań związanych
+z bezpieczeństwem komputerowym.
+
+</p>
+
+</div>
+
+
+
+<div class="creator">
+
+
+<div class="creator-card">
+
+<div class="creator-avatar">
+👨‍💻
+</div>
+
+<h3>
+Tech Karol
+</h3>
+
+<p>
+
+Twórca i główny rozwijający projekt KVGDV.
+
+Projekt jest rozwijany hobbystycznie
+i ma służyć przede wszystkim nauce,
+eksperymentowaniu oraz udostępnianiu
+przydatnych zasobów innym programistom.
+
+</p>
+
+</div>
+
+
+
+<div class="creator-card">
+
+<h3>
+Dlaczego powstaje KVGDV?
+</h3>
+
+<p>
+
+Tworzenie antywirusa lub własnego systemu
+bezpieczeństwa może być trudne.
+
+KVGDV ma pomagać rozwiązywać część problemów,
+które pojawiają się podczas tworzenia takich
+projektów.
+
+<br><br>
+
+Zamiast tworzyć zamknięte rozwiązanie,
+projekt skupia się na udostępnianiu wiedzy,
+danych i narzędzi, które inni mogą wykorzystać
+we własnych projektach.
+
+</p>
+
+</div>
+
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================================
+     LICENSE
+========================================================= -->
+
+<section id="license">
+
+<div class="container">
+
+
+<div class="section-title">
+
+<div class="kicker">
+05 / Licencja
+</div>
+
+
+<h2>
+Darmowe zasoby dla twórców.
+</h2>
+
+
+<p>
+
+KVGDV jest projektem hobbystycznym.
+Dokładne prawa dotyczące korzystania,
+kopiowania i modyfikowania poszczególnych
+elementów projektu określa aktualna licencja.
+
+</p>
+
+</div>
+
+
+
+<div class="license">
+
+
+<div class="license-box">
+
+
+<h3>
+KVGDV Database
+</h3>
+
+
+<p>
+
+Celem projektu jest udostępnianie zasobów
+związanych z bezpieczeństwem bez pobierania
+opłat od osób, które chcą się uczyć lub
+tworzyć własne projekty.
+
+</p>
+
+
+<ul>
+
+<li>
+Korzystanie z zasobów może być bezpłatne.
+</li>
+
+<li>
+Podanie autora KVGDV jest mile widziane.
+</li>
+
+<li>
+Atrybucja nie jest wymagana, jeśli licencja
+danego zasobu nie nakłada takiego obowiązku.
+</li>
+
+<li>
+Szczegółowe zasady znajdują się
+w pliku LICENSE.
+</li>
+
+</ul>
+
+
+</div>
+
+
+
+<div class="notice">
+
+
+<h3>
+🙏 Wspomnij o KVGDV
+</h3>
+
+
+<p>
+
+Nie wymagamy podawania autora tam,
+gdzie licencja tego nie wymaga.
+
+<br><br>
+
+Jeśli jednak korzystasz z KVGDV,
+będzie nam bardzo miło, jeśli wspomnisz
+o projekcie lub dodasz link do jego
+repozytorium.
+
+</p>
+
+
+</div>
+
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================================
+     FAQ
+========================================================= -->
+
+<section id="faq">
+
+<div class="container">
+
+
+<div class="section-title">
+
+<div class="kicker">
+06 / FAQ
+</div>
+
+
+<h2>
+Najczęstsze pytania.
+</h2>
+
+</div>
+
+
+
+<div class="faq">
+
+
+<details>
+
+<summary>
+Czym właściwie jest KVGDV?
+</summary>
+
+<p>
+
+KVGDV jest projektem skupiającym się
+na tworzeniu narzędzi, baz danych,
+dokumentacji i innych zasobów związanych
+z tworzeniem systemów bezpieczeństwa.
+
+</p>
+
+</details>
+
+
+
+<details>
+
+<summary>
+Czy KVGDV jest antywirusem?
+</summary>
+
+<p>
+
+Nie.
+
+KVGDV jest projektem i zestawem zasobów
+przeznaczonych między innymi dla osób,
+które chcą tworzyć własne antywirusy
+i narzędzia bezpieczeństwa.
+
+</p>
+
+</details>
+
+
+
+<details>
+
+<summary>
+Czy mogę wykorzystać KVGDV Database?
+</summary>
+
+<p>
+
+Możesz korzystać z bazy zgodnie
+z warunkami licencji przypisanej
+do danego zasobu.
+
+</p>
+
+</details>
+
+
+
+<details>
+
+<summary>
+Czy muszę podawać autora?
+</summary>
+
+<p>
+
+Jeśli licencja danego zasobu nie wymaga
+atrybucji, podanie autora jest dobrowolne.
+
+Jest jednak mile widziane.
+
+</p>
+
+</details>
+
+
+
+<details>
+
+<summary>
+Czy projekt jest płatny?
+</summary>
+
+<p>
+
+Założeniem KVGDV jest tworzenie bezpłatnych
+i publicznie dostępnych zasobów.
+
+Konkretne warunki określa licencja
+każdego elementu projektu.
+
+</p>
+
+</details>
+
+
+
+<details>
+
+<summary>
+Kto stworzył KVGDV?
+</summary>
+
+<p>
+
+Projekt KVGDV został stworzony
+i jest rozwijany przez Tech Karol.
+
+</p>
+
+</details>
+
+
+
+<details>
+
+<summary>
+Czy KVGDV gwarantuje wykrycie każdego wirusa?
+</summary>
+
+<p>
+
+Nie.
+
+Żadna baza danych ani pojedynczy mechanizm
+detekcji nie powinien być przedstawiany jako
+gwarancja wykrycia wszystkich zagrożeń.
+
+</p>
+
+</details>
+
+
+</div>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+<div class="container footer">
+
+
+<div>
+
+<strong
+style="color:white;font-size:15px;">
+
+KVGDV
+
+</strong>
+
+<br>
+
+Open Security Project
+
+<br>
+
+Created by
+
+<strong style="color:white;">
+Tech Karol
+</strong>
+
+<br><br>
+
+© 2026 KVGDV
+
+</div>
+
+
+
+<div class="footer-links">
+
+
+<a href="#about">
+O projekcie
+</a>
+
+
+<a href="#database">
+Baza
+</a>
+
+
+<a href="#license">
+Licencja
+</a>
+
+
+<!--
+=========================================================
+GITHUB
+ZMIEŃ LINK NA SWOJE REPOZYTORIUM
+=========================================================
+-->
+
+<a
+href="https://github.com/"
+target="_blank"
+rel="noopener">
+
+GitHub ↗
+
+</a>
+
+
+
+<!--
+=========================================================
+YOUTUBE
+ZMIEŃ "#" NA LINK DO SWOJEGO KANAŁU YOUTUBE
+=========================================================
+-->
+
+<a
+class="youtube"
+href="#"
+target="_blank"
+rel="noopener"
+aria-label="YouTube Tech Karol">
+
+<span class="youtube-icon">
+▶
+</span>
+
+YouTube
+
+</a>
+
+
+</div>
+
+
+</div>
+
+</footer>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+
+/* =========================================================
+   MENU MOBILNE
+========================================================= */
+
+const menuButton =
+document.getElementById("menuButton");
+
+const navLinks =
+document.getElementById("navLinks");
+
+
+menuButton.addEventListener(
+"click",
+() => {
+
+navLinks.classList.toggle("open");
+
+}
+);
+
+
+/* =========================================================
+   ZAMYKANIE MENU
+========================================================= */
+
+navLinks
+.querySelectorAll("a")
+.forEach(link => {
+
+link.addEventListener(
+"click",
+() => {
+
+navLinks.classList.remove("open");
+
+}
+);
+
+});
+
+
+/* =========================================================
+   ANIMACJE
+========================================================= */
+
+const animatedElements =
+document.querySelectorAll(
+".card, .step, .stat, .info-item, details, .creator-card"
+);
+
+
+const observer =
+new IntersectionObserver(
+entries => {
+
+entries.forEach(entry => {
+
+if(entry.isIntersecting) {
+
+entry.target.style.opacity = "1";
+
+entry.target.style.transform =
+"translateY(0)";
+
+}
+
+});
+
+},
+{
+threshold: .08
+}
+);
+
+
+animatedElements.forEach(element => {
+
+element.style.opacity = "0";
+
+element.style.transform =
+"translateY(18px)";
+
+element.style.transition =
+"opacity .5s ease, transform .5s ease";
+
+observer.observe(element);
+
+});
+
+
+/* =========================================================
+   KONSOLA
+========================================================= */
+
+console.log(
+"KVGDV — Open Security Project"
+);
+
+console.log(
+"Created by Tech Karol"
+);
+
+
+</script>
+
 
 </body>
 </html>
