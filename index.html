@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ADGVMaker — Tech Karol</title>
+
+    <meta
+        name="description"
+        content="ADGVMaker by Tech Karol — nowoczesny kreator reklam online."
+    >
+
+    <meta name="author" content="Tech Karol">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         TOP BAR
+    ========================== -->
+
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="brand-name">ADGVMaker</div>
+            <div class="brand-by">by Tech Karol</div>
+        </div>
+
+        <div class="project-actions">
+
+            <button id="newProjectBtn">
+                ＋ Nowy
+            </button>
+
+            <button id="saveProjectBtn">
+                💾 Zapisz
+            </button>
+
+            <button id="exportBtn" class="primary">
+                📤 Eksportuj
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN APPLICATION
+    ========================== -->
+
+    <main class="app">
+
+
+        <!-- =========================
+             LEFT SIDEBAR
+        ========================== -->
+
+        <aside class="sidebar">
+
+            <h2>Elementy</h2>
+
+            <button
+                class="tool-button"
+                id="addTextBtn"
+            >
+                <span class="tool-icon">✏️</span>
+                <span>Tekst</span>
+            </button>
+
+
+            <button
+                class="tool-button"
+                id="addImageBtn"
+            >
+                <span class="tool-icon">🖼️</span>
+                <span>Zdjęcie</span>
+            </button>
+
+
+            <button
+                class="tool-button"
+                id="addVideoBtn"
+            >
+                <span class="tool-icon">🎥</span>
+                <span>Film MP4</span>
+            </button>
+
+
+            <button
+                class="tool-button"
+                id="addIconBtn"
+            >
+                <span class="tool-icon">🔷</span>
+                <span>Ikona</span>
+            </button>
+
+
+            <button
+                class="tool-button"
+                id="addLogoBtn"
+            >
+                <span class="tool-icon">🏷️</span>
+                <span>Logo</span>
+            </button>
+
+
+            <hr>
+
+
+            <h2>Szablony</h2>
+
+
+            <button
+                class="template-button"
+                data-template="product"
+            >
+                🛍️ Produkt
+            </button>
+
+
+            <button
+                class="template-button"
+                data-template="sale"
+            >
+                🔥 Promocja
+            </button>
+
+
+            <button
+                class="template-button"
+                data-template="business"
+            >
+                💼 Firma
+            </button>
+
+
+            <button
+                class="template-button"
+                data-template="gaming"
+            >
+                🎮 Gaming
+            </button>
+
+        </aside>
+
+
+
+        <!-- =========================
+             EDITOR
+        ========================== -->
+
+        <section class="editor">
+
+
+            <!-- EDITOR TOOLBAR -->
+
+            <div class="editor-toolbar">
+
+                <button
+                    id="undoBtn"
+                    title="Cofnij"
+                >
+                    ↶
+                </button>
+
+
+                <button
+                    id="redoBtn"
+                    title="Ponów"
+                >
+                    ↷
+                </button>
+
+
+                <span class="toolbar-separator"></span>
+
+
+                <label for="formatSelect">
+                    Format:
+                </label>
+
+
+                <select id="formatSelect">
+
+                    <option value="1920x1080">
+                        16:9 — Full HD
+                    </option>
+
+                    <option value="1080x1920">
+                        9:16 — TikTok / Shorts
+                    </option>
+
+                    <option value="1080x1080">
+                        1:1 — Kwadrat
+                    </option>
+
+                    <option value="1280x720">
+                        16:9 — HD
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- =========================
+                 CANVAS AREA
+            ========================== -->
+
+            <div class="canvas-area">
+
+                <div
+                    id="canvas"
+                    class="canvas"
+                    data-width="1920"
+                    data-height="1080"
+                >
+
+                    <div
+                        id="canvasPlaceholder"
+                        class="canvas-placeholder"
+                    >
+
+                        <div class="placeholder-icon">
+                            🎬
+                        </div>
+
+
+                        <h3>
+                            Utwórz swoją reklamę
+                        </h3>
+
+
+                        <p>
+                            Dodaj film, zdjęcie, tekst
+                            lub wybierz gotowy szablon.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 TIMELINE
+            ========================== -->
+
+            <section class="timeline">
+
+
+                <div class="timeline-header">
+
+                    <strong>
+                        Timeline
+                    </strong>
+
+
+                    <div class="timeline-controls">
+
+                        <button id="playBtn">
+                            ▶
+                        </button>
+
+
+                        <button id="pauseBtn">
+                            ⏸
+                        </button>
+
+
+                        <button id="stopBtn">
+                            ⏹
+                        </button>
+
+
+                        <span id="currentTime">
+                            00:00
+                        </span>
+
+
+                        <span>
+                            /
+                        </span>
+
+
+                        <span id="duration">
+                            00:10
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TIMELINE RULER -->
+
+                <div class="timeline-ruler">
+
+                    <span>0s</span>
+                    <span>2s</span>
+                    <span>4s</span>
+                    <span>6s</span>
+                    <span>8s</span>
+                    <span>10s</span>
+
+                </div>
+
+
+
+                <!-- TRACKS -->
+
+                <div
+                    id="timelineTracks"
+                    class="timeline-tracks"
+                >
+
+
+                    <!-- MEDIA TRACK -->
+
+                    <div class="track">
+
+                        <div class="track-name">
+                            🎥 Media
+                        </div>
+
+
+                        <div
+                            id="mediaTrack"
+                            class="track-content"
+                        ></div>
+
+                    </div>
+
+
+
+                    <!-- TEXT TRACK -->
+
+                    <div class="track">
+
+                        <div class="track-name">
+                            ✏️ Tekst
+                        </div>
+
+
+                        <div
+                            id="textTrack"
+                            class="track-content"
+                        ></div>
+
+                    </div>
+
+
+
+                    <!-- GRAPHICS TRACK -->
+
+                    <div class="track">
+
+                        <div class="track-name">
+                            🖼️ Grafika
+                        </div>
+
+
+                        <div
+                            id="graphicsTrack"
+                            class="track-content"
+                        ></div>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+        </section>
+
+
+
+        <!-- =========================
+             RIGHT SIDEBAR
+        ========================== -->
+
+        <aside class="properties">
+
+            <h2>
+                Właściwości
+            </h2>
+
+
+            <div id="propertiesPanel">
+
+                <div class="no-selection">
+
+                    <div class="no-selection-icon">
+                        ⚙️
+                    </div>
+
+
+                    <p>
+                        Wybierz element na płótnie,
+                        aby edytować jego właściwości.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+
+    <!-- =========================
+         FILE INPUTS
+    ========================== -->
+
+    <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+        hidden
+    >
+
+
+    <input
+        type="file"
+        id="videoInput"
+        accept="video/mp4,video/webm,video/*"
+        hidden
+    >
+
+
+    <input
+        type="file"
+        id="logoInput"
+        accept="image/*"
+        hidden
+    >
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="app.js"></script>
+
+</body>
+</html>
