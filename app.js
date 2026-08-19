@@ -1,27 +1,46 @@
 /* =========================================================
-   ADGVMaker
+   ADGVMaker v2 Mobile
    by Tech Karol
-   app.js
-   Mobile-first editor
+
+   Mobile-first editor engine
+   - Touch / Pointer Events
+   - Pinch zoom
+   - Two-finger rotation
+   - Dragging
+   - Autosave
+   - Undo / Redo
+   - ADGV import / export
+   - Templates
+   - 10 second projects
 ========================================================= */
 
 "use strict";
+
 
 /* =========================================================
    CONFIG
 ========================================================= */
 
-const CONFIG = {
-    version: 1,
-    defaultDuration: 10,
-    defaultFPS: 30,
+const CONFIG = Object.freeze({
+
+    version: 2,
+
+    autosaveKey:
+        "adgvmaker_autosave_v2",
+
+    autosaveDelay:
+        700,
+
+    historyLimit:
+        40,
+
+    defaultDuration:
+        10,
+
+    defaultFPS:
+        30,
 
     formats: {
-        "1920x1080": {
-            width: 1920,
-            height: 1080,
-            ratio: "16:9"
-        },
 
         "1080x1920": {
             width: 1080,
@@ -35,13 +54,20 @@ const CONFIG = {
             ratio: "1:1"
         },
 
+        "1920x1080": {
+            width: 1920,
+            height: 1080,
+            ratio: "16:9"
+        },
+
         "1280x720": {
             width: 1280,
             height: 720,
             ratio: "16:9"
         }
     }
-};
+
+});
 
 
 /* =========================================================
@@ -49,32 +75,105 @@ const CONFIG = {
 ========================================================= */
 
 const state = {
-    project: {
-        version: CONFIG.version,
-        name: "Moja reklama",
-        duration: CONFIG.defaultDuration,
-        fps: CONFIG.defaultFPS,
 
-        format: {
-            width: 1080,
-            height: 1920,
-            ratio: "9:16"
-        }
+    project: {
+
+        version:
+            CONFIG.version,
+
+        name:
+            "Moja reklama",
+
+        duration:
+            CONFIG.defaultDuration,
+
+        fps:
+            CONFIG.defaultFPS,
+
+        format:
+            {
+                width: 1080,
+                height: 1920,
+                ratio: "9:16"
+            }
     },
+
 
     elements: [],
 
-    selectedId: null,
+
+    selectedId:
+        null,
+
+
+    history: {
+
+        undo: [],
+
+        redo: []
+    },
+
 
     playback: {
+
         playing: false,
+
         currentTime: 0,
+
         lastFrame: 0
     },
 
-    history: {
-        undo: [],
-        redo: []
+
+    interaction: {
+
+        pointers:
+            new Map(),
+
+        mode:
+            null,
+
+        elementId:
+            null,
+
+        startX:
+            0,
+
+        startY:
+            0,
+
+        startElementX:
+            0,
+
+        startElementY:
+            0,
+
+        startWidth:
+            0,
+
+        startHeight:
+            0,
+
+        startRotation:
+            0,
+
+        startDistance:
+            0,
+
+        startAngle:
+            0,
+
+        centerX:
+            0,
+
+        centerY:
+            0
+    },
+
+
+    view: {
+
+        zoom:
+            1
     }
 };
 
@@ -84,8 +183,12 @@ const state = {
 ========================================================= */
 
 const DOM = {
-    canvas: document.getElementById("canvas"),
-    placeholder: document.getElementById("canvasPlaceholder"),
+
+    canvas:
+        document.getElementById("canvas"),
+
+    placeholder:
+        document.getElementById("canvasPlaceholder"),
 
     properties:
         document.getElementById("propertiesPanel"),
@@ -115,15 +218,25 @@ const DOM = {
         document.getElementById("currentTime"),
 
     duration:
-        document.getElementById("duration")
+        document.getElementById("duration"),
+
+    playBtn:
+        document.getElementById("playBtn"),
+
+    pauseBtn:
+        document.getElementById("pauseBtn"),
+
+    stopBtn:
+        document.getElementById("stopBtn")
 };
 
 
 /* =========================================================
-   UTILITIES
+   HELPERS
 ========================================================= */
 
 function uid(prefix = "el") {
+
     return (
         prefix +
         "_" +
@@ -137,22 +250,40 @@ function uid(prefix = "el") {
 
 
 function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
+
+    return Math.max(
+        min,
+        Math.min(max, value)
+    );
+}
+
+
+function round(value, decimals = 2) {
+
+    const factor =
+        10 ** decimals;
+
+    return Math.round(
+        value * factor
+    ) / factor;
 }
 
 
 function formatTime(seconds) {
 
-    seconds = Math.max(
-        0,
-        Number(seconds) || 0
-    );
+    seconds =
+        Math.max(
+            0,
+            Number(seconds) || 0
+        );
 
     const minutes =
         Math.floor(seconds / 60);
 
     const secs =
-        Math.floor(seconds % 60);
+        Math.floor(
+            seconds % 60
+        );
 
     return (
         String(minutes).padStart(2, "0") +
@@ -176,7 +307,8 @@ function escapeHTML(value) {
 function getElement(id) {
 
     return state.elements.find(
-        element => element.id === id
+        element =>
+            element.id === id
     );
 }
 
@@ -190,14 +322,19 @@ function getSelected() {
 
 
 /* =========================================================
-   HISTORY
+   SNAPSHOT
 ========================================================= */
 
 function createSnapshot() {
 
     return JSON.stringify({
-        project: state.project,
-        elements: state.elements
+
+        project:
+            state.project,
+
+        elements:
+            state.elements
+
     });
 }
 
@@ -208,18 +345,34 @@ function restoreSnapshot(snapshot) {
         return;
     }
 
-    const data =
-        JSON.parse(snapshot);
+    try {
 
-    state.project =
-        data.project;
+        const data =
+            JSON.parse(snapshot);
 
-    state.elements =
-        data.elements;
+        state.project =
+            data.project;
 
-    state.selectedId = null;
+        state.elements =
+            data.elements || [];
 
-    renderAll();
+        state.selectedId =
+            null;
+
+        state.playback.currentTime =
+            0;
+
+        renderAll();
+
+        scheduleAutosave();
+
+    } catch (error) {
+
+        console.error(
+            "ADGVMaker restore error:",
+            error
+        );
+    }
 }
 
 
@@ -229,11 +382,16 @@ function saveHistory() {
         createSnapshot()
     );
 
-    if (state.history.undo.length > 30) {
+    if (
+        state.history.undo.length >
+        CONFIG.historyLimit
+    ) {
+
         state.history.undo.shift();
     }
 
-    state.history.redo.length = 0;
+    state.history.redo.length =
+        0;
 }
 
 
@@ -249,10 +407,9 @@ function undo() {
         createSnapshot()
     );
 
-    const snapshot =
-        state.history.undo.pop();
-
-    restoreSnapshot(snapshot);
+    restoreSnapshot(
+        state.history.undo.pop()
+    );
 }
 
 
@@ -268,10 +425,9 @@ function redo() {
         createSnapshot()
     );
 
-    const snapshot =
-        state.history.redo.pop();
-
-    restoreSnapshot(snapshot);
+    restoreSnapshot(
+        state.history.redo.pop()
+    );
 }
 
 
@@ -279,11 +435,69 @@ function redo() {
    ELEMENT FACTORY
 ========================================================= */
 
-function createElement(type, options = {}) {
+function createElement(
+    type,
+    options = {}
+) {
 
-    const element = {
+    const format =
+        state.project.format;
 
-        id: uid(type),
+
+    const defaults = {
+
+        text:
+            "NOWY TEKST",
+
+        fontSize:
+            64,
+
+        fontFamily:
+            "Arial",
+
+        fontWeight:
+            700,
+
+        color:
+            "#ffffff",
+
+        x:
+            format.width / 2 - 200,
+
+        y:
+            format.height / 2 - 100,
+
+        width:
+            400,
+
+        height:
+            200,
+
+        rotation:
+            0,
+
+        opacity:
+            1,
+
+        start:
+            0,
+
+        duration:
+            state.project.duration,
+
+        src:
+            null,
+
+        objectFit:
+            "contain"
+    };
+
+
+    return {
+
+        id:
+            options.id ||
+            uid(type),
 
         type,
 
@@ -292,67 +506,85 @@ function createElement(type, options = {}) {
             type,
 
         x:
-            options.x ??
-            state.project.format.width / 2 - 200,
+            Number(
+                options.x ??
+                defaults.x
+            ),
 
         y:
-            options.y ??
-            state.project.format.height / 2 - 100,
+            Number(
+                options.y ??
+                defaults.y
+            ),
 
         width:
-            options.width ??
-            400,
+            Number(
+                options.width ??
+                defaults.width
+            ),
 
         height:
-            options.height ??
-            200,
+            Number(
+                options.height ??
+                defaults.height
+            ),
 
         rotation:
-            options.rotation ??
-            0,
+            Number(
+                options.rotation ??
+                defaults.rotation
+            ),
 
         opacity:
-            options.opacity ??
-            1,
+            Number(
+                options.opacity ??
+                defaults.opacity
+            ),
 
         start:
-            options.start ??
-            0,
+            Number(
+                options.start ??
+                defaults.start
+            ),
 
         duration:
-            options.duration ??
-            state.project.duration,
+            Number(
+                options.duration ??
+                defaults.duration
+            ),
 
         text:
             options.text ??
-            "Nowy tekst",
+            defaults.text,
 
         fontSize:
-            options.fontSize ??
-            64,
+            Number(
+                options.fontSize ??
+                defaults.fontSize
+            ),
 
         fontFamily:
             options.fontFamily ??
-            "Arial",
+            defaults.fontFamily,
 
         fontWeight:
-            options.fontWeight ??
-            700,
+            Number(
+                options.fontWeight ??
+                defaults.fontWeight
+            ),
 
         color:
             options.color ??
-            "#ffffff",
+            defaults.color,
 
         src:
             options.src ??
-            null,
+            defaults.src,
 
         objectFit:
             options.objectFit ??
-            "contain"
+            defaults.objectFit
     };
-
-    return element;
 }
 
 
@@ -360,7 +592,10 @@ function createElement(type, options = {}) {
    ADD ELEMENT
 ========================================================= */
 
-function addElement(type, options = {}) {
+function addElement(
+    type,
+    options = {}
+) {
 
     saveHistory();
 
@@ -370,812 +605,18 @@ function addElement(type, options = {}) {
             options
         );
 
-    state.elements.push(element);
+    state.elements.push(
+        element
+    );
 
     state.selectedId =
         element.id;
 
     renderAll();
 
+    scheduleAutosave();
+
     return element;
-}
-
-
-/* =========================================================
-   CANVAS RENDER
-========================================================= */
-
-function renderCanvas() {
-
-    if (!DOM.canvas) {
-        return;
-    }
-
-    const fragment =
-        document.createDocumentFragment();
-
-
-    for (const element of state.elements) {
-
-        const node =
-            document.createElement("div");
-
-        node.className =
-            "adgvmaker-element";
-
-        node.dataset.id =
-            element.id;
-
-        node.style.left =
-            `${element.x}px`;
-
-        node.style.top =
-            `${element.y}px`;
-
-        node.style.width =
-            `${element.width}px`;
-
-        node.style.height =
-            `${element.height}px`;
-
-        node.style.opacity =
-            element.opacity;
-
-        node.style.transform =
-            `rotate(${element.rotation}deg)`;
-
-
-        if (
-            element.id ===
-            state.selectedId
-        ) {
-
-            node.style.outline =
-                "2px solid #4da3ff";
-
-            node.style.outlineOffset =
-                "2px";
-        }
-
-
-        /* TEXT */
-
-        if (element.type === "text") {
-
-            node.textContent =
-                element.text;
-
-            node.style.display =
-                "flex";
-
-            node.style.alignItems =
-                "center";
-
-            node.style.justifyContent =
-                "center";
-
-            node.style.textAlign =
-                "center";
-
-            node.style.color =
-                element.color;
-
-            node.style.fontSize =
-                `${element.fontSize}px`;
-
-            node.style.fontFamily =
-                element.fontFamily;
-
-            node.style.fontWeight =
-                element.fontWeight;
-
-            node.style.userSelect =
-                "none";
-        }
-
-
-        /* IMAGE / LOGO */
-
-        else if (
-            element.type === "image" ||
-            element.type === "logo"
-        ) {
-
-            const image =
-                document.createElement("img");
-
-            image.src =
-                element.src;
-
-            image.alt =
-                element.name;
-
-            image.draggable =
-                false;
-
-            image.decoding =
-                "async";
-
-            image.style.width =
-                "100%";
-
-            image.style.height =
-                "100%";
-
-            image.style.objectFit =
-                element.objectFit;
-
-            image.style.pointerEvents =
-                "none";
-
-            node.appendChild(image);
-        }
-
-
-        /* VIDEO */
-
-        else if (
-            element.type === "video"
-        ) {
-
-            const video =
-                document.createElement("video");
-
-            video.src =
-                element.src;
-
-            video.muted =
-                true;
-
-            video.playsInline =
-                true;
-
-            video.preload =
-                "metadata";
-
-            video.style.width =
-                "100%";
-
-            video.style.height =
-                "100%";
-
-            video.style.objectFit =
-                element.objectFit;
-
-            video.style.pointerEvents =
-                "none";
-
-            node.appendChild(video);
-        }
-
-
-        node.addEventListener(
-            "pointerdown",
-            onElementPointerDown,
-            {
-                passive: false
-            }
-        );
-
-
-        fragment.appendChild(node);
-    }
-
-
-    const old =
-        DOM.canvas.querySelectorAll(
-            ".adgvmaker-element"
-        );
-
-    old.forEach(
-        node => node.remove()
-    );
-
-
-    DOM.canvas.appendChild(
-        fragment
-    );
-
-
-    updatePlaceholder();
-}
-
-
-/* =========================================================
-   PLACEHOLDER
-========================================================= */
-
-function updatePlaceholder() {
-
-    if (!DOM.placeholder) {
-        return;
-    }
-
-    DOM.placeholder.style.display =
-        state.elements.length
-            ? "none"
-            : "flex";
-}
-
-
-/* =========================================================
-   POINTER / TOUCH DRAG
-========================================================= */
-
-let drag = null;
-
-
-function onElementPointerDown(event) {
-
-    event.preventDefault();
-
-    const id =
-        event.currentTarget.dataset.id;
-
-    const element =
-        getElement(id);
-
-    if (!element) {
-        return;
-    }
-
-    state.selectedId =
-        id;
-
-    const rect =
-        DOM.canvas.getBoundingClientRect();
-
-
-    /*
-       Przeliczamy pozycję ekranu
-       na współrzędne projektu.
-    */
-
-    const scaleX =
-        state.project.format.width /
-        rect.width;
-
-    const scaleY =
-        state.project.format.height /
-        rect.height;
-
-
-    drag = {
-
-        id,
-
-        pointerId:
-            event.pointerId,
-
-        offsetX:
-            (
-                event.clientX -
-                rect.left
-            ) *
-            scaleX -
-            element.x,
-
-        offsetY:
-            (
-                event.clientY -
-                rect.top
-            ) *
-            scaleY -
-            element.y,
-
-        scaleX,
-
-        scaleY
-    };
-
-
-    event.currentTarget.setPointerCapture(
-        event.pointerId
-    );
-
-
-    renderCanvas();
-
-    renderProperties();
-
-
-    event.currentTarget.addEventListener(
-        "pointermove",
-        onElementPointerMove
-    );
-
-    event.currentTarget.addEventListener(
-        "pointerup",
-        onElementPointerUp,
-        {
-            once: true
-        }
-    );
-}
-
-
-function onElementPointerMove(event) {
-
-    if (!drag) {
-        return;
-    }
-
-    if (
-        event.pointerId !==
-        drag.pointerId
-    ) {
-        return;
-    }
-
-
-    const element =
-        getElement(drag.id);
-
-    if (!element) {
-        return;
-    }
-
-
-    const rect =
-        DOM.canvas.getBoundingClientRect();
-
-
-    let x =
-        (
-            event.clientX -
-            rect.left
-        ) *
-        drag.scaleX -
-        drag.offsetX;
-
-
-    let y =
-        (
-            event.clientY -
-            rect.top
-        ) *
-        drag.scaleY -
-        drag.offsetY;
-
-
-    x = clamp(
-        x,
-        0,
-        state.project.format.width -
-        element.width
-    );
-
-
-    y = clamp(
-        y,
-        0,
-        state.project.format.height -
-        element.height
-    );
-
-
-    element.x = x;
-    element.y = y;
-
-
-    /*
-       Tylko canvas.
-       Nie odświeżamy całego interfejsu
-       przy każdym ruchu palca.
-    */
-
-    updateElementNode(
-        element
-    );
-}
-
-
-function onElementPointerUp(event) {
-
-    if (!drag) {
-        return;
-    }
-
-
-    saveHistory();
-
-    drag = null;
-
-    renderProperties();
-
-    renderTimeline();
-}
-
-
-function updateElementNode(element) {
-
-    const node =
-        DOM.canvas.querySelector(
-            `[data-id="${element.id}"]`
-        );
-
-    if (!node) {
-        return;
-    }
-
-    node.style.left =
-        `${element.x}px`;
-
-    node.style.top =
-        `${element.y}px`;
-}
-
-
-/* =========================================================
-   SELECT
-========================================================= */
-
-function selectElement(id) {
-
-    state.selectedId =
-        id;
-
-    renderCanvas();
-
-    renderProperties();
-}
-
-
-/* =========================================================
-   PROPERTIES
-========================================================= */
-
-function renderProperties() {
-
-    const element =
-        getSelected();
-
-
-    if (!element) {
-
-        DOM.properties.innerHTML = `
-            <div class="no-selection">
-                <div class="no-selection-icon">⚙️</div>
-
-                <p>
-                    Wybierz element na płótnie,
-                    aby edytować jego właściwości.
-                </p>
-            </div>
-        `;
-
-        return;
-    }
-
-
-    DOM.properties.innerHTML = `
-
-        <div class="property-group">
-            <label>Nazwa</label>
-
-            <input
-                id="propName"
-                type="text"
-                value="${escapeHTML(element.name)}"
-            >
-        </div>
-
-
-        <div class="property-group">
-            <label>X</label>
-
-            <input
-                id="propX"
-                type="number"
-                value="${Math.round(element.x)}"
-            >
-        </div>
-
-
-        <div class="property-group">
-            <label>Y</label>
-
-            <input
-                id="propY"
-                type="number"
-                value="${Math.round(element.y)}"
-            >
-        </div>
-
-
-        <div class="property-group">
-            <label>Szerokość</label>
-
-            <input
-                id="propWidth"
-                type="number"
-                min="1"
-                value="${Math.round(element.width)}"
-            >
-        </div>
-
-
-        <div class="property-group">
-            <label>Wysokość</label>
-
-            <input
-                id="propHeight"
-                type="number"
-                min="1"
-                value="${Math.round(element.height)}"
-            >
-        </div>
-
-
-        <div class="property-group">
-            <label>Obrót</label>
-
-            <input
-                id="propRotation"
-                type="number"
-                value="${element.rotation}"
-            >
-        </div>
-
-
-        <div class="property-group">
-            <label>Przezroczystość</label>
-
-            <input
-                id="propOpacity"
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value="${element.opacity}"
-            >
-        </div>
-
-
-        ${
-            element.type === "text"
-                ? `
-
-                <div class="property-group">
-                    <label>Tekst</label>
-
-                    <textarea
-                        id="propText"
-                        rows="4"
-                    >${escapeHTML(element.text)}</textarea>
-                </div>
-
-
-                <div class="property-group">
-                    <label>Rozmiar tekstu</label>
-
-                    <input
-                        id="propFontSize"
-                        type="number"
-                        min="1"
-                        value="${element.fontSize}"
-                    >
-                </div>
-
-
-                <div class="property-group">
-                    <label>Kolor</label>
-
-                    <input
-                        id="propColor"
-                        type="color"
-                        value="${element.color}"
-                    >
-                </div>
-
-                `
-                : ""
-        }
-
-
-        <button
-            id="deleteElementBtn"
-            class="danger-button"
-        >
-            🗑️ Usuń element
-        </button>
-    `;
-
-
-    connectProperties(element);
-}
-
-
-/* =========================================================
-   PROPERTY EVENTS
-========================================================= */
-
-function connectProperties(element) {
-
-    const input =
-        id => document.getElementById(id);
-
-
-    const update =
-        (id, callback) => {
-
-            const field =
-                input(id);
-
-            if (!field) {
-                return;
-            }
-
-            field.addEventListener(
-                "input",
-                callback
-            );
-        };
-
-
-    update(
-        "propName",
-        event => {
-            element.name =
-                event.target.value;
-
-            renderTimeline();
-        }
-    );
-
-
-    update(
-        "propX",
-        event => {
-
-            element.x =
-                Number(event.target.value) || 0;
-
-            updateElementNode(element);
-        }
-    );
-
-
-    update(
-        "propY",
-        event => {
-
-            element.y =
-                Number(event.target.value) || 0;
-
-            updateElementNode(element);
-        }
-    );
-
-
-    update(
-        "propWidth",
-        event => {
-
-            element.width =
-                Math.max(
-                    1,
-                    Number(event.target.value) || 1
-                );
-
-            renderCanvas();
-        }
-    );
-
-
-    update(
-        "propHeight",
-        event => {
-
-            element.height =
-                Math.max(
-                    1,
-                    Number(event.target.value) || 1
-                );
-
-            renderCanvas();
-        }
-    );
-
-
-    update(
-        "propRotation",
-        event => {
-
-            element.rotation =
-                Number(event.target.value) || 0;
-
-            renderCanvas();
-        }
-    );
-
-
-    update(
-        "propOpacity",
-        event => {
-
-            element.opacity =
-                Number(event.target.value);
-
-            renderCanvas();
-        }
-    );
-
-
-    update(
-        "propText",
-        event => {
-
-            element.text =
-                event.target.value;
-
-            const node =
-                DOM.canvas.querySelector(
-                    `[data-id="${element.id}"]`
-                );
-
-            if (node) {
-                node.textContent =
-                    element.text;
-            }
-        }
-    );
-
-
-    update(
-        "propFontSize",
-        event => {
-
-            element.fontSize =
-                Math.max(
-                    1,
-                    Number(event.target.value) || 1
-                );
-
-            const node =
-                DOM.canvas.querySelector(
-                    `[data-id="${element.id}"]`
-                );
-
-            if (node) {
-                node.style.fontSize =
-                    `${element.fontSize}px`;
-            }
-        }
-    );
-
-
-    update(
-        "propColor",
-        event => {
-
-            element.color =
-                event.target.value;
-
-            const node =
-                DOM.canvas.querySelector(
-                    `[data-id="${element.id}"]`
-                );
-
-            if (node) {
-                node.style.color =
-                    element.color;
-            }
-        }
-    );
-
-
-    const deleteButton =
-        document.getElementById(
-            "deleteElementBtn"
-        );
-
-
-    if (deleteButton) {
-
-        deleteButton.onclick =
-            deleteSelected;
-    }
 }
 
 
@@ -1202,835 +643,929 @@ function deleteSelected() {
         null;
 
     renderAll();
+
+    scheduleAutosave();
 }
 
 
 /* =========================================================
-   TEXT
+   CANVAS SCALE
 ========================================================= */
 
-document
-    .getElementById("addTextBtn")
-    ?.addEventListener(
-        "click",
-        () => {
+/*
+    Projekt ma np. 1080x1920.
 
-            addElement(
-                "text",
-                {
-                    name: "Tekst",
-                    text: "PROMOCJA!",
-                    x: 240,
-                    y: 250,
-                    width: 600,
-                    height: 140,
-                    fontSize: 80
-                }
-            );
-        }
-    );
+    Telefon może wyświetlić canvas np.
+    360x640.
 
+    scaleX = 360 / 1080
+    scaleY = 640 / 1920
 
-/* =========================================================
-   IMAGE
-========================================================= */
+    Wszystkie ruchy palcem są przeliczane
+    z pikseli ekranu na piksele projektu.
+*/
 
-document
-    .getElementById("addImageBtn")
-    ?.addEventListener(
-        "click",
-        () => {
-            DOM.imageInput.click();
-        }
-    );
+function getCanvasMetrics() {
 
+    const rect =
+        DOM.canvas.getBoundingClientRect();
 
-DOM.imageInput?.addEventListener(
-    "change",
-    event => {
+    return {
 
-        const file =
-            event.target.files?.[0];
+        rect,
 
-        if (!file) {
-            return;
-        }
+        scaleX:
+            state.project.format.width /
+            rect.width,
 
-        const url =
-            URL.createObjectURL(file);
-
-        addElement(
-            "image",
-            {
-                name: file.name,
-                src: url,
-                x: 100,
-                y: 200,
-                width: 700,
-                height: 500
-            }
-        );
-
-        event.target.value = "";
-    }
-);
-
-
-/* =========================================================
-   VIDEO
-========================================================= */
-
-document
-    .getElementById("addVideoBtn")
-    ?.addEventListener(
-        "click",
-        () => {
-            DOM.videoInput.click();
-        }
-    );
-
-
-DOM.videoInput?.addEventListener(
-    "change",
-    event => {
-
-        const file =
-            event.target.files?.[0];
-
-        if (!file) {
-            return;
-        }
-
-        const url =
-            URL.createObjectURL(file);
-
-        addElement(
-            "video",
-            {
-                name: file.name,
-                src: url,
-                x: 0,
-                y: 0,
-                width:
-                    state.project.format.width,
-                height:
-                    state.project.format.height
-            }
-        );
-
-        event.target.value = "";
-    }
-);
-
-
-/* =========================================================
-   LOGO
-========================================================= */
-
-document
-    .getElementById("addLogoBtn")
-    ?.addEventListener(
-        "click",
-        () => {
-            DOM.logoInput.click();
-        }
-    );
-
-
-DOM.logoInput?.addEventListener(
-    "change",
-    event => {
-
-        const file =
-            event.target.files?.[0];
-
-        if (!file) {
-            return;
-        }
-
-        const url =
-            URL.createObjectURL(file);
-
-        addElement(
-            "logo",
-            {
-                name: "Logo",
-                src: url,
-                x: 60,
-                y: 60,
-                width: 250,
-                height: 130
-            }
-        );
-
-        event.target.value = "";
-    }
-);
-
-
-/* =========================================================
-   ICON
-========================================================= */
-
-document
-    .getElementById("addIconBtn")
-    ?.addEventListener(
-        "click",
-        () => {
-
-            addElement(
-                "text",
-                {
-                    name: "Ikona",
-                    text: "★",
-                    x: 400,
-                    y: 400,
-                    width: 150,
-                    height: 150,
-                    fontSize: 110
-                }
-            );
-        }
-    );
-
-
-/* =========================================================
-   FORMAT
-========================================================= */
-
-DOM.formatSelect?.addEventListener(
-    "change",
-    event => {
-
-        const format =
-            CONFIG.formats[
-                event.target.value
-            ];
-
-        if (!format) {
-            return;
-        }
-
-        saveHistory();
-
-        state.project.format = {
-            width: format.width,
-            height: format.height,
-            ratio: format.ratio
-        };
-
-        DOM.canvas.dataset.width =
-            format.width;
-
-        DOM.canvas.dataset.height =
-            format.height;
-
-        DOM.canvas.style.aspectRatio =
-            `${format.width} / ${format.height}`;
-
-        renderCanvas();
-    }
-);
-
-
-/* =========================================================
-   NEW PROJECT
-========================================================= */
-
-document
-    .getElementById("newProjectBtn")
-    ?.addEventListener(
-        "click",
-        () => {
-
-            if (
-                state.elements.length > 0 &&
-                !confirm(
-                    "Utworzyć nowy projekt?"
-                )
-            ) {
-                return;
-            }
-
-            state.elements = [];
-
-            state.selectedId = null;
-
-            state.playback.currentTime = 0;
-
-            state.history.undo = [];
-
-            state.history.redo = [];
-
-            renderAll();
-        }
-    );
-
-
-/* =========================================================
-   SAVE PROJECT
-========================================================= */
-
-document
-    .getElementById("saveProjectBtn")
-    ?.addEventListener(
-        "click",
-        saveProject
-    );
-
-
-function saveProject() {
-
-    const project = {
-        format: "ADGV",
-        version: CONFIG.version,
-        type: "project",
-
-        project: {
-            ...state.project
-        },
-
-        elements:
-            state.elements.map(
-                element => ({
-                    ...element
-                })
-            )
+        scaleY:
+            state.project.format.height /
+            rect.height
     };
-
-
-    const blob =
-        new Blob(
-            [
-                JSON.stringify(
-                    project,
-                    null,
-                    2
-                )
-            ],
-            {
-                type: "application/json"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(blob);
-
-
-    const link =
-        document.createElement("a");
-
-    link.href = url;
-
-    link.download =
-        "ADGVMaker-project.adgv";
-
-    link.click();
-
-
-    setTimeout(
-        () => URL.revokeObjectURL(url),
-        1000
-    );
 }
 
 
 /* =========================================================
-   PLAYBACK
+   CANVAS RENDER
 ========================================================= */
 
-document
-    .getElementById("playBtn")
-    ?.addEventListener(
-        "click",
-        startPlayback
-    );
+function renderCanvas() {
 
-
-document
-    .getElementById("pauseBtn")
-    ?.addEventListener(
-        "click",
-        pausePlayback
-    );
-
-
-document
-    .getElementById("stopBtn")
-    ?.addEventListener(
-        "click",
-        stopPlayback
-    );
-
-
-function startPlayback() {
-
-    if (state.playback.playing) {
-        return;
-    }
-
-    state.playback.playing = true;
-
-    state.playback.lastFrame =
-        performance.now();
-
-    requestAnimationFrame(
-        playbackLoop
-    );
-}
-
-
-function pausePlayback() {
-
-    state.playback.playing =
-        false;
-}
-
-
-function stopPlayback() {
-
-    state.playback.playing =
-        false;
-
-    state.playback.currentTime =
-        0;
-
-    updateTimeDisplay();
-}
-
-
-function playbackLoop(timestamp) {
-
-    if (!state.playback.playing) {
+    if (!DOM.canvas) {
         return;
     }
 
 
-    const delta =
-        (timestamp -
-            state.playback.lastFrame) /
-        1000;
+    const fragment =
+        document.createDocumentFragment();
 
 
-    state.playback.lastFrame =
-        timestamp;
-
-
-    state.playback.currentTime +=
-        delta;
-
-
-    if (
-        state.playback.currentTime >=
-        state.project.duration
+    for (
+        const element
+        of state.elements
     ) {
 
-        state.playback.currentTime =
-            0;
-    }
-
-
-    updateTimeDisplay();
-
-
-    requestAnimationFrame(
-        playbackLoop
-    );
-}
-
-
-/* =========================================================
-   TIME DISPLAY
-========================================================= */
-
-function updateTimeDisplay() {
-
-    if (DOM.currentTime) {
-
-        DOM.currentTime.textContent =
-            formatTime(
-                state.playback.currentTime
-            );
-    }
-
-
-    if (DOM.duration) {
-
-        DOM.duration.textContent =
-            formatTime(
-                state.project.duration
-            );
-    }
-}
-
-
-/* =========================================================
-   TIMELINE
-========================================================= */
-
-function renderTimeline() {
-
-    const tracks = [
-        DOM.mediaTrack,
-        DOM.textTrack,
-        DOM.graphicsTrack
-    ];
-
-    tracks.forEach(
-        track => {
-            if (track) {
-                track.replaceChildren();
-            }
-        }
-    );
-
-
-    for (const element of state.elements) {
-
-        let track;
-
-        if (element.type === "text") {
-            track = DOM.textTrack;
-        }
-
-        else if (
-            element.type === "image" ||
-            element.type === "logo"
-        ) {
-            track = DOM.graphicsTrack;
-        }
-
-        else {
-            track = DOM.mediaTrack;
-        }
-
-
-        if (!track) {
-            continue;
-        }
-
-
-        const item =
+        const node =
             document.createElement("div");
 
-        item.className =
-            "timeline-item";
 
-        item.dataset.id =
+        node.className =
+            "adgvmaker-element";
+
+
+        node.dataset.id =
             element.id;
 
-        item.textContent =
-            element.name;
+
+        node.style.left =
+            `${element.x}px`;
 
 
-        item.style.left =
-            `${(
-                element.start /
-                state.project.duration
-            ) * 100}%`;
+        node.style.top =
+            `${element.y}px`;
 
 
-        item.style.width =
-            `${(
-                element.duration /
-                state.project.duration
-            ) * 100}%`;
+        node.style.width =
+            `${element.width}px`;
+
+
+        node.style.height =
+            `${element.height}px`;
+
+
+        node.style.opacity =
+            element.opacity;
+
+
+        node.style.transform =
+            `rotate(${element.rotation}deg)`;
 
 
         if (
             element.id ===
             state.selectedId
         ) {
-            item.style.outline =
-                "2px solid #ffffff";
+
+            node.style.outline =
+                "2px solid #6366f1";
+
+            node.style.outlineOffset =
+                "3px";
         }
 
 
-        item.addEventListener(
-            "click",
-            () => {
-                selectElement(
-                    element.id
-                );
+        /* TEXT */
+
+        if (
+            element.type === "text"
+        ) {
+
+            node.textContent =
+                element.text;
+
+
+            node.style.display =
+                "flex";
+
+
+            node.style.alignItems =
+                "center";
+
+
+            node.style.justifyContent =
+                "center";
+
+
+            node.style.textAlign =
+                "center";
+
+
+            node.style.color =
+                element.color;
+
+
+            node.style.fontSize =
+                `${element.fontSize}px`;
+
+
+            node.style.fontFamily =
+                element.fontFamily;
+
+
+            node.style.fontWeight =
+                element.fontWeight;
+
+
+            node.style.userSelect =
+                "none";
+
+
+            node.style.whiteSpace =
+                "pre-wrap";
+        }
+
+
+        /* IMAGE / LOGO */
+
+        else if (
+            element.type === "image" ||
+            element.type === "logo"
+        ) {
+
+            const image =
+                document.createElement("img");
+
+
+            image.src =
+                element.src;
+
+
+            image.alt =
+                element.name;
+
+
+            image.draggable =
+                false;
+
+
+            image.decoding =
+                "async";
+
+
+            image.style.width =
+                "100%";
+
+
+            image.style.height =
+                "100%";
+
+
+            image.style.objectFit =
+                element.objectFit;
+
+
+            image.style.pointerEvents =
+                "none";
+
+
+            node.appendChild(
+                image
+            );
+        }
+
+
+        /* VIDEO */
+
+        else if (
+            element.type === "video"
+        ) {
+
+            const video =
+                document.createElement("video");
+
+
+            video.src =
+                element.src;
+
+
+            video.muted =
+                true;
+
+
+            video.playsInline =
+                true;
+
+
+            video.preload =
+                "metadata";
+
+
+            video.style.width =
+                "100%";
+
+
+            video.style.height =
+                "100%";
+
+
+            video.style.objectFit =
+                element.objectFit;
+
+
+            video.style.pointerEvents =
+                "none";
+
+
+            node.appendChild(
+                video
+            );
+        }
+
+
+        node.addEventListener(
+            "pointerdown",
+            onElementPointerDown,
+            {
+                passive: false
             }
         );
 
 
-        track.appendChild(item);
+        fragment.appendChild(
+            node
+        );
     }
+
+
+    DOM.canvas
+        .querySelectorAll(
+            ".adgvmaker-element"
+        )
+        .forEach(
+            node => node.remove()
+        );
+
+
+    DOM.canvas.appendChild(
+        fragment
+    );
+
+
+    updatePlaceholder();
+}
+
+
+function updatePlaceholder() {
+
+    if (!DOM.placeholder) {
+        return;
+    }
+
+    DOM.placeholder.style.display =
+        state.elements.length
+            ? "none"
+            : "flex";
 }
 
 
 /* =========================================================
-   TEMPLATES
+   ELEMENT NODE UPDATE
 ========================================================= */
 
-const templates = {
+function updateElementNode(
+    element
+) {
 
-    sale: {
-        name: "Promocja",
-
-        elements: [
-
-            {
-                type: "text",
-                name: "Nagłówek",
-                text: "PROMOCJA!",
-                x: 150,
-                y: 250,
-                width: 780,
-                height: 150,
-                fontSize: 100
-            },
-
-            {
-                type: "text",
-                name: "Rabat",
-                text: "-30%",
-                x: 200,
-                y: 500,
-                width: 680,
-                height: 200,
-                fontSize: 160
-            },
-
-            {
-                type: "text",
-                name: "CTA",
-                text: "KUP TERAZ",
-                x: 250,
-                y: 850,
-                width: 580,
-                height: 120,
-                fontSize: 60
-            }
-        ]
-    },
-
-
-    product: {
-        name: "Produkt",
-
-        elements: [
-
-            {
-                type: "text",
-                name: "Tytuł",
-                text: "NOWY PRODUKT",
-                x: 150,
-                y: 200,
-                width: 780,
-                height: 150,
-                fontSize: 80
-            },
-
-            {
-                type: "text",
-                name: "Opis",
-                text: "Poznaj nową jakość",
-                x: 200,
-                y: 400,
-                width: 680,
-                height: 100,
-                fontSize: 45
-            }
-        ]
-    },
-
-
-    gaming: {
-        name: "Gaming",
-
-        elements: [
-
-            {
-                type: "text",
-                name: "Gaming",
-                text: "GAME ON!",
-                x: 100,
-                y: 500,
-                width: 880,
-                height: 200,
-                fontSize: 120
-            },
-
-            {
-                type: "text",
-                name: "CTA",
-                text: "PLAY NOW",
-                x: 250,
-                y: 850,
-                width: 580,
-                height: 120,
-                fontSize: 60
-            }
-        ]
-    },
-
-
-    business: {
-        name: "Firma",
-
-        elements: [
-
-            {
-                type: "text",
-                name: "Firma",
-                text: "TWOJA FIRMA",
-                x: 150,
-                y: 300,
-                width: 780,
-                height: 150,
-                fontSize: 80
-            },
-
-            {
-                type: "text",
-                name: "Slogan",
-                text: "Profesjonalne rozwiązania",
-                x: 150,
-                y: 520,
-                width: 780,
-                height: 120,
-                fontSize: 42
-            }
-        ]
-    }
-};
-
-
-document
-    .querySelectorAll(".template-button")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const name =
-                    button.dataset.template;
-
-                loadTemplate(name);
-            }
+    const node =
+        DOM.canvas.querySelector(
+            `[data-id="${element.id}"]`
         );
-    });
 
 
-function loadTemplate(name) {
-
-    const template =
-        templates[name];
-
-    if (!template) {
+    if (!node) {
         return;
     }
 
 
-    saveHistory();
+    node.style.left =
+        `${element.x}px`;
 
 
-    state.elements =
-        template.elements.map(
-            data =>
-                createElement(
-                    data.type,
-                    data
-                )
-        );
+    node.style.top =
+        `${element.y}px`;
 
 
-    state.selectedId =
-        state.elements[0]?.id ||
-        null;
+    node.style.width =
+        `${element.width}px`;
 
 
-    renderAll();
+    node.style.height =
+        `${element.height}px`;
+
+
+    node.style.opacity =
+        element.opacity;
+
+
+    node.style.transform =
+        `rotate(${element.rotation}deg)`;
 }
 
 
 /* =========================================================
-   UNDO / REDO
+   TOUCH HELPERS
 ========================================================= */
 
-document
-    .getElementById("undoBtn")
-    ?.addEventListener(
-        "click",
-        undo
-    );
+function getPointerList() {
+
+    return [
+        ...state.interaction.pointers.values()
+    ];
+}
 
 
-document
-    .getElementById("redoBtn")
-    ?.addEventListener(
-        "click",
-        redo
+function distanceBetween(
+    a,
+    b
+) {
+
+    return Math.hypot(
+        b.x - a.x,
+        b.y - a.y
     );
+}
+
+
+function angleBetween(
+    a,
+    b
+) {
+
+    return Math.atan2(
+        b.y - a.y,
+        b.x - a.x
+    );
+}
+
+
+function midpoint(
+    a,
+    b
+) {
+
+    return {
+
+        x:
+            (a.x + b.x) / 2,
+
+        y:
+            (a.y + b.y) / 2
+    };
+}
 
 
 /* =========================================================
-   DELETE KEY
+   POINTER DOWN
 ========================================================= */
 
-document.addEventListener(
-    "keydown",
-    event => {
+function onElementPointerDown(
+    event
+) {
 
-        const active =
-            document.activeElement;
+    event.preventDefault();
+
+    const node =
+        event.currentTarget;
+
+    const id =
+        node.dataset.id;
+
+    const element =
+        getElement(id);
 
 
-        const editing =
-            active &&
+    if (!element) {
+        return;
+    }
+
+
+    state.selectedId =
+        id;
+
+
+    node.setPointerCapture?.(
+        event.pointerId
+    );
+
+
+    state.interaction.pointers.set(
+        event.pointerId,
+        {
+            x: event.clientX,
+            y: event.clientY
+        }
+    );
+
+
+    const metrics =
+        getCanvasMetrics();
+
+
+    state.interaction.elementId =
+        id;
+
+
+    state.interaction.startX =
+        event.clientX;
+
+
+    state.interaction.startY =
+        event.clientY;
+
+
+    state.interaction.startElementX =
+        element.x;
+
+
+    state.interaction.startElementY =
+        element.y;
+
+
+    state.interaction.startWidth =
+        element.width;
+
+
+    state.interaction.startHeight =
+        element.height;
+
+
+    state.interaction.startRotation =
+        element.rotation;
+
+
+    /*
+        Jeden palec = przesuwanie
+    */
+
+    state.interaction.mode =
+        "drag";
+
+
+    /*
+        Dwa palce = zoom + obrót
+    */
+
+    if (
+        state.interaction.pointers.size >= 2
+    ) {
+
+        const pointers =
+            getPointerList();
+
+
+        const a =
+            pointers[0];
+
+        const b =
+            pointers[1];
+
+
+        state.interaction.startDistance =
+            distanceBetween(a, b);
+
+
+        state.interaction.startAngle =
+            angleBetween(a, b);
+
+
+        state.interaction.mode =
+            "transform";
+
+
+        state.interaction.center =
+            midpoint(a, b);
+    }
+
+
+    renderCanvas();
+
+    renderProperties();
+}
+
+
+/* =========================================================
+   POINTER MOVE
+========================================================= */
+
+function onPointerMove(
+    event
+) {
+
+    if (
+        !state.interaction.elementId
+    ) {
+        return;
+    }
+
+
+    if (
+        !state.interaction.pointers.has(
+            event.pointerId
+        )
+    ) {
+        return;
+    }
+
+
+    event.preventDefault();
+
+
+    state.interaction.pointers.set(
+        event.pointerId,
+        {
+            x: event.clientX,
+            y: event.clientY
+        }
+    );
+
+
+    const element =
+        getElement(
+            state.interaction.elementId
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    const metrics =
+        getCanvasMetrics();
+
+
+    /*
+       ONE FINGER
+    */
+
+    if (
+        state.interaction.mode ===
+        "drag" &&
+        state.interaction.pointers.size === 1
+    ) {
+
+        const dx =
             (
-                active.tagName === "INPUT" ||
-                active.tagName === "TEXTAREA" ||
-                active.tagName === "SELECT"
+                event.clientX -
+                state.interaction.startX
+            ) *
+            metrics.scaleX;
+
+
+        const dy =
+            (
+                event.clientY -
+                state.interaction.startY
+            ) *
+            metrics.scaleY;
+
+
+        element.x =
+            clamp(
+                state.interaction.startElementX +
+                dx,
+
+                0,
+
+                state.project.format.width -
+                element.width
+            );
+
+
+        element.y =
+            clamp(
+                state.interaction.startElementY +
+                dy,
+
+                0,
+
+                state.project.format.height -
+                element.height
+            );
+
+
+        updateElementNode(
+            element
+        );
+
+
+        return;
+    }
+
+
+    /*
+       TWO FINGERS
+    */
+
+    if (
+        state.interaction.pointers.size >= 2
+    ) {
+
+        const pointers =
+            getPointerList();
+
+
+        const a =
+            pointers[0];
+
+        const b =
+            pointers[1];
+
+
+        const distance =
+            distanceBetween(
+                a,
+                b
+            );
+
+
+        const angle =
+            angleBetween(
+                a,
+                b
             );
 
 
         if (
-            !editing &&
+            state.interaction.startDistance <= 0
+        ) {
+            return;
+        }
+
+
+        /*
+            Skalowanie
+        */
+
+        const scale =
+            distance /
+            state.interaction.startDistance;
+
+
+        const newWidth =
+            clamp(
+                state.interaction.startWidth *
+                scale,
+
+                30,
+
+                state.project.format.width
+            );
+
+
+        const newHeight =
+            clamp(
+                state.interaction.startHeight *
+                scale,
+
+                30,
+
+                state.project.format.height
+            );
+
+
+        element.width =
+            newWidth;
+
+
+        element.height =
+            newHeight;
+
+
+        /*
+            Obrót
+        */
+
+        const angleDelta =
             (
-                event.key === "Delete" ||
-                event.key === "Backspace"
-            )
+                angle -
+                state.interaction.startAngle
+            ) *
+            180 /
+            Math.PI;
+
+
+        element.rotation =
+            state.interaction.startRotation +
+            angleDelta;
+
+
+        /*
+            Nie pozwalamy wyjechać
+            całkowicie poza canvas.
+        */
+
+        element.x =
+            clamp(
+                element.x,
+                0,
+                state.project.format.width -
+                element.width
+            );
+
+
+        element.y =
+            clamp(
+                element.y,
+                0,
+                state.project.format.height -
+                element.height
+            );
+
+
+        updateElementNode(
+            element
+        );
+    }
+}
+
+
+/* =========================================================
+   POINTER UP
+========================================================= */
+
+function onPointerUp(
+    event
+) {
+
+    if (
+        state.interaction.pointers.has(
+            event.pointerId
+        )
+    ) {
+
+        state.interaction.pointers.delete(
+            event.pointerId
+        );
+    }
+
+
+    /*
+       Po zakończeniu gestu zapisujemy
+       jedną operację do historii.
+    */
+
+    if (
+        state.interaction.pointers.size === 0
+    ) {
+
+        if (
+            state.interaction.mode
         ) {
 
-            deleteSelected();
+            saveHistoryFromInteraction();
         }
+
+
+        state.interaction.mode =
+            null;
+
+        state.interaction.elementId =
+            null;
+
+        scheduleAutosave();
+
+        renderProperties();
+
+        renderTimeline();
+    }
+
+
+    /*
+       Jeśli został jeden palec,
+       wracamy do drag.
+    */
+
+    else if (
+        state.interaction.pointers.size === 1
+    ) {
+
+        state.interaction.mode =
+            "drag";
+    }
+}
+
+
+function saveHistoryFromInteraction() {
+
+    /*
+       Historia gestu jest dodawana
+       przed zmianą w przyszłej wersji.
+       Tutaj zachowujemy prosty model:
+       snapshot aktualnego stanu.
+    */
+
+    const current =
+        createSnapshot();
+
+
+    const previous =
+        state.history.undo[
+            state.history.undo.length - 1
+        ];
+
+
+    if (previous !== current) {
+
+        state.history.undo.push(
+            current
+        );
 
 
         if (
-            !editing &&
-            event.ctrlKey &&
-            event.key.toLowerCase() === "z"
+            state.history.undo.length >
+            CONFIG.historyLimit
         ) {
 
-            event.preventDefault();
-
-            undo();
+            state.history.undo.shift();
         }
 
 
-        if (
-            !editing &&
-            event.ctrlKey &&
-            event.key.toLowerCase() === "y"
-        ) {
+        state.history.redo.length =
+            0;
+    }
+}
 
-            event.preventDefault();
 
-            redo();
-        }
+/* =========================================================
+   GLOBAL POINTER EVENTS
+========================================================= */
+
+document.addEventListener(
+    "pointermove",
+    onPointerMove,
+    {
+        passive: false
+    }
+);
+
+
+document.addEventListener(
+    "pointerup",
+    onPointerUp,
+    {
+        passive: false
+    }
+);
+
+
+document.addEventListener(
+    "pointercancel",
+    onPointerUp,
+    {
+        passive: false
     }
 );
 
 
 /* =========================================================
-   CANVAS DESELECT
+   SELECT / DESELECT
 ========================================================= */
+
+function selectElement(id) {
+
+    if (!getElement(id)) {
+        return;
+    }
+
+    state.selectedId =
+        id;
+
+    renderCanvas();
+
+    renderProperties();
+}
+
 
 DOM.canvas?.addEventListener(
     "pointerdown",
@@ -2055,20 +1590,2034 @@ DOM.canvas?.addEventListener(
 
 
 /* =========================================================
-   EXPORT PLACEHOLDER
+   PROPERTIES
 ========================================================= */
 
-document
-    .getElementById("exportBtn")
-    ?.addEventListener(
-        "click",
-        () => {
+function renderProperties() {
 
-            alert(
-                "Eksport MP4 zostanie podłączony przez FFmpeg.wasm."
+    const element =
+        getSelected();
+
+
+    if (!element) {
+
+        DOM.properties.innerHTML = `
+
+            <div class="no-selection">
+
+                <div>
+                    ⚙️
+                </div>
+
+                <p>
+                    Wybierz element,
+                    aby go edytować.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    DOM.properties.innerHTML = `
+
+        <div class="property-group">
+
+            <label>
+                Nazwa
+            </label>
+
+            <input
+                id="propName"
+                type="text"
+                value="${escapeHTML(
+                    element.name
+                )}"
+            >
+
+        </div>
+
+
+        <div class="property-group">
+
+            <label>
+                X
+            </label>
+
+            <input
+                id="propX"
+                type="number"
+                value="${round(
+                    element.x
+                )}"
+            >
+
+        </div>
+
+
+        <div class="property-group">
+
+            <label>
+                Y
+            </label>
+
+            <input
+                id="propY"
+                type="number"
+                value="${round(
+                    element.y
+                )}"
+            >
+
+        </div>
+
+
+        <div class="property-group">
+
+            <label>
+                Szerokość
+            </label>
+
+            <input
+                id="propWidth"
+                type="number"
+                min="30"
+                value="${round(
+                    element.width
+                )}"
+            >
+
+        </div>
+
+
+        <div class="property-group">
+
+            <label>
+                Wysokość
+            </label>
+
+            <input
+                id="propHeight"
+                type="number"
+                min="30"
+                value="${round(
+                    element.height
+                )}"
+            >
+
+        </div>
+
+
+        <div class="property-group">
+
+            <label>
+                Obrót
+            </label>
+
+            <input
+                id="propRotation"
+                type="number"
+                value="${round(
+                    element.rotation
+                )}"
+            >
+
+        </div>
+
+
+        <div class="property-group">
+
+            <label>
+                Przezroczystość
+            </label>
+
+            <input
+                id="propOpacity"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="${element.opacity}"
+            >
+
+        </div>
+
+
+        ${
+            element.type === "text"
+
+                ? `
+
+                <div class="property-group">
+
+                    <label>
+                        Tekst
+                    </label>
+
+                    <textarea
+                        id="propText"
+                        rows="4"
+                    >${escapeHTML(
+                        element.text
+                    )}</textarea>
+
+                </div>
+
+
+                <div class="property-group">
+
+                    <label>
+                        Rozmiar tekstu
+                    </label>
+
+                    <input
+                        id="propFontSize"
+                        type="number"
+                        min="1"
+                        value="${element.fontSize}"
+                    >
+
+                </div>
+
+
+                <div class="property-group">
+
+                    <label>
+                        Kolor
+                    </label>
+
+                    <input
+                        id="propColor"
+                        type="color"
+                        value="${element.color}"
+                    >
+
+                </div>
+
+                `
+
+                : ""
+        }
+
+
+        <button
+            id="deleteElementBtn"
+            class="danger-button"
+        >
+            🗑️ Usuń element
+        </button>
+
+    `;
+
+
+    connectPropertyEvents(
+        element
+    );
+}
+
+
+/* =========================================================
+   PROPERTY EVENTS
+========================================================= */
+
+function connectPropertyEvents(
+    element
+) {
+
+    const bind =
+        (
+            id,
+            callback
+        ) => {
+
+            const field =
+                document.getElementById(
+                    id
+                );
+
+
+            if (!field) {
+                return;
+            }
+
+
+            field.addEventListener(
+                "input",
+                callback
             );
+        };
+
+
+    bind(
+        "propName",
+        event => {
+
+            element.name =
+                event.target.value;
+
+            renderTimeline();
+
+            scheduleAutosave();
         }
     );
+
+
+    bind(
+        "propX",
+        event => {
+
+            element.x =
+                clamp(
+                    Number(
+                        event.target.value
+                    ) || 0,
+
+                    0,
+
+                    state.project.format.width -
+                    element.width
+                );
+
+
+            updateElementNode(
+                element
+            );
+
+            scheduleAutosave();
+        }
+    );
+
+
+    bind(
+        "propY",
+        event => {
+
+            element.y =
+                clamp(
+                    Number(
+                        event.target.value
+                    ) || 0,
+
+                    0,
+
+                    state.project.format.height -
+                    element.height
+                );
+
+
+            updateElementNode(
+                element
+            );
+
+            scheduleAutosave();
+        }
+    );
+
+
+    bind(
+        "propWidth",
+        event => {
+
+            element.width =
+                clamp(
+                    Number(
+                        event.target.value
+                    ) || 30,
+
+                    30,
+
+                    state.project.format.width
+                );
+
+
+            updateElementNode(
+                element
+            );
+
+            scheduleAutosave();
+        }
+    );
+
+
+    bind(
+        "propHeight",
+        event => {
+
+            element.height =
+                clamp(
+                    Number(
+                        event.target.value
+                    ) || 30,
+
+                    30,
+
+                    state.project.format.height
+                );
+
+
+            updateElementNode(
+                element
+            );
+
+            scheduleAutosave();
+        }
+    );
+
+
+    bind(
+        "propRotation",
+        event => {
+
+            element.rotation =
+                Number(
+                    event.target.value
+                ) || 0;
+
+
+            updateElementNode(
+                element
+            );
+
+            scheduleAutosave();
+        }
+    );
+
+
+    bind(
+        "propOpacity",
+        event => {
+
+            element.opacity =
+                Number(
+                    event.target.value
+                );
+
+
+            updateElementNode(
+                element
+            );
+
+            scheduleAutosave();
+        }
+    );
+
+
+    bind(
+        "propText",
+        event => {
+
+            element.text =
+                event.target.value;
+
+
+            const node =
+                DOM.canvas.querySelector(
+                    `[data-id="${element.id}"]`
+                );
+
+
+            if (node) {
+
+                node.textContent =
+                    element.text;
+            }
+
+
+            scheduleAutosave();
+        }
+    );
+
+
+    bind(
+        "propFontSize",
+        event => {
+
+            element.fontSize =
+                Math.max(
+                    1,
+                    Number(
+                        event.target.value
+                    ) || 1
+                );
+
+
+            const node =
+                DOM.canvas.querySelector(
+                    `[data-id="${element.id}"]`
+                );
+
+
+            if (node) {
+
+                node.style.fontSize =
+                    `${element.fontSize}px`;
+            }
+
+
+            scheduleAutosave();
+        }
+    );
+
+
+    bind(
+        "propColor",
+        event => {
+
+            element.color =
+                event.target.value;
+
+
+            const node =
+                DOM.canvas.querySelector(
+                    `[data-id="${element.id}"]`
+                );
+
+
+            if (node) {
+
+                node.style.color =
+                    element.color;
+            }
+
+
+            scheduleAutosave();
+        }
+    );
+
+
+    document
+        .getElementById(
+            "deleteElementBtn"
+        )
+        ?.addEventListener(
+            "click",
+            deleteSelected
+        );
+}
+
+
+/* =========================================================
+   FILE IMPORT
+========================================================= */
+
+function setupFileInputs() {
+
+    DOM.imageInput?.addEventListener(
+        "change",
+        event => {
+
+            const file =
+                event.target.files?.[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            const url =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            addElement(
+                "image",
+                {
+
+                    name:
+                        file.name,
+
+                    src:
+                        url,
+
+                    x:
+                        100,
+
+                    y:
+                        200,
+
+                    width:
+                        700,
+
+                    height:
+                        500
+                }
+            );
+
+
+            event.target.value =
+                "";
+        }
+    );
+
+
+    DOM.videoInput?.addEventListener(
+        "change",
+        event => {
+
+            const file =
+                event.target.files?.[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            const url =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            addElement(
+                "video",
+                {
+
+                    name:
+                        file.name,
+
+                    src:
+                        url,
+
+                    x:
+                        0,
+
+                    y:
+                        0,
+
+                    width:
+                        state.project.format.width,
+
+                    height:
+                        state.project.format.height
+                }
+            );
+
+
+            event.target.value =
+                "";
+        }
+    );
+
+
+    DOM.logoInput?.addEventListener(
+        "change",
+        event => {
+
+            const file =
+                event.target.files?.[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            const url =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            addElement(
+                "logo",
+                {
+
+                    name:
+                        "Logo",
+
+                    src:
+                        url,
+
+                    x:
+                        60,
+
+                    y:
+                        60,
+
+                    width:
+                        250,
+
+                    height:
+                        130
+                }
+            );
+
+
+            event.target.value =
+                "";
+        }
+    );
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+function setupButtons() {
+
+
+    document
+        .getElementById(
+            "addTextBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                addElement(
+                    "text",
+                    {
+
+                        name:
+                            "Nagłówek",
+
+                        text:
+                            "PROMOCJA!",
+
+                        x:
+                            150,
+
+                        y:
+                            300,
+
+                        width:
+                            780,
+
+                        height:
+                            150,
+
+                        fontSize:
+                            90
+                    }
+                );
+            }
+        );
+
+
+    document
+        .getElementById(
+            "addImageBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                DOM.imageInput?.click();
+            }
+        );
+
+
+    document
+        .getElementById(
+            "addVideoBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                DOM.videoInput?.click();
+            }
+        );
+
+
+    document
+        .getElementById(
+            "addLogoBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                DOM.logoInput?.click();
+            }
+        );
+
+
+    document
+        .getElementById(
+            "addIconBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                addElement(
+                    "text",
+                    {
+
+                        name:
+                            "Ikona",
+
+                        text:
+                            "★",
+
+                        x:
+                            400,
+
+                        y:
+                            400,
+
+                        width:
+                            150,
+
+                        height:
+                            150,
+
+                        fontSize:
+                            110
+                    }
+                );
+            }
+        );
+
+
+    document
+        .getElementById(
+            "undoBtn"
+        )
+        ?.addEventListener(
+            "click",
+            undo
+        );
+
+
+    document
+        .getElementById(
+            "redoBtn"
+        )
+        ?.addEventListener(
+            "click",
+            redo
+        );
+
+
+    document
+        .getElementById(
+            "newProjectBtn"
+        )
+        ?.addEventListener(
+            "click",
+            newProject
+        );
+
+
+    document
+        .getElementById(
+            "saveProjectBtn"
+        )
+        ?.addEventListener(
+            "click",
+            exportProject
+        );
+
+
+    document
+        .getElementById(
+            "exportBtn"
+        )
+        ?.addEventListener(
+            "click",
+            exportVideoPlaceholder
+        );
+
+
+    DOM.playBtn?.addEventListener(
+        "click",
+        startPlayback
+    );
+
+
+    DOM.pauseBtn?.addEventListener(
+        "click",
+        pausePlayback
+    );
+
+
+    DOM.stopBtn?.addEventListener(
+        "click",
+        stopPlayback
+    );
+}
+
+
+/* =========================================================
+   FORMAT
+========================================================= */
+
+function setupFormat() {
+
+    DOM.formatSelect?.addEventListener(
+        "change",
+        event => {
+
+            const format =
+                CONFIG.formats[
+                    event.target.value
+                ];
+
+
+            if (!format) {
+                return;
+            }
+
+
+            saveHistory();
+
+
+            state.project.format = {
+
+                width:
+                    format.width,
+
+                height:
+                    format.height,
+
+                ratio:
+                    format.ratio
+            };
+
+
+            DOM.canvas.style.aspectRatio =
+                `${format.width} / ${format.height}`;
+
+
+            renderCanvas();
+
+            renderProperties();
+
+            scheduleAutosave();
+        }
+    );
+}
+
+
+/* =========================================================
+   NEW PROJECT
+========================================================= */
+
+function newProject() {
+
+    if (
+        state.elements.length > 0
+    ) {
+
+        const accepted =
+            confirm(
+                "Utworzyć nowy projekt?"
+            );
+
+
+        if (!accepted) {
+            return;
+        }
+    }
+
+
+    state.elements =
+        [];
+
+
+    state.selectedId =
+        null;
+
+
+    state.history.undo =
+        [];
+
+
+    state.history.redo =
+        [];
+
+
+    state.playback.currentTime =
+        0;
+
+
+    state.project.name =
+        "Moja reklama";
+
+
+    renderAll();
+
+    scheduleAutosave();
+}
+
+
+/* =========================================================
+   ADGV EXPORT
+========================================================= */
+
+function exportProject() {
+
+    const data = {
+
+        format:
+            "ADGV",
+
+        version:
+            CONFIG.version,
+
+        project:
+            state.project,
+
+        elements:
+            state.elements
+    };
+
+
+    const blob =
+        new Blob(
+            [
+                JSON.stringify(
+                    data,
+                    null,
+                    2
+                )
+            ],
+            {
+                type:
+                    "application/json"
+            }
+        );
+
+
+    downloadBlob(
+        blob,
+        "ADGVMaker-project.adgv"
+    );
+}
+
+
+function downloadBlob(
+    blob,
+    filename
+) {
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        filename;
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        1000
+    );
+}
+
+
+/* =========================================================
+   ADGV IMPORT
+========================================================= */
+
+function importProjectFile(
+    file
+) {
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        () => {
+
+            try {
+
+                const data =
+                    JSON.parse(
+                        reader.result
+                    );
+
+
+                if (
+                    data.format !==
+                    "ADGV"
+                ) {
+
+                    throw new Error(
+                        "Nieprawidłowy format ADGV."
+                    );
+                }
+
+
+                saveHistory();
+
+
+                state.project =
+                    data.project;
+
+
+                state.elements =
+                    Array.isArray(
+                        data.elements
+                    )
+                        ? data.elements
+                        : [];
+
+
+                state.selectedId =
+                    null;
+
+
+                state.playback.currentTime =
+                    0;
+
+
+                renderAll();
+
+                scheduleAutosave();
+
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+
+                alert(
+                    "Nie udało się otworzyć projektu."
+                );
+            }
+        };
+
+
+    reader.readAsText(
+        file
+    );
+}
+
+
+/* =========================================================
+   AUTOSAVE
+========================================================= */
+
+let autosaveTimer =
+    null;
+
+
+function scheduleAutosave() {
+
+    clearTimeout(
+        autosaveTimer
+    );
+
+
+    autosaveTimer =
+        setTimeout(
+            autosave,
+            CONFIG.autosaveDelay
+        );
+}
+
+
+function autosave() {
+
+    try {
+
+        const data = {
+
+            version:
+                CONFIG.version,
+
+            project:
+                state.project,
+
+            elements:
+                state.elements
+        };
+
+
+        localStorage.setItem(
+            CONFIG.autosaveKey,
+            JSON.stringify(data)
+        );
+
+
+    } catch (error) {
+
+        /*
+           Safari / iOS może blokować
+           localStorage w określonych
+           warunkach.
+
+           Edytor nadal działa.
+        */
+
+        console.warn(
+            "Autosave unavailable:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   RESTORE AUTOSAVE
+========================================================= */
+
+function restoreAutosave() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                CONFIG.autosaveKey
+            );
+
+
+        if (!saved) {
+            return false;
+        }
+
+
+        const data =
+            JSON.parse(saved);
+
+
+        if (
+            !data.project ||
+            !Array.isArray(
+                data.elements
+            )
+        ) {
+
+            return false;
+        }
+
+
+        state.project =
+            data.project;
+
+
+        state.elements =
+            data.elements;
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.warn(
+            "Autosave restore failed:",
+            error
+        );
+
+
+        return false;
+    }
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+function renderTimeline() {
+
+    const tracks = [
+
+        DOM.mediaTrack,
+
+        DOM.textTrack,
+
+        DOM.graphicsTrack
+
+    ];
+
+
+    tracks.forEach(
+        track => {
+
+            track?.replaceChildren();
+
+        }
+    );
+
+
+    for (
+        const element
+        of state.elements
+    ) {
+
+        let track;
+
+
+        if (
+            element.type ===
+            "text"
+        ) {
+
+            track =
+                DOM.textTrack;
+
+        } else if (
+
+            element.type === "image" ||
+            element.type === "logo"
+
+        ) {
+
+            track =
+                DOM.graphicsTrack;
+
+        } else {
+
+            track =
+                DOM.mediaTrack;
+        }
+
+
+        if (!track) {
+            continue;
+        }
+
+
+        const item =
+            document.createElement(
+                "div"
+            );
+
+
+        item.className =
+            "timeline-item";
+
+
+        item.dataset.id =
+            element.id;
+
+
+        item.textContent =
+            element.name;
+
+
+        const left =
+            (
+                element.start /
+                state.project.duration
+            ) *
+            100;
+
+
+        const width =
+            (
+                element.duration /
+                state.project.duration
+            ) *
+            100;
+
+
+        item.style.left =
+            `${left}%`;
+
+
+        item.style.width =
+            `${Math.max(
+                width,
+                2
+            )}%`;
+
+
+        if (
+            element.id ===
+            state.selectedId
+        ) {
+
+            item.style.outline =
+                "2px solid #fff";
+        }
+
+
+        item.addEventListener(
+            "click",
+            () => {
+
+                selectElement(
+                    element.id
+                );
+            }
+        );
+
+
+        track.appendChild(
+            item
+        );
+    }
+}
+
+
+/* =========================================================
+   TEMPLATES
+========================================================= */
+
+const templates = {
+
+    sale: {
+
+        name:
+            "Promocja",
+
+        elements: [
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "Nagłówek",
+
+                text:
+                    "PROMOCJA!",
+
+                x:
+                    100,
+
+                y:
+                    260,
+
+                width:
+                    880,
+
+                height:
+                    150,
+
+                fontSize:
+                    90
+            },
+
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "Rabat",
+
+                text:
+                    "-30%",
+
+                x:
+                    150,
+
+                y:
+                    500,
+
+                width:
+                    780,
+
+                height:
+                    220,
+
+                fontSize:
+                    170
+            },
+
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "CTA",
+
+                text:
+                    "KUP TERAZ",
+
+                x:
+                    200,
+
+                y:
+                    900,
+
+                width:
+                    680,
+
+                height:
+                    130,
+
+                fontSize:
+                    58
+            }
+
+        ]
+    },
+
+
+    product: {
+
+        name:
+            "Produkt",
+
+        elements: [
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "Tytuł",
+
+                text:
+                    "NOWY PRODUKT",
+
+                x:
+                    100,
+
+                y:
+                    220,
+
+                width:
+                    880,
+
+                height:
+                    150,
+
+                fontSize:
+                    75
+            },
+
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "Opis",
+
+                text:
+                    "Poznaj nową jakość.",
+
+                x:
+                    120,
+
+                y:
+                    430,
+
+                width:
+                    840,
+
+                height:
+                    120,
+
+                fontSize:
+                    42
+            },
+
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "CTA",
+
+                text:
+                    "SPRAWDŹ TERAZ",
+
+                x:
+                    180,
+
+                y:
+                    900,
+
+                width:
+                    720,
+
+                height:
+                    130,
+
+                fontSize:
+                    52
+            }
+
+        ]
+    },
+
+
+    gaming: {
+
+        name:
+            "Gaming",
+
+        elements: [
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "Gaming",
+
+                text:
+                    "GAME ON!",
+
+                x:
+                    80,
+
+                y:
+                    500,
+
+                width:
+                    920,
+
+                height:
+                    200,
+
+                fontSize:
+                    125
+            },
+
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "CTA",
+
+                text:
+                    "PLAY NOW",
+
+                x:
+                    220,
+
+                y:
+                    900,
+
+                width:
+                    640,
+
+                height:
+                    140,
+
+                fontSize:
+                    65
+            }
+
+        ]
+    },
+
+
+    business: {
+
+        name:
+            "Firma",
+
+        elements: [
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "Firma",
+
+                text:
+                    "TWOJA FIRMA",
+
+                x:
+                    100,
+
+                y:
+                    300,
+
+                width:
+                    880,
+
+                height:
+                    150,
+
+                fontSize:
+                    80
+            },
+
+
+            {
+                type:
+                    "text",
+
+                name:
+                    "Slogan",
+
+                text:
+                    "Profesjonalne rozwiązania.",
+
+                x:
+                    120,
+
+                y:
+                    520,
+
+                width:
+                    840,
+
+                height:
+                    130,
+
+                fontSize:
+                    42
+            }
+
+        ]
+    }
+};
+
+
+function setupTemplates() {
+
+    document
+        .querySelectorAll(
+            ".template-card"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        loadTemplate(
+                            button.dataset.template
+                        );
+                    }
+                );
+            }
+        );
+}
+
+
+function loadTemplate(
+    name
+) {
+
+    const template =
+        templates[name];
+
+
+    if (!template) {
+        return;
+    }
+
+
+    saveHistory();
+
+
+    state.project.name =
+        template.name;
+
+
+    state.project.duration =
+        CONFIG.defaultDuration;
+
+
+    state.elements =
+        template.elements.map(
+            element =>
+                createElement(
+                    element.type,
+                    element
+                )
+        );
+
+
+    state.selectedId =
+        state.elements[0]?.id ||
+        null;
+
+
+    state.playback.currentTime =
+        0;
+
+
+    renderAll();
+
+    scheduleAutosave();
+}
+
+
+/* =========================================================
+   PLAYBACK
+========================================================= */
+
+function startPlayback() {
+
+    if (
+        state.playback.playing
+    ) {
+        return;
+    }
+
+
+    state.playback.playing =
+        true;
+
+
+    state.playback.lastFrame =
+        performance.now();
+
+
+    requestAnimationFrame(
+        playbackLoop
+    );
+}
+
+
+function pausePlayback() {
+
+    state.playback.playing =
+        false;
+}
+
+
+function stopPlayback() {
+
+    state.playback.playing =
+        false;
+
+
+    state.playback.currentTime =
+        0;
+
+
+    updateTimeDisplay();
+}
+
+
+function playbackLoop(
+    timestamp
+) {
+
+    if (
+        !state.playback.playing
+    ) {
+        return;
+    }
+
+
+    const delta =
+        (
+            timestamp -
+            state.playback.lastFrame
+        ) /
+        1000;
+
+
+    state.playback.lastFrame =
+        timestamp;
+
+
+    state.playback.currentTime +=
+        delta;
+
+
+    if (
+        state.playback.currentTime >=
+        state.project.duration
+    ) {
+
+        state.playback.currentTime =
+            0;
+    }
+
+
+    updateTimeDisplay();
+
+
+    updatePlaybackVisibility();
+
+
+    requestAnimationFrame(
+        playbackLoop
+    );
+}
+
+
+/* =========================================================
+   PLAYBACK VISIBILITY
+========================================================= */
+
+function updatePlaybackVisibility() {
+
+    const time =
+        state.playback.currentTime;
+
+
+    DOM.canvas
+        .querySelectorAll(
+            ".adgvmaker-element"
+        )
+        .forEach(
+            node => {
+
+                const element =
+                    getElement(
+                        node.dataset.id
+                    );
+
+
+                if (!element) {
+                    return;
+                }
+
+
+                const visible =
+                    time >= element.start &&
+                    time <
+                    element.start +
+                    element.duration;
+
+
+                node.style.visibility =
+                    visible
+                        ? "visible"
+                        : "hidden";
+            }
+        );
+}
+
+
+/* =========================================================
+   TIME
+========================================================= */
+
+function updateTimeDisplay() {
+
+    if (
+        DOM.currentTime
+    ) {
+
+        DOM.currentTime.textContent =
+            formatTime(
+                state.playback.currentTime
+            );
+    }
+
+
+    if (
+        DOM.duration
+    ) {
+
+        DOM.duration.textContent =
+            formatTime(
+                state.project.duration
+            );
+    }
+}
+
+
+/* =========================================================
+   EXPORT VIDEO
+========================================================= */
+
+function exportVideoPlaceholder() {
+
+    alert(
+        "🎬 Eksport MP4 będzie realizowany przez moduł FFmpeg.wasm."
+    );
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        const active =
+            document.activeElement;
+
+
+        const editing =
+            active &&
+            (
+                active.tagName ===
+                    "INPUT" ||
+
+                active.tagName ===
+                    "TEXTAREA" ||
+
+                active.tagName ===
+                    "SELECT"
+            );
+
+
+        if (
+            !editing &&
+            (
+                event.key ===
+                    "Delete" ||
+
+                event.key ===
+                    "Backspace"
+            )
+        ) {
+
+            deleteSelected();
+        }
+
+
+        if (
+            !editing &&
+            event.ctrlKey &&
+            event.key.toLowerCase() ===
+                "z"
+        ) {
+
+            event.preventDefault();
+
+            undo();
+        }
+
+
+        if (
+            !editing &&
+            event.ctrlKey &&
+            event.key.toLowerCase() ===
+                "y"
+        ) {
+
+            event.preventDefault();
+
+            redo();
+        }
+    }
+);
 
 
 /* =========================================================
@@ -2084,6 +3633,32 @@ function renderAll() {
     renderProperties();
 
     updateTimeDisplay();
+
+    updatePlaybackVisibility();
+}
+
+
+/* =========================================================
+   INITIALIZE CANVAS
+========================================================= */
+
+function initializeCanvas() {
+
+    const format =
+        state.project.format;
+
+
+    DOM.canvas.style.aspectRatio =
+        `${format.width} / ${format.height}`;
+
+
+    if (
+        DOM.formatSelect
+    ) {
+
+        DOM.formatSelect.value =
+            `${format.width}x${format.height}`;
+    }
 }
 
 
@@ -2093,37 +3668,30 @@ function renderAll() {
 
 function initialize() {
 
-    const format =
-        state.project.format;
+    initializeCanvas();
+
+    setupButtons();
+
+    setupFileInputs();
+
+    setupFormat();
+
+    setupTemplates();
 
 
-    if (DOM.canvas) {
-
-        DOM.canvas.dataset.width =
-            format.width;
-
-        DOM.canvas.dataset.height =
-            format.height;
-
-        DOM.canvas.style.aspectRatio =
-            `${format.width} / ${format.height}`;
-    }
-
-
-    if (DOM.formatSelect) {
-
-        DOM.formatSelect.value =
-            `${format.width}x${format.height}`;
-    }
+    const restored =
+        restoreAutosave();
 
 
     renderAll();
 
 
     console.log(
-        "🎬 ADGVMaker initialized — Tech Karol"
+        restored
+            ? "🎬 ADGVMaker v2 Mobile — autosave restored"
+            : "🎬 ADGVMaker v2 Mobile — Tech Karol"
     );
 }
 
 
-initialize();q
+initialize();
