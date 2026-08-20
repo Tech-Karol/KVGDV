@@ -1,2424 +1,832 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<meta
-name="description"
-content="KVGDV — otwarty projekt Tech Karol poświęcony tworzeniu narzędzi, baz danych i wiedzy potrzebnej do budowania własnych systemów bezpieczeństwa."
->
-
-<meta name="theme-color" content="#070a12">
-
-<title>KVGDV — Open Security Project</title>
-
-<style>
-
-/* =========================================================
-   KVGDV
-   Open Security Project
-   Created by Tech Karol
-========================================================= */
-
-:root {
-
-    --background: #070a12;
-    --background2: #0c1120;
-
-    --card: rgba(18,25,42,.78);
-    --card-hover: rgba(25,34,55,.92);
-
-    --border: rgba(255,255,255,.09);
-
-    --text: #f5f7ff;
-    --muted: #9aa7bd;
-
-    --blue: #5aa7ff;
-    --blue-light: #8dc5ff;
-
-    --purple: #8c7cff;
-
-    --green: #45d483;
-
-    --red: #ff6378;
-
-    --radius: 20px;
-
-    --max-width: 1150px;
-}
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-
-    min-height: 100vh;
-
-    font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-    color: var(--text);
-
-    line-height: 1.6;
-
-    background:
-
-        radial-gradient(
-            circle at 10% 0%,
-            rgba(90,167,255,.15),
-            transparent 30%
-        ),
-
-        radial-gradient(
-            circle at 90% 10%,
-            rgba(140,124,255,.13),
-            transparent 28%
-        ),
-
-        var(--background);
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-button {
-    font-family: inherit;
-}
-
-.container {
-
-    width:
-        min(
-            calc(100% - 32px),
-            var(--max-width)
-        );
-
-    margin: 0 auto;
-}
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-nav {
-
-    position: sticky;
-    top: 0;
-
-    z-index: 100;
-
-    background:
-        rgba(7,10,18,.72);
-
-    backdrop-filter:
-        blur(18px);
-
-    border-bottom:
-        1px solid var(--border);
-}
-
-.nav-inner {
-
-    height: 70px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-}
-
-.logo {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 11px;
-
-    font-size: 18px;
-
-    font-weight: 800;
-
-    letter-spacing: -.02em;
-}
-
-.logo-icon {
-
-    width: 39px;
-    height: 39px;
-
-    display: grid;
-
-    place-items: center;
-
-    border-radius: 12px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--blue),
-            var(--purple)
-        );
-
-    box-shadow:
-        0 8px 28px
-        rgba(90,167,255,.25);
-}
-
-.nav-links {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 5px;
-
-    color: var(--muted);
-
-    font-size: 14px;
-}
-
-.nav-links a {
-
-    padding: 9px 12px;
-
-    border-radius: 10px;
-
-    transition: .2s ease;
-}
-
-.nav-links a:hover {
-
-    color: white;
-
-    background:
-        rgba(255,255,255,.06);
-}
-
-.menu-button {
-
-    display: none;
-
-    padding: 8px 11px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 10px;
-
-    background: transparent;
-
-    color: white;
-
-    cursor: pointer;
-
-    font-size: 18px;
-}
-
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero {
-
-    padding:
-        110px 0 85px;
-
-    text-align: center;
-}
-
-.badge {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 7px 12px;
-
-    margin-bottom: 24px;
-
-    border:
-        1px solid
-        rgba(90,167,255,.22);
-
-    border-radius: 999px;
-
-    background:
-        rgba(90,167,255,.07);
-
-    color: #b8d8ff;
-
-    font-size: 13px;
-
-    font-weight: 700;
-}
-
-.status-dot {
-
-    width: 7px;
-    height: 7px;
-
-    border-radius: 50%;
-
-    background:
-        var(--green);
-
-    box-shadow:
-        0 0 13px
-        var(--green);
-}
-
-h1 {
-
-    max-width: 920px;
-
-    margin: 0 auto;
-
-    font-size:
-        clamp(
-            45px,
-            7vw,
-            80px
-        );
-
-    line-height: .98;
-
-    letter-spacing: -.065em;
-}
-
-.gradient {
-
-    background:
-
-        linear-gradient(
-            110deg,
-            white,
-            #9dcaff,
-            #9d90ff
-        );
-
-    -webkit-background-clip: text;
-
-    background-clip: text;
-
-    color: transparent;
-}
-
-.hero-description {
-
-    max-width: 760px;
-
-    margin: 25px auto 0;
-
-    color: var(--muted);
-
-    font-size: 18px;
-}
-
-.buttons {
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    gap: 12px;
-
-    flex-wrap: wrap;
-
-    margin-top: 32px;
-}
-
-.button {
-
-    min-height: 46px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 8px;
-
-    padding: 0 19px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 12px;
-
-    font-size: 14px;
-
-    font-weight: 750;
-
-    transition: .2s ease;
-}
-
-.button:hover {
-
-    transform:
-        translateY(-2px);
-}
-
-.primary {
-
-    color: #06101e;
-
-    background:
-
-        linear-gradient(
-            135deg,
-            var(--blue-light),
-            #9d91ff
-        );
-
-    border: none;
-}
-
-.secondary {
-
-    background:
-        rgba(255,255,255,.04);
-}
-
-
-/* =========================================================
-   STATS
-========================================================= */
-
-.stats {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap: 12px;
-
-    margin-bottom: 90px;
-}
-
-.stat {
-
-    padding: 23px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 18px;
-
-    background: var(--card);
-}
-
-.stat strong {
-
-    display: block;
-
-    font-size: 27px;
-
-    letter-spacing: -.04em;
-}
-
-.stat span {
-
-    color: var(--muted);
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   SECTIONS
-========================================================= */
-
-section {
-
-    padding:
-        45px 0 90px;
-
-    scroll-margin-top: 85px;
-}
-
-.section-title {
-
-    margin-bottom: 32px;
-}
-
-.kicker {
-
-    margin-bottom: 8px;
-
-    color: #82bdff;
-
-    font-size: 12px;
-
-    text-transform: uppercase;
-
-    letter-spacing: .15em;
-
-    font-weight: 800;
-}
-
-h2 {
-
-    font-size:
-        clamp(
-            30px,
-            4vw,
-            46px
-        );
-
-    line-height: 1.05;
-
-    letter-spacing: -.045em;
-}
-
-.section-title p {
-
-    max-width: 780px;
-
-    margin-top: 12px;
-
-    color: var(--muted);
-}
-
-
-/* =========================================================
-   CARDS
-========================================================= */
-
-.cards {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap: 15px;
-}
-
-.card {
-
-    padding: 26px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    background:
-
-        linear-gradient(
-            180deg,
-            rgba(20,29,48,.9),
-            rgba(13,20,35,.85)
-        );
-
-    transition: .25s ease;
-}
-
-.card:hover {
-
-    transform:
-        translateY(-4px);
-
-    background:
-        var(--card-hover);
-
-    border-color:
-        rgba(90,167,255,.2);
-}
-
-.icon {
-
-    width: 45px;
-    height: 45px;
-
-    display: grid;
-
-    place-items: center;
-
-    margin-bottom: 17px;
-
-    border-radius: 13px;
-
-    background:
-        rgba(90,167,255,.09);
-
-    font-size: 21px;
-}
-
-.card h3 {
-
-    margin-bottom: 7px;
-
-    font-size: 18px;
-}
-
-.card p {
-
-    color: var(--muted);
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   DATABASE
-========================================================= */
-
-.database {
-
-    display: grid;
-
-    grid-template-columns:
-        1.1fr .9fr;
-
-    gap: 18px;
-}
-
-.code {
-
-    overflow: hidden;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    background: #050810;
-}
-
-.code-header {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding: 13px 17px;
-
-    border-bottom:
-        1px solid var(--border);
-
-    color: var(--muted);
-
-    font-size: 12px;
-}
-
-pre {
-
-    padding: 23px;
-
-    overflow-x: auto;
-
-    font:
-        13px/1.8
-        Consolas,
-        "Courier New",
-        monospace;
-
-    color: #cbd6e9;
-}
-
-.json-key {
-    color: #82c3ff;
-}
-
-.json-string {
-    color: #9de2ac;
-}
-
-.json-number {
-    color: #d3adff;
-}
-
-.info {
-
-    display: grid;
-
-    gap: 11px;
-}
-
-.info-item {
-
-    display: flex;
-
-    gap: 12px;
-
-    padding: 15px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 14px;
-
-    background:
-        rgba(255,255,255,.025);
-}
-
-.info-item b {
-
-    display: block;
-
-    font-size: 14px;
-}
-
-.info-item span {
-
-    display: block;
-
-    color: var(--muted);
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   STEPS
-========================================================= */
-
-.steps {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap: 12px;
-}
-
-.step {
-
-    padding: 23px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 18px;
-
-    background: var(--card);
-}
-
-.step-number {
-
-    margin-bottom: 15px;
-
-    color: #83bcff;
-
-    font:
-        800 13px
-        monospace;
-}
-
-.step h3 {
-
-    margin-bottom: 6px;
-
-    font-size: 16px;
-}
-
-.step p {
-
-    color: var(--muted);
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   CREATOR
-========================================================= */
-
-.creator {
-
-    display: grid;
-
-    grid-template-columns:
-        .9fr 1.1fr;
-
-    gap: 18px;
-}
-
-.creator-card {
-
-    padding: 30px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    background: var(--card);
-}
-
-.creator-avatar {
-
-    width: 65px;
-    height: 65px;
-
-    display: grid;
-
-    place-items: center;
-
-    margin-bottom: 18px;
-
-    border-radius: 18px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--blue),
-            var(--purple)
-        );
-
-    font-size: 28px;
-}
-
-.creator-card h3 {
-
-    margin-bottom: 8px;
-
-    font-size: 23px;
-}
-
-.creator-card p {
-
-    color: var(--muted);
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   LICENSE
-========================================================= */
-
-.license {
-
-    display: grid;
-
-    grid-template-columns:
-        1fr .8fr;
-
-    gap: 18px;
-}
-
-.license-box {
-
-    padding: 30px;
-
-    border:
-        1px solid
-        rgba(90,167,255,.2);
-
-    border-radius: var(--radius);
-
-    background:
-        rgba(16,24,42,.9);
-}
-
-.license-box h3 {
-
-    margin-bottom: 10px;
-
-    font-size: 23px;
-}
-
-.license-box p,
-.license-box li {
-
-    color: var(--muted);
-
-    font-size: 14px;
-}
-
-.license-box ul {
-
-    display: grid;
-
-    gap: 8px;
-
-    margin:
-        18px 0 0 20px;
-}
-
-.notice {
-
-    padding: 25px;
-
-    border:
-        1px solid
-        rgba(69,212,131,.2);
-
-    border-radius: var(--radius);
-
-    background:
-        rgba(69,212,131,.05);
-}
-
-.notice h3 {
-
-    margin-bottom: 8px;
-}
-
-.notice p {
-
-    color: var(--muted);
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   FAQ
-========================================================= */
-
-.faq {
-
-    display: grid;
-
-    gap: 10px;
-}
-
-details {
-
-    overflow: hidden;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 15px;
-
-    background:
-        rgba(255,255,255,.025);
-}
-
-summary {
-
-    padding: 17px;
-
-    cursor: pointer;
-
-    font-weight: 700;
-
-    font-size: 14px;
-}
-
-details p {
-
-    padding:
-        0 17px 18px;
-
-    color: var(--muted);
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-footer {
-
-    margin-top: 20px;
-
-    padding:
-        40px 0 50px;
-
-    border-top:
-        1px solid var(--border);
-
-    color: var(--muted);
-
-    font-size: 13px;
-}
-
-.footer {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 25px;
-}
-
-.footer-links {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    flex-wrap: wrap;
-}
-
-.footer-links a {
-
-    padding:
-        8px 10px;
-
-    border-radius: 9px;
-
-    transition: .2s ease;
-}
-
-.footer-links a:hover {
-
-    color: white;
-
-    background:
-        rgba(255,255,255,.05);
-}
-
-
-/* =========================================================
-   YOUTUBE
-========================================================= */
-
-.youtube {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 8px;
-
-    padding:
-        9px 13px !important;
-
-    border:
-        1px solid
-        rgba(255,80,80,.2);
-
-    border-radius: 10px;
-
-    color: #ff7777 !important;
-
-    background:
-        rgba(255,80,80,.05);
-
-    transition: .2s ease;
-}
-
-.youtube:hover {
-
-    transform:
-        translateY(-2px);
-
-    background:
-        rgba(255,80,80,.1) !important;
-}
-
-.youtube-icon {
-
-    font-size: 17px;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media(max-width:850px) {
-
-    .menu-button {
-        display: block;
-    }
-
-    .nav-links {
-
-        display: none;
-
-        position: absolute;
-
-        left: 15px;
-        right: 15px;
-
-        top: 70px;
-
-        flex-direction: column;
-
-        padding: 10px;
-
-        border:
-            1px solid var(--border);
-
-        border-radius: 15px;
-
-        background: #0c1220;
-    }
-
-    .nav-links.open {
-        display: flex;
-    }
-
-    .stats,
-    .cards,
-    .steps {
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-    .database,
-    .license,
-    .creator {
-
-        grid-template-columns: 1fr;
-    }
-}
-
-
-@media(max-width:580px) {
-
-    .container {
-
-        width:
-            calc(100% - 22px);
-    }
-
-    .hero {
-
-        padding:
-            75px 0 65px;
-    }
-
-    h1 {
-
-        font-size: 48px;
-    }
-
-    .hero-description {
-
-        font-size: 16px;
-    }
-
-    .stats,
-    .cards,
-    .steps {
-
-        grid-template-columns: 1fr;
-    }
-
-    .footer {
-
-        flex-direction: column;
-
-        align-items: flex-start;
-    }
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KVGDV — Developer Launcher</title>
+    <meta name="description" content="KVGDV — szybki i nowoczesny launcher dla programistów. Zarządzaj projektami, terminalami i narzędziami z jednego miejsca.">
+
+    <style>
+        :root {
+            --bg: #08090d;
+            --bg-secondary: #0d0f14;
+            --card: rgba(255,255,255,0.045);
+            --card-hover: rgba(255,255,255,0.075);
+            --border: rgba(255,255,255,0.09);
+            --text: #f5f7fa;
+            --muted: #9298a5;
+            --accent: #7c5cff;
+            --accent-2: #00d4ff;
+            --success: #37d67a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 50% -20%, rgba(124,92,255,.20), transparent 35%),
+                radial-gradient(circle at 80% 20%, rgba(0,212,255,.08), transparent 25%),
+                var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1120px, calc(100% - 40px));
+            margin: auto;
+        }
+
+        /* NAVBAR */
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            background: rgba(8,9,13,.72);
+            backdrop-filter: blur(18px);
+        }
+
+        .nav-inner {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            font-size: 15px;
+            box-shadow: 0 0 30px rgba(124,92,255,.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .nav-links a {
+            transition: .2s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-github {
+            padding: 9px 15px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: white !important;
+        }
+
+        /* HERO */
+
+        .hero {
+            min-height: 850px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            padding-top: 70px;
+        }
+
+        .hero-content {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 13px;
+            border: 1px solid rgba(124,92,255,.25);
+            border-radius: 999px;
+            background: rgba(124,92,255,.08);
+            color: #c8bcff;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        h1 {
+            font-size: clamp(60px, 10vw, 110px);
+            line-height: .95;
+            letter-spacing: -6px;
+            font-weight: 900;
+            margin-bottom: 28px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(110deg, #fff 20%, #a99aff 55%, #66e7ff 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 650px;
+            margin: auto;
+            color: var(--muted);
+            font-size: 18px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 35px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-width: 150px;
+            padding: 13px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: .2s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #08090d;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 35px rgba(255,255,255,.15);
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.03);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,.08);
+            transform: translateY(-2px);
+        }
+
+        /* APP PREVIEW */
+
+        .preview-wrapper {
+            margin-top: 75px;
+            perspective: 1000px;
+        }
+
+        .app-preview {
+            position: relative;
+            max-width: 900px;
+            margin: auto;
+            border: 1px solid rgba(255,255,255,.13);
+            border-radius: 15px;
+            overflow: hidden;
+            background: #0b0d12;
+            box-shadow:
+                0 40px 100px rgba(0,0,0,.6),
+                0 0 100px rgba(124,92,255,.10);
+            transform: rotateX(4deg);
+        }
+
+        .window-bar {
+            height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 0 15px;
+            border-bottom: 1px solid rgba(255,255,255,.07);
+            background: #101219;
+        }
+
+        .window-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #444;
+        }
+
+        .window-title {
+            margin-left: 10px;
+            font-size: 12px;
+            color: #777e8c;
+        }
+
+        .app-body {
+            display: grid;
+            grid-template-columns: 190px 1fr;
+            min-height: 430px;
+        }
+
+        .sidebar {
+            padding: 20px 12px;
+            border-right: 1px solid rgba(255,255,255,.06);
+            background: #0d0f14;
+        }
+
+        .sidebar-logo {
+            font-size: 18px;
+            font-weight: 800;
+            padding: 5px 10px 20px;
+        }
+
+        .side-item {
+            padding: 9px 11px;
+            border-radius: 7px;
+            color: #777e8c;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .side-item.active {
+            background: rgba(124,92,255,.13);
+            color: #bdb0ff;
+        }
+
+        .dashboard {
+            padding: 25px;
+            text-align: left;
+        }
+
+        .dashboard h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-subtitle {
+            color: #6f7582;
+            font-size: 11px;
+            margin-bottom: 22px;
+        }
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .project {
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 10px;
+            background: rgba(255,255,255,.025);
+        }
+
+        .project-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .project-status {
+            color: #6f7582;
+            font-size: 10px;
+            margin-top: 7px;
+        }
+
+        .status {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .online {
+            background: var(--success);
+            box-shadow: 0 0 7px var(--success);
+        }
+
+        .offline {
+            background: #555b68;
+        }
+
+        /* FEATURES */
+
+        section {
+            padding: 110px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto 55px;
+        }
+
+        .section-header span {
+            color: #a99aff;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(34px, 5vw, 52px);
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin: 10px 0 15px;
+        }
+
+        .section-header p {
+            color: var(--muted);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .feature {
+            padding: 28px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--card);
+            transition: .25s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            background: var(--card-hover);
+            border-color: rgba(124,92,255,.3);
+        }
+
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: rgba(124,92,255,.12);
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+
+        .feature h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* TECH */
+
+        .tech {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 35px;
+        }
+
+        .tech-item {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #aeb4c0;
+            background: rgba(255,255,255,.025);
+            font-size: 13px;
+        }
+
+        /* CTA */
+
+        .cta {
+            padding: 90px 30px;
+            border: 1px solid rgba(124,92,255,.18);
+            border-radius: 20px;
+            text-align: center;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(124,92,255,.15), transparent 50%),
+                rgba(255,255,255,.025);
+        }
+
+        .cta h2 {
+            font-size: clamp(32px, 5vw, 55px);
+            letter-spacing: -2px;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            padding: 35px 0;
+            border-top: 1px solid rgba(255,255,255,.06);
+            color: #666c78;
+            font-size: 13px;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 800px) {
+            .nav-links a:not(.nav-github) {
+                display: none;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .app-body {
+                grid-template-columns: 130px 1fr;
+            }
+
+            .projects {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                min-height: 760px;
+            }
+
+            h1 {
+                letter-spacing: -4px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .container {
+                width: min(100% - 24px, 1120px);
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .app-body {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard {
+                padding: 18px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
-
 
 <body>
 
-
-<!-- =========================================================
-     NAVIGATION
-========================================================= -->
-
-<nav>
-
-<div class="container nav-inner">
-
-
-<a href="#home" class="logo">
-
-<span class="logo-icon">
-🛡️
-</span>
-
-<span>
-KVGDV
-</span>
-
-</a>
-
-
-<button
-class="menu-button"
-id="menuButton"
-aria-label="Otwórz menu">
-
-☰
-
-</button>
-
-
-<div
-class="nav-links"
-id="navLinks">
-
-<a href="#about">
-O projekcie
-</a>
-
-<a href="#database">
-Baza
-</a>
-
-<a href="#how">
-Co znajdziesz
-</a>
-
-<a href="#creator">
-Twórca
-</a>
-
-<a href="#license">
-Licencja
-</a>
-
-<a href="#faq">
-FAQ
-</a>
-
-</div>
-
-</div>
-
-</nav>
-
-
-
-<main>
-
-
-<!-- =========================================================
-     HERO
-========================================================= -->
-
-<section
-class="hero"
-id="home">
-
-<div class="container">
-
-
-<div class="badge">
-
-<span class="status-dot"></span>
-
-Open • Free • Community
-
-</div>
-
-
-<h1>
-
-Twórz własne
-<span class="gradient">
-systemy bezpieczeństwa.
-</span>
-
-</h1>
-
-
-<p class="hero-description">
-
-<strong>KVGDV</strong> to otwarty projekt tworzony przez
-<strong>Tech Karol</strong>, którego celem jest rozwijanie
-wiedzy, narzędzi i publicznych zasobów pomagających
-programistom tworzyć własne antywirusy oraz inne
-systemy bezpieczeństwa.
-
-</p>
-
-
-<div class="buttons">
-
-
-<!--
-ZMIEŃ LINK NA SWOJE REPOZYTORIUM GITHUB
--->
-
-<a
-class="button primary"
-href="https://raw.githubusercontent.com/Tech-Karol/KVGDV/refs/heads/main/DataBase/2026/1.0/Malware-Base.json"
-target="_blank"
-rel="noopener">
-
-↗ GitHub projektu
-
-</a>
-
-
-<a
-class="button secondary"
-href="#about">
-
-Dowiedz się więcej ↓
-
-</a>
-
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- =========================================================
-     STATS
-========================================================= -->
-
-<div class="container stats">
-
-
-<div class="stat">
-
-<strong>
-0 zł
-</strong>
-
-<span>
-Darmowe zasoby
-</span>
-
-</div>
-
-
-<div class="stat">
-
-<strong>
-Open
-</strong>
-
-<span>
-Publiczny projekt
-</span>
-
-</div>
-
-
-<div class="stat">
-
-<strong>
-JSON
-</strong>
-
-<span>
-Otwarte dane
-</span>
-
-</div>
-
-
-<div class="stat">
-
-<strong>
-Tech Karol
-</strong>
-
-<span>
-Twórca projektu
-</span>
-
-</div>
-
-
-</div>
-
-
-
-<!-- =========================================================
-     ABOUT
-========================================================= -->
-
-<section id="about">
-
-<div class="container">
-
-
-<div class="section-title">
-
-<div class="kicker">
-01 / O projekcie
-</div>
-
-
-<h2>
-
-Miejsce do nauki,
-eksperymentowania
-i tworzenia.
-
-</h2>
-
-
-<p>
-
-KVGDV nie jest kolejnym gotowym antywirusem.
-To projekt skupiający się na problemach związanych
-z tworzeniem oprogramowania bezpieczeństwa.
-
-<br><br>
-
-Projekt ma dostarczać programistom wiedzy,
-przykładów, publicznych danych i narzędzi,
-które mogą wykorzystać podczas tworzenia
-własnych rozwiązań.
-
-</p>
-
-</div>
-
-
-
-<div class="cards">
-
-
-<article class="card">
-
-<div class="icon">
-📚
-</div>
-
-<h3>
-Wiedza
-</h3>
-
-<p>
-
-Materiały dotyczące tworzenia antywirusów,
-systemów detekcji, sygnatur, hashy,
-analizy plików oraz innych zagadnień
-związanych z bezpieczeństwem.
-
-</p>
-
-</article>
-
-
-
-<article class="card">
-
-<div class="icon">
-🗄️
-</div>
-
-<h3>
-Bazy danych
-</h3>
-
-<p>
-
-Publiczne i uporządkowane dane,
-które mogą zostać wykorzystane
-przez inne projekty bezpieczeństwa
-zgodnie z warunkami licencji.
-
-</p>
-
-</article>
-
-
-
-<article class="card">
-
-<div class="icon">
-🧩
-</div>
-
-<h3>
-Narzędzia
-</h3>
-
-<p>
-
-Przykłady, eksperymenty oraz narzędzia
-pomagające programistom budować
-własne rozwiązania ochronne.
-
-</p>
-
-</article>
-
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- =========================================================
-     DATABASE
-========================================================= -->
-
-<section id="database">
-
-<div class="container">
-
-
-<div class="section-title">
-
-<div class="kicker">
-02 / KVGDV Database
-</div>
-
-
-<h2>
-
-Publiczna baza
-dla twórców.
-
-</h2>
-
-
-<p>
-
-Jednym z elementów KVGDV jest publiczna baza
-informacji o zagrożeniach.
-
-<br><br>
-
-Programista może pobrać dane i wykorzystać je
-we własnym projekcie. Baza sama w sobie nie
-musi otrzymywać plików użytkownika ani wyników
-skanowania.
-
-</p>
-
-</div>
-
-
-
-<div class="database">
-
-
-<div class="code">
-
-
-<div class="code-header">
-
-<span>
-database.json
-</span>
-
-<span>
-KVGDV v0.1.0
-</span>
-
-</div>
-
-
-<pre>{
-  <span class="json-key">"name"</span>:
-    <span class="json-string">"Example.Malware"</span>,
-
-  <span class="json-key">"type"</span>:
-    <span class="json-string">"trojan"</span>,
-
-  <span class="json-key">"sha256"</span>:
-    <span class="json-string">"example_hash"</span>,
-
-  <span class="json-key">"severity"</span>:
-    <span class="json-string">"high"</span>,
-
-  <span class="json-key">"author"</span>:
-    <span class="json-string">"KVGDV"</span>,
-
-  <span class="json-key">"version"</span>:
-    <span class="json-number">1</span>
-}</pre>
-
-
-</div>
-
-
-
-<div class="info">
-
-
-<div class="info-item">
-
-<div>
-📦
-</div>
-
-<div>
-
-<b>
-Prosty format
-</b>
-
-<span>
-
-JSON pozwala łatwo wykorzystać
-dane w różnych językach programowania.
-
-</span>
-
-</div>
-
-</div>
-
-
-
-<div class="info-item">
-
-<div>
-🔄
-</div>
-
-<div>
-
-<b>
-Aktualizacje
-</b>
-
-<span>
-
-Baza może być regularnie rozwijana
-i otrzymywać nowe wpisy.
-
-</span>
-
-</div>
-
-</div>
-
-
-
-<div class="info-item">
-
-<div>
-🌐
-</div>
-
-<div>
-
-<b>
-Publiczny dostęp
-</b>
-
-<span>
-
-Dane mogą być udostępniane przez
-publiczne repozytorium projektu.
-
-</span>
-
-</div>
-
-</div>
-
-
-
-<div class="info-item">
-
-<div>
-👨‍💻
-</div>
-
-<div>
-
-<b>
-Dla programistów
-</b>
-
-<span>
-
-Twórcy mogą wykorzystywać bazę
-w swoich projektach zgodnie z licencją.
-
-</span>
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- =========================================================
-     WHAT YOU CAN FIND
-========================================================= -->
-
-<section id="how">
-
-<div class="container">
-
-
-<div class="section-title">
-
-<div class="kicker">
-03 / Co znajdziesz
-</div>
-
-
-<h2>
-
-Wszystko związane
-z tworzeniem systemów ochrony.
-
-</h2>
-
-
-<p>
-
-KVGDV będzie stopniowo rozwijane.
-Kolejne elementy projektu mogą pojawiać się
-wraz z jego rozwojem.
-
-</p>
-
-</div>
-
-
-
-<div class="steps">
-
-
-<article class="step">
-
-<div class="step-number">
-01
-</div>
-
-<h3>
-Dokumentacja
-</h3>
-
-<p>
-
-Materiały pomagające zrozumieć,
-jak działają poszczególne elementy
-systemów bezpieczeństwa.
-
-</p>
-
-</article>
-
-
-
-<article class="step">
-
-<div class="step-number">
-02
-</div>
-
-<h3>
-Bazy danych
-</h3>
-
-<p>
-
-Publiczne dane możliwe do wykorzystania
-przez własne narzędzia.
-
-</p>
-
-</article>
-
-
-
-<article class="step">
-
-<div class="step-number">
-03
-</div>
-
-<h3>
-Projekty
-</h3>
-
-<p>
-
-Eksperymenty i przykładowe rozwiązania
-związane z bezpieczeństwem.
-
-</p>
-
-</article>
-
-
-
-<article class="step">
-
-<div class="step-number">
-04
-</div>
-
-<h3>
-Społeczność
-</h3>
-
-<p>
-
-Projekt może być rozwijany przez
-osoby zainteresowane programowaniem
-i cyberbezpieczeństwem.
-
-</p>
-
-</article>
-
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- =========================================================
-     CREATOR
-========================================================= -->
-
-<section id="creator">
-
-<div class="container">
-
-
-<div class="section-title">
-
-<div class="kicker">
-04 / Twórca
-</div>
-
-
-<h2>
-KVGDV tworzy Tech Karol.
-</h2>
-
-
-<p>
-
-KVGDV jest niezależnym projektem hobbystycznym
-rozwijanym przez <strong>Tech Karol</strong>.
-
-<br><br>
-
-Celem projektu jest eksperymentowanie z tworzeniem
-oprogramowania, baz danych oraz rozwiązań związanych
-z bezpieczeństwem komputerowym.
-
-</p>
-
-</div>
-
-
-
-<div class="creator">
-
-
-<div class="creator-card">
-
-<div class="creator-avatar">
-👨‍💻
-</div>
-
-<h3>
-Tech Karol
-</h3>
-
-<p>
-
-Twórca i główny rozwijający projekt KVGDV.
-
-Projekt jest rozwijany hobbystycznie
-i ma służyć przede wszystkim nauce,
-eksperymentowaniu oraz udostępnianiu
-przydatnych zasobów innym programistom.
-
-</p>
-
-</div>
-
-
-
-<div class="creator-card">
-
-<h3>
-Dlaczego powstaje KVGDV?
-</h3>
-
-<p>
-
-Tworzenie antywirusa lub własnego systemu
-bezpieczeństwa może być trudne.
-
-KVGDV ma pomagać rozwiązywać część problemów,
-które pojawiają się podczas tworzenia takich
-projektów.
-
-<br><br>
-
-Zamiast tworzyć zamknięte rozwiązanie,
-projekt skupia się na udostępnianiu wiedzy,
-danych i narzędzi, które inni mogą wykorzystać
-we własnych projektach.
-
-</p>
-
-</div>
-
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- =========================================================
-     LICENSE
-========================================================= -->
-
-<section id="license">
-
-<div class="container">
-
-
-<div class="section-title">
-
-<div class="kicker">
-05 / Licencja
-</div>
-
-
-<h2>
-Darmowe zasoby dla twórców.
-</h2>
-
-
-<p>
-
-KVGDV jest projektem hobbystycznym.
-Dokładne prawa dotyczące korzystania,
-kopiowania i modyfikowania poszczególnych
-elementów projektu określa aktualna licencja.
-
-</p>
-
-</div>
-
-
-
-<div class="license">
-
-
-<div class="license-box">
-
-
-<h3>
-KVGDV Database
-</h3>
-
-
-<p>
-
-Celem projektu jest udostępnianie zasobów
-związanych z bezpieczeństwem bez pobierania
-opłat od osób, które chcą się uczyć lub
-tworzyć własne projekty.
-
-</p>
-
-
-<ul>
-
-<li>
-Korzystanie z zasobów może być bezpłatne.
-</li>
-
-<li>
-Podanie autora KVGDV jest mile widziane.
-</li>
-
-<li>
-Atrybucja nie jest wymagana, jeśli licencja
-danego zasobu nie nakłada takiego obowiązku.
-</li>
-
-<li>
-Szczegółowe zasady znajdują się
-w pliku LICENSE.
-</li>
-
-</ul>
-
-
-</div>
-
-
-
-<div class="notice">
-
-
-<h3>
-🙏 Wspomnij o KVGDV
-</h3>
-
-
-<p>
-
-Nie wymagamy podawania autora tam,
-gdzie licencja tego nie wymaga.
-
-<br><br>
-
-Jeśli jednak korzystasz z KVGDV,
-będzie nam bardzo miło, jeśli wspomnisz
-o projekcie lub dodasz link do jego
-repozytorium.
-
-</p>
-
-
-</div>
-
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- =========================================================
-     FAQ
-========================================================= -->
-
-<section id="faq">
-
-<div class="container">
-
-
-<div class="section-title">
-
-<div class="kicker">
-06 / FAQ
-</div>
-
-
-<h2>
-Najczęstsze pytania.
-</h2>
-
-</div>
-
-
-
-<div class="faq">
-
-
-<details>
-
-<summary>
-Czym właściwie jest KVGDV?
-</summary>
-
-<p>
-
-KVGDV jest projektem skupiającym się
-na tworzeniu narzędzi, baz danych,
-dokumentacji i innych zasobów związanych
-z tworzeniem systemów bezpieczeństwa.
-
-</p>
-
-</details>
-
-
-
-<details>
-
-<summary>
-Czy KVGDV jest antywirusem?
-</summary>
-
-<p>
-
-Nie.
-
-KVGDV jest projektem i zestawem zasobów
-przeznaczonych między innymi dla osób,
-które chcą tworzyć własne antywirusy
-i narzędzia bezpieczeństwa.
-
-</p>
-
-</details>
-
-
-
-<details>
-
-<summary>
-Czy mogę wykorzystać KVGDV Database?
-</summary>
-
-<p>
-
-Możesz korzystać z bazy zgodnie
-z warunkami licencji przypisanej
-do danego zasobu.
-
-</p>
-
-</details>
-
-
-
-<details>
-
-<summary>
-Czy muszę podawać autora?
-</summary>
-
-<p>
-
-Jeśli licencja danego zasobu nie wymaga
-atrybucji, podanie autora jest dobrowolne.
-
-Jest jednak mile widziane.
-
-</p>
-
-</details>
-
-
-
-<details>
-
-<summary>
-Czy projekt jest płatny?
-</summary>
-
-<p>
-
-Założeniem KVGDV jest tworzenie bezpłatnych
-i publicznie dostępnych zasobów.
-
-Konkretne warunki określa licencja
-każdego elementu projektu.
-
-</p>
-
-</details>
-
-
-
-<details>
-
-<summary>
-Kto stworzył KVGDV?
-</summary>
-
-<p>
-
-Projekt KVGDV został stworzony
-i jest rozwijany przez Tech Karol.
-
-</p>
-
-</details>
-
-
-
-<details>
-
-<summary>
-Czy KVGDV gwarantuje wykrycie każdego wirusa?
-</summary>
-
-<p>
-
-Nie.
-
-Żadna baza danych ani pojedynczy mechanizm
-detekcji nie powinien być przedstawiany jako
-gwarancja wykrycia wszystkich zagrożeń.
-
-</p>
-
-</details>
-
-
-</div>
-
-</div>
-
-</section>
-
-
-</main>
-
-
-
-<!-- =========================================================
-     FOOTER
-========================================================= -->
-
-<footer>
-
-<div class="container footer">
-
-
-<div>
-
-<strong
-style="color:white;font-size:15px;">
-
-KVGDV
-
-</strong>
-
-<br>
-
-Open Security Project
-
-<br>
-
-Created by
-
-<strong style="color:white;">
-Tech Karol
-</strong>
-
-<br><br>
-
-© 2026 KVGDV
-
-</div>
-
-
-
-<div class="footer-links">
-
-
-<a href="#about">
-O projekcie
-</a>
-
-
-<a href="#database">
-Baza
-</a>
-
-
-<a href="#license">
-Licencja
-</a>
-
-
-<!--
-=========================================================
-GITHUB
-ZMIEŃ LINK NA SWOJE REPOZYTORIUM
-=========================================================
--->
-
-<a
-href="https://github.com/Tech-Karol/KVGDV/tree/main/DataBase/2026/1.0"
-target="_blank"
-rel="noopener">
-
-GitHub KVGDV DataBase ↗
-
-</a>
-
-
-
-<!--
-=========================================================
-YOUTUBE
-ZMIEŃ "#" NA LINK DO SWOJEGO KANAŁU YOUTUBE
-=========================================================
--->
-
-<a
-class="youtube"
-href="https://youtube.com/@tech-karol?si=o5i4V2Kowuz7iCn0"
-target="_blank"
-rel="noopener"
-aria-label="YouTube Tech Karol">
-
-<span class="youtube-icon">
-▶
-</span>
-
-YouTube
-
-</a>
-
-
-</div>
-
-
-</div>
-
-</footer>
-
-
-
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
-
-<script>
-
-
-/* =========================================================
-   MENU MOBILNE
-========================================================= */
-
-const menuButton =
-document.getElementById("menuButton");
-
-const navLinks =
-document.getElementById("navLinks");
-
-
-menuButton.addEventListener(
-"click",
-() => {
-
-navLinks.classList.toggle("open");
-
-}
-);
-
-
-/* =========================================================
-   ZAMYKANIE MENU
-========================================================= */
-
-navLinks
-.querySelectorAll("a")
-.forEach(link => {
-
-link.addEventListener(
-"click",
-() => {
-
-navLinks.classList.remove("open");
-
-}
-);
-
-});
-
-
-/* =========================================================
-   ANIMACJE
-========================================================= */
-
-const animatedElements =
-document.querySelectorAll(
-".card, .step, .stat, .info-item, details, .creator-card"
-);
-
-
-const observer =
-new IntersectionObserver(
-entries => {
-
-entries.forEach(entry => {
-
-if(entry.isIntersecting) {
-
-entry.target.style.opacity = "1";
-
-entry.target.style.transform =
-"translateY(0)";
-
-}
-
-});
-
-},
-{
-threshold: .08
-}
-);
-
-
-animatedElements.forEach(element => {
-
-element.style.opacity = "0";
-
-element.style.transform =
-"translateY(18px)";
-
-element.style.transition =
-"opacity .5s ease, transform .5s ease";
-
-observer.observe(element);
-
-});
-
-
-/* =========================================================
-   KONSOLA
-========================================================= */
-
-console.log(
-"KVGDV — Open Security Project"
-);
-
-console.log(
-"Created by Tech Karol"
-);
-
-
-</script>
-
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="container nav-inner">
+            <a href="#" class="logo">
+                <div class="logo-mark">K</div>
+                KVGDV
+            </a>
+
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="https://github.com/" class="nav-github" target="_blank">
+                    GitHub ↗
+                </a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- HERO -->
+    <main>
+
+        <section class="hero">
+            <div class="container hero-content">
+
+                <div class="badge">
+                    <span class="badge-dot"></span>
+                    Developer tools, simplified
+                </div>
+
+                <h1>
+                    <span class="gradient-text">KVGDV</span>
+                </h1>
+
+                <p class="hero-description">
+                    A modern developer launcher designed to keep your projects,
+                    terminals and development tools in one fast and simple place.
+                </p>
+
+                <div class="buttons">
+                    <!-- ZMIEŃ LINK NA PRAWDZIWY LINK DO WYDANIA -->
+                    <a href="https://github.com/" class="btn btn-primary" target="_blank">
+                        ⬇ Download
+                    </a>
+
+                    <a href="https://github.com/" class="btn btn-secondary" target="_blank">
+                        ◇ View on GitHub
+                    </a>
+                </div>
+
+                <!-- APP PREVIEW -->
+                <div class="preview-wrapper">
+                    <div class="app-preview">
+
+                        <div class="window-bar">
+                            <span class="window-dot"></span>
+                            <span class="window-dot"></span>
+                            <span class="window-dot"></span>
+                            <span class="window-title">KVGDV</span>
+                        </div>
+
+                        <div class="app-body">
+
+                            <aside class="sidebar">
+                                <div class="sidebar-logo">KVGDV</div>
+
+                                <div class="side-item active">⌂ Dashboard</div>
+                                <div class="side-item">▣ Projects</div>
+                                <div class="side-item">⌘ Terminal</div>
+                                <div class="side-item">◈ Tools</div>
+                                <div class="side-item">◉ Git</div>
+                                <div class="side-item">⚙ Settings</div>
+                            </aside>
+
+                            <div class="dashboard">
+                                <h3>Projects</h3>
+                                <div class="dashboard-subtitle">
+                                    Your development environment
+                                </div>
+
+                                <div class="projects">
+
+                                    <div class="project">
+                                        <div class="project-name">
+                                            <span class="status online"></span>
+                                            MyWebsite
+                                        </div>
+                                        <div class="project-status">
+                                            Node.js · localhost:3000
+                                        </div>
+                                    </div>
+
+                                    <div class="project">
+                                        <div class="project-name">
+                                            <span class="status offline"></span>
+                                            DiscordBot
+                                        </div>
+                                        <div class="project-status">
+                                            Python · Stopped
+                                        </div>
+                                    </div>
+
+                                    <div class="project">
+                                        <div class="project-name">
+                                            <span class="status online"></span>
+                                            API Server
+                                        </div>
+                                        <div class="project-status">
+                                            Node.js · localhost:8080
+                                        </div>
+                                    </div>
+
+                                    <div class="project">
+                                        <div class="project-name">
+                                            <span class="status offline"></span>
+                                            LinuxTool
+                                        </div>
+                                        <div class="project-status">
+                                            Rust · Stopped
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- FEATURES -->
+        <section id="features">
+            <div class="container">
+
+                <div class="section-header">
+                    <span>Features</span>
+                    <h2>Everything you need.<br>One launcher.</h2>
+                    <p>
+                        KVGDV gives you a single place to manage the projects
+                        and tools you use every day.
+                    </p>
+                </div>
+
+                <div class="features">
+
+                    <div class="feature">
+                        <div class="feature-icon">🚀</div>
+                        <h3>Quick Launch</h3>
+                        <p>
+                            Start your development projects with a single click
+                            instead of opening multiple terminals manually.
+                        </p>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">⌨️</div>
+                        <h3>Integrated Terminal</h3>
+                        <p>
+                            Keep your terminal workflow close to your projects
+                            without switching between applications.
+                        </p>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">📁</div>
+                        <h3>Project Manager</h3>
+                        <p>
+                            Organize all your development projects and launch
+                            them using their individual configurations.
+                        </p>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">🐙</div>
+                        <h3>Git Integration</h3>
+                        <p>
+                            Quickly check repository status and access your
+                            Git workflow directly from KVGDV.
+                        </p>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">🐳</div>
+                        <h3>Docker Ready</h3>
+                        <p>
+                            Keep Docker-based development environments
+                            accessible from the same interface.
+                        </p>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">⚙️</div>
+                        <h3>Custom Commands</h3>
+                        <p>
+                            Configure custom start commands, directories,
+                            ports and development environments.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ABOUT -->
+        <section id="about">
+            <div class="container">
+
+                <div class="section-header">
+                    <span>Built for developers</span>
+                    <h2>Simple by design.</h2>
+                    <p>
+                        KVGDV is focused on one thing: making the process
+                        between opening your computer and starting work faster.
+                    </p>
+                </div>
+
+                <div class="tech">
+                    <div class="tech-item">Node.js</div>
+                    <div class="tech-item">Python</div>
+                    <div class="tech-item">Rust</div>
+                    <div class="tech-item">Java</div>
+                    <div class="tech-item">Git</div>
+                    <div class="tech-item">Docker</div>
+                    <div class="tech-item">PowerShell</div>
+                    <div class="tech-item">Terminal</div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- CTA -->
+        <section>
+            <div class="container">
+
+                <div class="cta">
+                    <h2>Ready to build?</h2>
+
+                    <p>
+                        Get KVGDV and put your development environment
+                        in one place.
+                    </p>
+
+                    <div class="buttons">
+                        <a href="https://github.com/" class="btn btn-primary" target="_blank">
+                            ⬇ Get KVGDV
+                        </a>
+
+                        <a href="https://github.com/" class="btn btn-secondary" target="_blank">
+                            GitHub ↗
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container footer-inner">
+            <div>© 2026 KVGDV</div>
+            <div>Built for developers.</div>
+        </div>
+    </footer>
+
+
+    <script>
+        // Delikatny efekt pojawiania się elementów przy scrollowaniu
+
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                    }
+                });
+            },
+            { threshold: 0.12 }
+        );
+
+        document.querySelectorAll(".feature, .section-header, .cta").forEach(el => {
+            el.style.opacity = "0";
+            el.style.transform = "translateY(20px)";
+            el.style.transition = "opacity .6s ease, transform .6s ease";
+            observer.observe(el);
+        });
+    </script>
 
 </body>
 </html>
