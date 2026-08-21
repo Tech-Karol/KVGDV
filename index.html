@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b0f14">
-  <meta name="description" content="KVGDV Maps — własna platforma mapowa">
 
   <title>KVGDV Maps</title>
 
@@ -33,6 +32,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+
       font-family:
         Inter,
         ui-sans-serif,
@@ -41,6 +41,7 @@
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
+
       background: var(--bg);
       color: var(--text);
     }
@@ -55,159 +56,51 @@
       cursor: pointer;
     }
 
-    /* =========================
+    /* =========================================
        MAP
-    ========================= */
+    ========================================= */
 
     #map {
       position: fixed;
       inset: 0;
       overflow: hidden;
       background:
-        radial-gradient(circle at 50% 45%, rgba(45, 57, 72, 0.35), transparent 42%),
+        radial-gradient(
+          circle at 50% 45%,
+          rgba(45, 57, 72, 0.35),
+          transparent 42%
+        ),
         #10161d;
     }
 
-    .map-grid {
+    #mapCanvas {
       position: absolute;
-      inset: -100px;
-      opacity: 0.65;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-      background-size: 80px 80px;
-      transform: rotate(0deg);
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
     }
 
-    .map-land {
-      position: absolute;
-      width: 850px;
-      height: 620px;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%) rotate(-7deg);
-      border-radius: 46% 54% 52% 48% / 48% 43% 57% 52%;
-      background: #1a222b;
-      box-shadow:
-        inset 0 0 80px rgba(0,0,0,0.18),
-        0 0 100px rgba(0,0,0,0.12);
+    #mapCanvas.dragging {
+      cursor: grabbing;
     }
 
-    .road {
-      position: absolute;
-      height: 5px;
-      background: #3b4652;
-      border-radius: 99px;
-      transform-origin: left center;
-      opacity: 0.9;
-    }
-
-    .road::after {
-      content: "";
-      position: absolute;
-      inset: 1px 0;
-      border-radius: inherit;
-      background: rgba(255,255,255,0.08);
-    }
-
-    .road.main {
-      height: 8px;
-      background: #697584;
-    }
-
-    .road.r1 {
-      width: 720px;
-      left: 8%;
-      top: 28%;
-      transform: rotate(13deg);
-    }
-
-    .road.r2 {
-      width: 680px;
-      left: 15%;
-      top: 63%;
-      transform: rotate(-19deg);
-    }
-
-    .road.r3 {
-      width: 540px;
-      left: 36%;
-      top: 12%;
-      transform: rotate(72deg);
-    }
-
-    .road.r4 {
-      width: 420px;
-      left: 48%;
-      top: 80%;
-      transform: rotate(-71deg);
-    }
-
-    .road.r5 {
-      width: 500px;
-      left: 2%;
-      top: 50%;
-      transform: rotate(2deg);
-    }
-
-    .road.r6 {
-      width: 340px;
-      left: 62%;
-      top: 35%;
-      transform: rotate(45deg);
-    }
-
-    .road.small {
-      height: 3px;
-      background: #313b46;
-    }
-
-    .road.r7 {
-      width: 300px;
-      left: 18%;
-      top: 38%;
-      transform: rotate(50deg);
-    }
-
-    .road.r8 {
-      width: 280px;
-      left: 53%;
-      top: 56%;
-      transform: rotate(15deg);
-    }
-
-    .road.r9 {
-      width: 250px;
-      left: 36%;
-      top: 72%;
-      transform: rotate(32deg);
-    }
-
-    .water {
-      position: absolute;
-      width: 900px;
-      height: 230px;
-      left: 50%;
-      top: 76%;
-      transform: translateX(-50%) rotate(-5deg);
-      background: #111c27;
-      border-radius: 50%;
-      opacity: 0.85;
-    }
-
-    /* =========================
+    /* =========================================
        TOP BAR
-    ========================= */
+    ========================================= */
 
     .topbar {
       position: fixed;
       z-index: 20;
+
       top: 16px;
       left: 16px;
       right: 16px;
+
       display: flex;
       align-items: center;
       gap: 12px;
+
       pointer-events: none;
     }
 
@@ -217,13 +110,17 @@
 
     .brand {
       height: 52px;
+
       display: flex;
       align-items: center;
       gap: 11px;
+
       padding: 0 17px;
+
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 15px;
+
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
     }
@@ -231,10 +128,14 @@
     .brand-icon {
       width: 30px;
       height: 30px;
-      border-radius: 9px;
+
       display: grid;
       place-items: center;
+
+      border-radius: 9px;
+
       background: var(--accent);
+
       font-size: 15px;
       font-weight: 800;
     }
@@ -248,13 +149,17 @@
     .search {
       height: 52px;
       width: min(500px, 48vw);
+
       display: flex;
       align-items: center;
       gap: 10px;
+
       padding: 0 15px;
+
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 15px;
+
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
     }
@@ -266,9 +171,12 @@
 
     .search input {
       width: 100%;
+
       border: 0;
       outline: none;
+
       background: transparent;
+
       color: var(--text);
       font-size: 14px;
     }
@@ -279,27 +187,35 @@
 
     .search-shortcut {
       padding: 4px 7px;
+
       border: 1px solid var(--border);
       border-radius: 7px;
+
       color: var(--muted);
+
       font-size: 11px;
       white-space: nowrap;
     }
 
-    /* =========================
+    /* =========================================
        LEFT PANEL
-    ========================= */
+    ========================================= */
 
     .left-panel {
       position: fixed;
       z-index: 15;
+
       top: 84px;
       left: 16px;
+
       width: 270px;
+
       padding: 10px;
+
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 17px;
+
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
     }
@@ -310,9 +226,12 @@
 
     .panel-title {
       margin-bottom: 8px;
+
       color: var(--muted);
+
       font-size: 11px;
       font-weight: 700;
+
       letter-spacing: 0.8px;
       text-transform: uppercase;
     }
@@ -320,23 +239,29 @@
     .tool {
       width: 100%;
       min-height: 43px;
+
       display: flex;
       align-items: center;
       gap: 11px;
+
       padding: 0 11px;
+
       border-radius: 11px;
+
       background: transparent;
       color: var(--text);
+
       text-align: left;
+
       transition: 0.15s ease;
     }
 
     .tool:hover {
-      background: rgba(255,255,255,0.06);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .tool.active {
-      background: rgba(79,140,255,0.13);
+      background: rgba(79, 140, 255, 0.13);
       color: #9cbdff;
     }
 
@@ -351,15 +276,17 @@
       font-weight: 550;
     }
 
-    /* =========================
+    /* =========================================
        RIGHT CONTROLS
-    ========================= */
+    ========================================= */
 
     .map-controls {
       position: fixed;
       z-index: 15;
+
       right: 16px;
       bottom: 104px;
+
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -367,11 +294,14 @@
 
     .control-group {
       overflow: hidden;
+
       display: flex;
       flex-direction: column;
+
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 13px;
+
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
     }
@@ -379,16 +309,20 @@
     .map-btn {
       width: 46px;
       height: 46px;
+
       display: grid;
       place-items: center;
+
       background: transparent;
       color: var(--text);
+
       font-size: 18px;
+
       transition: 0.15s ease;
     }
 
     .map-btn:hover {
-      background: rgba(255,255,255,0.07);
+      background: rgba(255, 255, 255, 0.07);
     }
 
     .divider {
@@ -396,19 +330,53 @@
       background: var(--border);
     }
 
-    /* =========================
+    /* =========================================
+       LOCATION
+    ========================================= */
+
+    .location-btn {
+      position: fixed;
+      z-index: 15;
+
+      right: 16px;
+      bottom: 16px;
+
+      width: 46px;
+      height: 46px;
+
+      border-radius: 13px;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+
+      color: var(--text);
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+
+      font-size: 18px;
+    }
+
+    .location-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* =========================================
        BOTTOM BAR
-    ========================= */
+    ========================================= */
 
     .bottom-bar {
       position: fixed;
       z-index: 20;
+
       left: 16px;
       right: 16px;
       bottom: 16px;
+
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       pointer-events: none;
     }
 
@@ -418,15 +386,20 @@
 
     .status {
       height: 44px;
+
       display: flex;
       align-items: center;
       gap: 9px;
+
       padding: 0 13px;
+
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 12px;
+
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
+
       color: var(--muted);
       font-size: 12px;
     }
@@ -434,84 +407,88 @@
     .status-dot {
       width: 8px;
       height: 8px;
+
       border-radius: 50%;
+
       background: #47d18c;
-      box-shadow: 0 0 10px rgba(71,209,140,0.6);
+
+      box-shadow:
+        0 0 10px rgba(71, 209, 140, 0.6);
     }
 
     .coordinates {
       height: 44px;
+
       display: flex;
       align-items: center;
+
       padding: 0 13px;
+
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 12px;
+
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
+
       color: var(--muted);
+
       font-size: 12px;
       font-variant-numeric: tabular-nums;
     }
 
-    /* =========================
-       LOCATION BUTTON
-    ========================= */
+    /* =========================================
+       PLACE INFO
+    ========================================= */
 
-    .location-btn {
+    .place-card {
       position: fixed;
-      z-index: 15;
-      right: 16px;
-      bottom: 16px;
-      width: 46px;
-      height: 46px;
-      border-radius: 13px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-      font-size: 18px;
-    }
+      z-index: 18;
 
-    .location-btn:hover {
-      background: rgba(255,255,255,0.08);
-    }
+      left: 50%;
+      top: 50%;
 
-    /* =========================
-       MAP MARKER
-    ========================= */
-
-    .marker {
-      position: absolute;
-      z-index: 5;
-      left: 55%;
-      top: 47%;
-      width: 38px;
-      height: 38px;
       transform: translate(-50%, -100%);
-      border-radius: 50% 50% 50% 0;
-      rotate: -45deg;
-      background: var(--accent);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+
+      display: none;
+
+      padding: 9px 13px;
+
+      background: var(--panel);
+
+      border: 1px solid var(--border);
+      border-radius: 11px;
+
+      box-shadow: var(--shadow);
+
+      backdrop-filter: blur(18px);
+
+      pointer-events: none;
     }
 
-    .marker::after {
-      content: "";
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      left: 13px;
-      top: 13px;
-      border-radius: 50%;
-      background: #fff;
+    .place-card.visible {
+      display: block;
     }
 
-    /* =========================
+    .place-name {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .place-type {
+      margin-top: 2px;
+
+      color: var(--muted);
+
+      font-size: 10px;
+    }
+
+    /* =========================================
        RESPONSIVE
-    ========================= */
+    ========================================= */
 
     @media (max-width: 760px) {
+
       .topbar {
         left: 10px;
         right: 10px;
@@ -553,51 +530,47 @@
       .coordinates {
         display: none;
       }
-
-      .map-land {
-        width: 700px;
-        height: 500px;
-      }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- MAP -->
+  <!-- =========================================
+       MAP
+  ========================================== -->
+
   <main id="map">
-    <div class="map-grid"></div>
 
-    <div class="map-land">
+    <canvas id="mapCanvas"></canvas>
 
-      <div class="water"></div>
-
-      <div class="road main r1"></div>
-      <div class="road main r2"></div>
-      <div class="road main r3"></div>
-      <div class="road main r4"></div>
-      <div class="road main r5"></div>
-      <div class="road main r6"></div>
-
-      <div class="road small r7"></div>
-      <div class="road small r8"></div>
-      <div class="road small r9"></div>
-
-    </div>
-
-    <div class="marker"></div>
   </main>
 
-  <!-- TOP -->
+
+  <!-- =========================================
+       TOP BAR
+  ========================================== -->
+
   <header class="topbar">
 
     <div class="brand">
-      <div class="brand-icon">K</div>
-      <div class="brand-name">KVGDV Maps</div>
+
+      <div class="brand-icon">
+        K
+      </div>
+
+      <div class="brand-name">
+        KVGDV Maps
+      </div>
+
     </div>
 
+
     <div class="search">
-      <div class="search-icon">⌕</div>
+
+      <div class="search-icon">
+        ⌕
+      </div>
 
       <input
         id="searchInput"
@@ -606,12 +579,19 @@
         autocomplete="off"
       >
 
-      <div class="search-shortcut">Ctrl K</div>
+      <div class="search-shortcut">
+        Ctrl K
+      </div>
+
     </div>
 
   </header>
 
-  <!-- LEFT MENU -->
+
+  <!-- =========================================
+       LEFT PANEL
+  ========================================== -->
+
   <aside class="left-panel">
 
     <div class="panel-section">
@@ -622,20 +602,27 @@
 
       <button class="tool active">
         <span class="tool-icon">🗺️</span>
-        <span class="tool-text">Mapa standardowa</span>
+        <span class="tool-text">
+          Mapa standardowa
+        </span>
       </button>
 
       <button class="tool">
         <span class="tool-icon">🛰️</span>
-        <span class="tool-text">Satelita</span>
+        <span class="tool-text">
+          Satelita
+        </span>
       </button>
 
       <button class="tool">
         <span class="tool-icon">⛰️</span>
-        <span class="tool-text">Teren</span>
+        <span class="tool-text">
+          Teren
+        </span>
       </button>
 
     </div>
+
 
     <div class="panel-section">
 
@@ -645,43 +632,66 @@
 
       <button class="tool">
         <span class="tool-icon">📍</span>
-        <span class="tool-text">Dodaj punkt</span>
+        <span class="tool-text">
+          Dodaj punkt
+        </span>
       </button>
 
       <button class="tool">
         <span class="tool-icon">🧭</span>
-        <span class="tool-text">Wyznacz trasę</span>
+        <span class="tool-text">
+          Wyznacz trasę
+        </span>
       </button>
 
       <button class="tool">
         <span class="tool-icon">📏</span>
-        <span class="tool-text">Zmierz odległość</span>
+        <span class="tool-text">
+          Zmierz odległość
+        </span>
       </button>
 
     </div>
 
   </aside>
 
-  <!-- MAP CONTROLS -->
+
+  <!-- =========================================
+       RIGHT CONTROLS
+  ========================================== -->
+
   <div class="map-controls">
 
     <div class="control-group">
 
-      <button class="map-btn" id="zoomIn" title="Przybliż">
+      <button
+        class="map-btn"
+        id="zoomIn"
+        title="Przybliż"
+      >
         +
       </button>
 
       <div class="divider"></div>
 
-      <button class="map-btn" id="zoomOut" title="Oddal">
+      <button
+        class="map-btn"
+        id="zoomOut"
+        title="Oddal"
+      >
         −
       </button>
 
     </div>
 
+
     <div class="control-group">
 
-      <button class="map-btn" title="Warstwy">
+      <button
+        class="map-btn"
+        id="layersButton"
+        title="Warstwy"
+      >
         ◈
       </button>
 
@@ -689,7 +699,11 @@
 
   </div>
 
-  <!-- LOCATION -->
+
+  <!-- =========================================
+       LOCATION
+  ========================================== -->
+
   <button
     class="location-btn"
     id="locationButton"
@@ -698,89 +712,1042 @@
     ◎
   </button>
 
-  <!-- BOTTOM -->
+
+  <!-- =========================================
+       PLACE CARD
+  ========================================== -->
+
+  <div
+    class="place-card"
+    id="placeCard"
+  >
+
+    <div
+      class="place-name"
+      id="placeName"
+    >
+      Redlino
+    </div>
+
+    <div
+      class="place-type"
+      id="placeType"
+    >
+      Wieś
+    </div>
+
+  </div>
+
+
+  <!-- =========================================
+       BOTTOM BAR
+  ========================================== -->
+
   <footer class="bottom-bar">
 
     <div class="status">
+
       <span class="status-dot"></span>
-      KVGDV Maps Engine — offline
+
+      <span id="engineStatus">
+        KVGDV Maps Engine
+      </span>
+
     </div>
 
-    <div class="coordinates" id="coordinates">
-      53.12345° N · 15.67890° E
+
+    <div
+      class="coordinates"
+      id="coordinates"
+    >
+      Ładowanie mapy...
     </div>
 
   </footer>
 
+
+  <!-- =========================================
+       KVGDV MAP ENGINE
+  ========================================== -->
+
   <script>
-    const searchInput = document.getElementById("searchInput");
-    const coordinates = document.getElementById("coordinates");
-    const map = document.getElementById("map");
 
-    /* Ctrl + K */
-    document.addEventListener("keydown", (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        searchInput.focus();
+    /*
+      ============================================
+      KVGDV MAPS ENGINE
+      ============================================
+
+      Na tym etapie:
+
+      - brak API
+      - brak Leaflet
+      - brak Mapbox
+      - brak Google Maps
+      - brak zewnętrznych bibliotek
+
+      Dane:
+        data/zachodniopomorskie.json
+
+      Renderer:
+        HTML5 Canvas
+    */
+
+
+    const canvas = document.getElementById("mapCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const coordinatesElement =
+      document.getElementById("coordinates");
+
+    const engineStatus =
+      document.getElementById("engineStatus");
+
+    const placeCard =
+      document.getElementById("placeCard");
+
+    const placeName =
+      document.getElementById("placeName");
+
+    const placeType =
+      document.getElementById("placeType");
+
+    const searchInput =
+      document.getElementById("searchInput");
+
+
+    /* =========================================
+       STATE
+    ========================================== */
+
+    const state = {
+
+      width: 0,
+      height: 0,
+
+      zoom: 25000,
+
+      centerLat: 54.025457,
+      centerLon: 15.901234,
+
+      mouseX: 0,
+      mouseY: 0,
+
+      dragging: false,
+
+      lastMouseX: 0,
+      lastMouseY: 0,
+
+      data: null
+
+    };
+
+
+    /* =========================================
+       RESIZE
+    ========================================== */
+
+    function resizeCanvas() {
+
+      const dpr =
+        window.devicePixelRatio || 1;
+
+      state.width =
+        window.innerWidth;
+
+      state.height =
+        window.innerHeight;
+
+      canvas.width =
+        state.width * dpr;
+
+      canvas.height =
+        state.height * dpr;
+
+      canvas.style.width =
+        state.width + "px";
+
+      canvas.style.height =
+        state.height + "px";
+
+      ctx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+      );
+
+      render();
+
+    }
+
+
+    window.addEventListener(
+      "resize",
+      resizeCanvas
+    );
+
+
+    /* =========================================
+       GEO → SCREEN
+    ========================================== */
+
+    function geoToScreen(lat, lon) {
+
+      const x =
+        state.width / 2 +
+        (lon - state.centerLon) *
+        state.zoom;
+
+      const y =
+        state.height / 2 -
+        (lat - state.centerLat) *
+        state.zoom;
+
+      return {
+        x,
+        y
+      };
+
+    }
+
+
+    /* =========================================
+       SCREEN → GEO
+    ========================================== */
+
+    function screenToGeo(x, y) {
+
+      const lon =
+        state.centerLon +
+        (x - state.width / 2) /
+        state.zoom;
+
+      const lat =
+        state.centerLat -
+        (y - state.height / 2) /
+        state.zoom;
+
+      return {
+        lat,
+        lon
+      };
+
+    }
+
+
+    /* =========================================
+       DRAW BACKGROUND
+    ========================================== */
+
+    function drawBackground() {
+
+      ctx.fillStyle =
+        "#10161d";
+
+      ctx.fillRect(
+        0,
+        0,
+        state.width,
+        state.height
+      );
+
+
+      /*
+        Subtelna siatka.
+      */
+
+      const grid =
+        Math.max(
+          50,
+          Math.min(
+            100,
+            state.zoom / 300
+          )
+        );
+
+
+      ctx.strokeStyle =
+        "rgba(255,255,255,0.025)";
+
+      ctx.lineWidth = 1;
+
+
+      for (
+        let x = 0;
+        x < state.width;
+        x += grid
+      ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, state.height);
+
+        ctx.stroke();
+
       }
-    });
 
-    /* Zoom prototype */
-    let zoom = 1;
 
-    document.getElementById("zoomIn").addEventListener("click", () => {
-      zoom = Math.min(zoom + 0.15, 2);
-      map.style.transform = `scale(${zoom})`;
-    });
+      for (
+        let y = 0;
+        y < state.height;
+        y += grid
+      ) {
 
-    document.getElementById("zoomOut").addEventListener("click", () => {
-      zoom = Math.max(zoom - 0.15, 0.75);
-      map.style.transform = `scale(${zoom})`;
-    });
+        ctx.beginPath();
 
-    /* Geolocation */
-    document.getElementById("locationButton").addEventListener("click", () => {
+        ctx.moveTo(0, y);
+        ctx.lineTo(state.width, y);
 
-      if (!navigator.geolocation) {
-        alert("Geolokalizacja nie jest obsługiwana przez tę przeglądarkę.");
+        ctx.stroke();
+
+      }
+
+    }
+
+
+    /* =========================================
+       DRAW WATER
+    ========================================== */
+
+    function drawWater() {
+
+      if (
+        !state.data ||
+        !state.data.water
+      ) {
         return;
       }
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude.toFixed(5);
-          const lon = position.coords.longitude.toFixed(5);
 
-          coordinates.textContent = `${lat}° · ${lon}°`;
-        },
+      /*
+        Przygotowane pod przyszłe
+        poligony wodne.
+      */
+
+      for (
+        const water of state.data.water
+      ) {
+
+        if (
+          !water.coordinates
+        ) {
+          continue;
+        }
+
+        if (
+          water.coordinates.length < 3
+        ) {
+          continue;
+        }
+
+
+        ctx.beginPath();
+
+
+        water.coordinates.forEach(
+          (point, index) => {
+
+            const p =
+              geoToScreen(
+                point.lat,
+                point.lon
+              );
+
+
+            if (index === 0) {
+
+              ctx.moveTo(
+                p.x,
+                p.y
+              );
+
+            } else {
+
+              ctx.lineTo(
+                p.x,
+                p.y
+              );
+
+            }
+
+          }
+        );
+
+
+        ctx.closePath();
+
+        ctx.fillStyle =
+          "#142534";
+
+        ctx.fill();
+
+      }
+
+    }
+
+
+    /* =========================================
+       DRAW ROADS
+    ========================================== */
+
+    function drawRoads() {
+
+      if (
+        !state.data ||
+        !state.data.roads
+      ) {
+        return;
+      }
+
+
+      for (
+        const road of state.data.roads
+      ) {
+
+        if (
+          !road.coordinates
+        ) {
+          continue;
+        }
+
+
+        if (
+          road.coordinates.length < 2
+        ) {
+          continue;
+        }
+
+
+        ctx.beginPath();
+
+
+        road.coordinates.forEach(
+          (point, index) => {
+
+            const p =
+              geoToScreen(
+                point.lat,
+                point.lon
+              );
+
+
+            if (index === 0) {
+
+              ctx.moveTo(
+                p.x,
+                p.y
+              );
+
+            } else {
+
+              ctx.lineTo(
+                p.x,
+                p.y
+              );
+
+            }
+
+          }
+        );
+
+
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        ctx.strokeStyle =
+          road.type === "main"
+            ? "#697584"
+            : "#3b4652";
+
+        ctx.lineWidth =
+          road.type === "main"
+            ? 7
+            : 4;
+
+        ctx.stroke();
+
+      }
+
+    }
+
+
+    /* =========================================
+       DRAW PLACES
+    ========================================== */
+
+    function drawPlaces() {
+
+      if (
+        !state.data ||
+        !state.data.places
+      ) {
+        return;
+      }
+
+
+      for (
+        const place of state.data.places
+      ) {
+
+        if (
+          !place.coordinates
+        ) {
+          continue;
+        }
+
+
+        const p =
+          geoToScreen(
+            place.coordinates.lat,
+            place.coordinates.lon
+          );
+
+
+        /*
+          Marker
+        */
+
+        ctx.beginPath();
+
+        ctx.arc(
+          p.x,
+          p.y,
+          8,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fillStyle =
+          "#4f8cff";
+
+        ctx.fill();
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+          p.x,
+          p.y,
+          3,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fillStyle =
+          "#ffffff";
+
+        ctx.fill();
+
+
+        /*
+          Nazwa
+        */
+
+        ctx.font =
+          "600 14px Inter, system-ui, sans-serif";
+
+        ctx.textAlign =
+          "center";
+
+        ctx.textBaseline =
+          "top";
+
+        ctx.fillStyle =
+          "#f1f5f9";
+
+        ctx.fillText(
+          place.name,
+          p.x,
+          p.y + 15
+        );
+
+      }
+
+    }
+
+
+    /* =========================================
+       RENDER
+    ========================================== */
+
+    function render() {
+
+      drawBackground();
+
+      drawWater();
+
+      drawRoads();
+
+      drawPlaces();
+
+      updateCoordinates();
+
+    }
+
+
+    /* =========================================
+       COORDINATES
+    ========================================== */
+
+    function updateCoordinates() {
+
+      const geo =
+        screenToGeo(
+          state.mouseX,
+          state.mouseY
+        );
+
+
+      coordinatesElement.textContent =
+        `${geo.lat.toFixed(6)}° N · ` +
+        `${geo.lon.toFixed(6)}° E`;
+
+    }
+
+
+    /* =========================================
+       MOUSE
+    ========================================== */
+
+    canvas.addEventListener(
+      "mousedown",
+      (event) => {
+
+        state.dragging = true;
+
+        state.lastMouseX =
+          event.clientX;
+
+        state.lastMouseY =
+          event.clientY;
+
+        canvas.classList.add(
+          "dragging"
+        );
+
+      }
+    );
+
+
+    window.addEventListener(
+      "mouseup",
+      () => {
+
+        state.dragging = false;
+
+        canvas.classList.remove(
+          "dragging"
+        );
+
+      }
+    );
+
+
+    canvas.addEventListener(
+      "mousemove",
+      (event) => {
+
+        state.mouseX =
+          event.clientX;
+
+        state.mouseY =
+          event.clientY;
+
+
+        if (
+          state.dragging
+        ) {
+
+          const dx =
+            event.clientX -
+            state.lastMouseX;
+
+          const dy =
+            event.clientY -
+            state.lastMouseY;
+
+
+          state.centerLon -=
+            dx / state.zoom;
+
+          state.centerLat +=
+            dy / state.zoom;
+
+
+          state.lastMouseX =
+            event.clientX;
+
+          state.lastMouseY =
+            event.clientY;
+
+
+          render();
+
+        } else {
+
+          updateCoordinates();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================
+       WHEEL ZOOM
+    ========================================== */
+
+    canvas.addEventListener(
+      "wheel",
+      (event) => {
+
+        event.preventDefault();
+
+
+        const mouseBefore =
+          screenToGeo(
+            event.clientX,
+            event.clientY
+          );
+
+
+        const factor =
+          event.deltaY < 0
+            ? 1.15
+            : 1 / 1.15;
+
+
+        state.zoom =
+          Math.max(
+            1000,
+            Math.min(
+              1000000,
+              state.zoom * factor
+            )
+          );
+
+
+        const mouseAfter =
+          screenToGeo(
+            event.clientX,
+            event.clientY
+          );
+
+
+        state.centerLon +=
+          mouseBefore.lon -
+          mouseAfter.lon;
+
+        state.centerLat +=
+          mouseBefore.lat -
+          mouseAfter.lat;
+
+
+        render();
+
+      },
+      {
+        passive: false
+      }
+    );
+
+
+    /* =========================================
+       ZOOM BUTTONS
+    ========================================== */
+
+    document
+      .getElementById("zoomIn")
+      .addEventListener(
+        "click",
         () => {
-          alert("Nie udało się pobrać lokalizacji.");
+
+          state.zoom *= 1.25;
+
+          state.zoom =
+            Math.min(
+              state.zoom,
+              1000000
+            );
+
+          render();
+
         }
       );
 
-    });
 
-    /* Fake search for UI prototype */
-    searchInput.addEventListener("keydown", (event) => {
+    document
+      .getElementById("zoomOut")
+      .addEventListener(
+        "click",
+        () => {
 
-      if (event.key !== "Enter") {
-        return;
-      }
+          state.zoom /= 1.25;
 
-      const query = searchInput.value.trim();
+          state.zoom =
+            Math.max(
+              state.zoom,
+              1000
+            );
 
-      if (!query) {
-        return;
-      }
+          render();
 
-      console.log("KVGDV Maps search:", query);
-
-      alert(
-        "KVGDV Maps\n\n" +
-        "Wyszukiwanie zostanie podłączone do KVGDV Maps API."
+        }
       );
 
-    });
+
+    /* =========================================
+       GEOLOCATION
+    ========================================== */
+
+    document
+      .getElementById("locationButton")
+      .addEventListener(
+        "click",
+        () => {
+
+          if (
+            !navigator.geolocation
+          ) {
+
+            alert(
+              "Geolokalizacja nie jest obsługiwana."
+            );
+
+            return;
+
+          }
+
+
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+
+              state.centerLat =
+                position.coords.latitude;
+
+              state.centerLon =
+                position.coords.longitude;
+
+
+              render();
+
+            },
+
+            () => {
+
+              alert(
+                "Nie udało się pobrać lokalizacji."
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /* =========================================
+       SEARCH
+    ========================================== */
+
+    searchInput.addEventListener(
+      "keydown",
+      (event) => {
+
+        if (
+          event.key !== "Enter"
+        ) {
+          return;
+        }
+
+
+        const query =
+          searchInput.value
+            .trim()
+            .toLowerCase();
+
+
+        if (!query) {
+          return;
+        }
+
+
+        if (
+          !state.data ||
+          !state.data.places
+        ) {
+          return;
+        }
+
+
+        const result =
+          state.data.places.find(
+            (place) =>
+              place.name
+                .toLowerCase()
+                .includes(query)
+          );
+
+
+        if (!result) {
+
+          alert(
+            "KVGDV Maps: nie znaleziono miejsca."
+          );
+
+          return;
+
+        }
+
+
+        state.centerLat =
+          result.coordinates.lat;
+
+        state.centerLon =
+          result.coordinates.lon;
+
+
+        placeName.textContent =
+          result.name;
+
+
+        placeType.textContent =
+          result.type === "village"
+            ? "Wieś"
+            : result.type;
+
+
+        placeCard.classList.add(
+          "visible"
+        );
+
+
+        render();
+
+      }
+    );
+
+
+    /* =========================================
+       CTRL + K
+    ========================================== */
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+
+        if (
+          (event.ctrlKey ||
+            event.metaKey) &&
+          event.key.toLowerCase() === "k"
+        ) {
+
+          event.preventDefault();
+
+          searchInput.focus();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================
+       LOAD MAP DATA
+    ========================================== */
+
+    async function loadMapData() {
+
+      try {
+
+        engineStatus.textContent =
+          "Ładowanie KVGDV Map Data...";
+
+
+        const response =
+          await fetch(
+            "data/zachodniopomorskie.json"
+          );
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            "Nie można załadować danych mapy."
+          );
+
+        }
+
+
+        state.data =
+          await response.json();
+
+
+        /*
+          Ustawiamy centrum na pierwszą
+          dostępną miejscowość.
+        */
+
+        if (
+          state.data.places &&
+          state.data.places.length > 0
+        ) {
+
+          const first =
+            state.data.places[0];
+
+
+          state.centerLat =
+            first.coordinates.lat;
+
+          state.centerLon =
+            first.coordinates.lon;
+
+        }
+
+
+        engineStatus.textContent =
+          "KVGDV Maps Engine · Zachodniopomorskie";
+
+
+        render();
+
+
+      } catch (error) {
+
+        console.error(
+          "KVGDV Maps:",
+          error
+        );
+
+
+        engineStatus.textContent =
+          "KVGDV Maps Engine · błąd danych";
+
+
+        /*
+          Renderujemy mimo błędu,
+          żeby interfejs nadal działał.
+        */
+
+        render();
+
+      }
+
+    }
+
+
+    /* =========================================
+       START
+    ========================================== */
+
+    resizeCanvas();
+
+    loadMapData();
+
   </script>
 
 </body>
