@@ -1,7 +1,732 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0f14">
+
+  <title>KVGDV Maps</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0b0f14;
+      --panel: rgba(17, 22, 29, 0.94);
+      --panel-2: #151b23;
+      --border: rgba(255, 255, 255, 0.09);
+      --text: #f1f5f9;
+      --muted: #8b98a8;
+      --accent: #4f8cff;
+      --accent-hover: #6b9eff;
+      --danger: #ff5c5c;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    /* =========================================
+       MAP
+    ========================================= */
+
+    #map {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: #10161d;
+    }
+
+    #mapCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+
+    #mapCanvas.dragging {
+      cursor: grabbing;
+    }
+
+    /* =========================================
+       TOP BAR
+    ========================================= */
+
+    .topbar {
+      position: fixed;
+      z-index: 20;
+
+      top: 16px;
+      left: 16px;
+      right: 16px;
+
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      pointer-events: none;
+    }
+
+    .topbar > * {
+      pointer-events: auto;
+    }
+
+    .brand {
+      height: 52px;
+
+      display: flex;
+      align-items: center;
+      gap: 11px;
+
+      padding: 0 17px;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand-icon {
+      width: 30px;
+      height: 30px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 9px;
+
+      background: var(--accent);
+
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .brand-name {
+      font-weight: 750;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+    }
+
+    .search {
+      height: 52px;
+      width: min(500px, 48vw);
+
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      padding: 0 15px;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .search-icon {
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    .search input {
+      width: 100%;
+
+      border: 0;
+      outline: none;
+
+      background: transparent;
+
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .search input::placeholder {
+      color: #748090;
+    }
+
+    .search-shortcut {
+      padding: 4px 7px;
+
+      border: 1px solid var(--border);
+      border-radius: 7px;
+
+      color: var(--muted);
+
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    /* =========================================
+       LEFT PANEL
+    ========================================= */
+
+    .left-panel {
+      position: fixed;
+      z-index: 15;
+
+      top: 84px;
+      left: 16px;
+
+      width: 270px;
+
+      padding: 10px;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 17px;
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .panel-section {
+      padding: 8px;
+    }
+
+    .panel-title {
+      margin-bottom: 8px;
+
+      color: var(--muted);
+
+      font-size: 11px;
+      font-weight: 700;
+
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .tool {
+      width: 100%;
+      min-height: 43px;
+
+      display: flex;
+      align-items: center;
+      gap: 11px;
+
+      padding: 0 11px;
+
+      border-radius: 11px;
+
+      background: transparent;
+      color: var(--text);
+
+      text-align: left;
+
+      transition: 0.15s ease;
+    }
+
+    .tool:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tool.active {
+      background: rgba(79, 140, 255, 0.13);
+      color: #9cbdff;
+    }
+
+    .tool-icon {
+      width: 25px;
+      text-align: center;
+      font-size: 17px;
+    }
+
+    .tool-text {
+      font-size: 13px;
+      font-weight: 550;
+    }
+
+    /* =========================================
+       RIGHT CONTROLS
+    ========================================= */
+
+    .map-controls {
+      position: fixed;
+      z-index: 15;
+
+      right: 16px;
+      bottom: 104px;
+
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group {
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .map-btn {
+      width: 46px;
+      height: 46px;
+
+      display: grid;
+      place-items: center;
+
+      background: transparent;
+      color: var(--text);
+
+      font-size: 18px;
+
+      transition: 0.15s ease;
+    }
+
+    .map-btn:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* =========================================
+       LOCATION
+    ========================================= */
+
+    .location-btn {
+      position: fixed;
+      z-index: 15;
+
+      right: 16px;
+      bottom: 16px;
+
+      width: 46px;
+      height: 46px;
+
+      border-radius: 13px;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+
+      color: var(--text);
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+
+      font-size: 18px;
+    }
+
+    .location-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* =========================================
+       BOTTOM BAR
+    ========================================= */
+
+    .bottom-bar {
+      position: fixed;
+      z-index: 20;
+
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      pointer-events: none;
+    }
+
+    .bottom-bar > * {
+      pointer-events: auto;
+    }
+
+    .status {
+      height: 44px;
+
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      padding: 0 13px;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+
+      border-radius: 50%;
+
+      background: #47d18c;
+
+      box-shadow:
+        0 0 10px rgba(71, 209, 140, 0.6);
+    }
+
+    .coordinates {
+      height: 44px;
+
+      display: flex;
+      align-items: center;
+
+      padding: 0 13px;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+
+      color: var(--muted);
+
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* =========================================
+       PLACE INFO
+    ========================================= */
+
+    .place-card {
+      position: fixed;
+      z-index: 18;
+
+      left: 50%;
+      top: 50%;
+
+      transform: translate(-50%, -100%);
+
+      display: none;
+
+      padding: 9px 13px;
+
+      background: var(--panel);
+
+      border: 1px solid var(--border);
+      border-radius: 11px;
+
+      box-shadow: var(--shadow);
+
+      backdrop-filter: blur(18px);
+
+      pointer-events: none;
+    }
+
+    .place-card.visible {
+      display: block;
+    }
+
+    .place-name {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .place-type {
+      margin-top: 2px;
+
+      color: var(--muted);
+
+      font-size: 10px;
+    }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
+    @media (max-width: 760px) {
+
+      .topbar {
+        left: 10px;
+        right: 10px;
+        top: 10px;
+      }
+
+      .brand {
+        padding: 0 13px;
+      }
+
+      .brand-name {
+        display: none;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .left-panel {
+        display: none;
+      }
+
+      .bottom-bar {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+      }
+
+      .map-controls {
+        right: 10px;
+        bottom: 68px;
+      }
+
+      .location-btn {
+        right: 10px;
+        bottom: 10px;
+      }
+
+      .coordinates {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main id="map">
+    <canvas id="mapCanvas"></canvas>
+  </main>
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="brand-icon">K</div>
+
+      <div class="brand-name">
+        KVGDV Maps
+      </div>
+
+    </div>
+
+    <div class="search">
+
+      <div class="search-icon">⌕</div>
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Szukaj miejsca, adresu lub współrzędnych..."
+        autocomplete="off"
+      >
+
+      <div class="search-shortcut">
+        Ctrl K
+      </div>
+
+    </div>
+
+  </header>
+
+  <aside class="left-panel">
+
+    <div class="panel-section">
+
+      <div class="panel-title">
+        Mapa
+      </div>
+
+      <button class="tool active">
+        <span class="tool-icon">🗺️</span>
+        <span class="tool-text">
+          Mapa standardowa
+        </span>
+      </button>
+
+      <button class="tool">
+        <span class="tool-icon">🛰️</span>
+        <span class="tool-text">
+          Satelita
+        </span>
+      </button>
+
+      <button class="tool">
+        <span class="tool-icon">⛰️</span>
+        <span class="tool-text">
+          Teren
+        </span>
+      </button>
+
+    </div>
+
+    <div class="panel-section">
+
+      <div class="panel-title">
+        Narzędzia
+      </div>
+
+      <button class="tool">
+        <span class="tool-icon">📍</span>
+        <span class="tool-text">
+          Dodaj punkt
+        </span>
+      </button>
+
+      <button class="tool">
+        <span class="tool-icon">🧭</span>
+        <span class="tool-text">
+          Wyznacz trasę
+        </span>
+      </button>
+
+      <button class="tool">
+        <span class="tool-icon">📏</span>
+        <span class="tool-text">
+          Zmierz odległość
+        </span>
+      </button>
+
+    </div>
+
+  </aside>
+
+  <div class="map-controls">
+
+    <div class="control-group">
+
+      <button
+        class="map-btn"
+        id="zoomIn"
+        title="Przybliż"
+      >
+        +
+      </button>
+
+      <div class="divider"></div>
+
+      <button
+        class="map-btn"
+        id="zoomOut"
+        title="Oddal"
+      >
+        −
+      </button>
+
+    </div>
+
+    <div class="control-group">
+
+      <button
+        class="map-btn"
+        id="layersButton"
+        title="Warstwy"
+      >
+        ◈
+      </button>
+
+    </div>
+
+  </div>
+
+  <button
+    class="location-btn"
+    id="locationButton"
+    title="Moja lokalizacja"
+  >
+    ◎
+  </button>
+
+  <div
+    class="place-card"
+    id="placeCard"
+  >
+
+    <div
+      class="place-name"
+      id="placeName"
+    >
+      Redlino
+    </div>
+
+    <div
+      class="place-type"
+      id="placeType"
+    >
+      Wieś
+    </div>
+
+  </div>
+
+  <footer class="bottom-bar">
+
+    <div class="status">
+
+      <span class="status-dot"></span>
+
+      <span id="engineStatus">
+        KVGDV Maps Engine
+      </span>
+
+    </div>
+
+    <div
+      class="coordinates"
+      id="coordinates"
+    >
+      Ładowanie mapy...
+    </div>
+
+  </footer>
+
+
 <script>
 
-const canvas = document.getElementById("mapCanvas");
-const ctx = canvas.getContext("2d");
+/* =========================================
+   KVGDV MAPS ENGINE
+========================================= */
+
+const canvas =
+  document.getElementById("mapCanvas");
+
+const ctx =
+  canvas.getContext("2d");
 
 const coordinatesElement =
   document.getElementById("coordinates");
@@ -28,128 +753,33 @@ const searchInput =
 
 const state = {
 
-  width: 0,
-  height: 0,
+  width: window.innerWidth,
 
-  zoom: 25000,
+  height: window.innerHeight,
+
+  zoom: 80000,
 
   centerLat: 54.025456959035,
+
   centerLon: 15.9012336035926,
 
-  mouseX: 0,
-  mouseY: 0,
+  mouseX: window.innerWidth / 2,
+
+  mouseY: window.innerHeight / 2,
 
   dragging: false,
 
   lastMouseX: 0,
+
   lastMouseY: 0,
 
-  data: null
+  data: null,
+
+  places: [],
+
+  roads: []
 
 };
-
-
-/* =========================================
-   POMOCNICZE
-========================================= */
-
-/*
-  Pobiera wartość z obiektu,
-  próbując kilka możliwych nazw.
-*/
-
-function getValue(object, names) {
-
-  if (!object || typeof object !== "object") {
-    return undefined;
-  }
-
-  for (const name of names) {
-
-    if (
-      Object.prototype.hasOwnProperty.call(
-        object,
-        name
-      )
-    ) {
-
-      return object[name];
-
-    }
-
-  }
-
-  return undefined;
-
-}
-
-
-/*
-  Współrzędne punktu.
-*/
-
-function getPointCoordinates(point) {
-
-  if (!point || typeof point !== "object") {
-    return null;
-  }
-
-  const lat = Number(
-    getValue(point, [
-      "szer.",
-      "szer",
-      "lat",
-      "latitude"
-    ])
-  );
-
-  const lon = Number(
-    getValue(point, [
-      "długość",
-      "dług.",
-      "dług",
-      "lon",
-      "lng",
-      "longitude"
-    ])
-  );
-
-  if (
-    !Number.isFinite(lat) ||
-    !Number.isFinite(lon)
-  ) {
-
-    return null;
-
-  }
-
-  return {
-    lat,
-    lon
-  };
-
-}
-
-
-/*
-  Obsługa współrzędnych miejscowości.
-*/
-
-function getPlaceCoordinates(place) {
-
-  const coordinates =
-    getValue(place, [
-      "współrzędne",
-      "wspolrzedne",
-      "coordinates",
-      "koordynaty"
-    ]);
-
-  return getPointCoordinates(
-    coordinates
-  );
-
-}
 
 
 /* =========================================
@@ -191,7 +821,6 @@ function resizeCanvas() {
   render();
 
 }
-
 
 window.addEventListener(
   "resize",
@@ -236,19 +865,19 @@ function screenToGeo(x, y) {
 
   return {
 
-    lon:
-      state.centerLon +
-      (
-        x -
-        state.width / 2
-      ) /
-      state.zoom,
-
     lat:
       state.centerLat -
       (
         y -
         state.height / 2
+      ) /
+      state.zoom,
+
+    lon:
+      state.centerLon +
+      (
+        x -
+        state.width / 2
       ) /
       state.zoom
 
@@ -273,78 +902,27 @@ function drawBackground() {
     state.height
   );
 
-
-  const grid =
-    Math.max(
-      50,
-      Math.min(
-        100,
-        state.zoom / 300
-      )
-    );
-
-
-  ctx.strokeStyle =
-    "rgba(255,255,255,0.025)";
-
-  ctx.lineWidth = 1;
-
-
-  for (
-    let x = 0;
-    x < state.width;
-    x += grid
-  ) {
-
-    ctx.beginPath();
-
-    ctx.moveTo(x, 0);
-
-    ctx.lineTo(
-      x,
-      state.height
-    );
-
-    ctx.stroke();
-
-  }
-
-
-  for (
-    let y = 0;
-    y < state.height;
-    y += grid
-  ) {
-
-    ctx.beginPath();
-
-    ctx.moveTo(0, y);
-
-    ctx.lineTo(
-      state.width,
-      y
-    );
-
-    ctx.stroke();
-
-  }
-
 }
 
 
 /* =========================================
-   DROGI
+   ROAD TYPE
 ========================================= */
 
-function getRoadStyle(road) {
+function roadStyle(road) {
+
+  const type =
+    String(
+      road.typ ||
+      road.type ||
+      ""
+    ).toLowerCase();
 
   const highway =
     String(
-      getValue(road, [
-        "autostrada",
-        "highway",
-        "typ"
-      ]) || ""
+      road.autostrada ||
+      road.highway ||
+      ""
     ).toLowerCase();
 
 
@@ -354,8 +932,8 @@ function getRoadStyle(road) {
   ) {
 
     return {
-      color: "#d18b55",
-      width: 8
+      color: "#d99a61",
+      width: 9
     };
 
   }
@@ -367,8 +945,24 @@ function getRoadStyle(road) {
   ) {
 
     return {
-      color: "#c78a58",
-      width: 7
+      color: "#d18c58",
+      width: 8
+    };
+
+  }
+
+
+  if (
+    highway.includes("drugorzędna") ||
+    highway.includes("drugorzedna") ||
+    type.includes("wtórny") ||
+    type.includes("wtorny") ||
+    highway.includes("secondary")
+  ) {
+
+    return {
+      color: "#8b949e",
+      width: 6
     };
 
   }
@@ -381,89 +975,43 @@ function getRoadStyle(road) {
   ) {
 
     return {
-      color: "#b07b57",
-      width: 6
-    };
-
-  }
-
-
-  if (
-    highway.includes("drugorzędna") ||
-    highway.includes("drugorzedna") ||
-    highway.includes("wtórny") ||
-    highway.includes("wtorny") ||
-    highway.includes("secondary")
-  ) {
-
-    return {
-      color: "#737d89",
-      width: 5
-    };
-
-  }
-
-
-  if (
-    highway.includes("trzeciorzędna") ||
-    highway.includes("trzeciorzedna") ||
-    highway.includes("tertiary")
-  ) {
-
-    return {
-      color: "#626d79",
-      width: 4
+      color: "#aeb5bd",
+      width: 7
     };
 
   }
 
 
   return {
-    color: "#46515e",
-    width: 3
+    color: "#59636f",
+    width: 4
   };
 
 }
 
 
+/* =========================================
+   DRAW ROADS
+========================================= */
+
 function drawRoads() {
 
-  if (!state.data) {
-    return;
-  }
-
-
-  const roads =
-    getValue(state.data, [
-      "drogi",
-      "roads"
-    ]);
-
-
-  if (!Array.isArray(roads)) {
-
-    console.warn(
-      "Nie znaleziono tablicy drogi/drogi."
-    );
-
-    return;
-
-  }
-
-
-  for (const road of roads) {
-
-    const geometry =
-      getValue(road, [
-        "geometria",
-        "geometry",
-        "coordinates"
-      ]);
-
+  for (
+    const road of state.roads
+  ) {
 
     if (
-      !Array.isArray(geometry) ||
-      geometry.length < 2
+      !Array.isArray(
+        road.geometria
+      )
+    ) {
+
+      continue;
+
+    }
+
+    if (
+      road.geometria.length < 2
     ) {
 
       continue;
@@ -472,41 +1020,55 @@ function drawRoads() {
 
 
     const style =
-      getRoadStyle(road);
+      roadStyle(road);
 
 
     ctx.beginPath();
 
-
-    let firstPoint = true;
-
-
-    for (const point of geometry) {
-
-      const coords =
-        getPointCoordinates(point);
+    let started = false;
 
 
-      if (!coords) {
+    for (
+      const point of road.geometria
+    ) {
+
+      if (!point) {
         continue;
+      }
+
+
+      const lat =
+        Number(point["szer."]);
+
+      const lon =
+        Number(point["długość"]);
+
+
+      if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lon)
+      ) {
+
+        continue;
+
       }
 
 
       const screen =
         geoToScreen(
-          coords.lat,
-          coords.lon
+          lat,
+          lon
         );
 
 
-      if (firstPoint) {
+      if (!started) {
 
         ctx.moveTo(
           screen.x,
           screen.y
         );
 
-        firstPoint = false;
+        started = true;
 
       } else {
 
@@ -520,13 +1082,16 @@ function drawRoads() {
     }
 
 
-    if (firstPoint) {
+    if (!started) {
       continue;
     }
 
 
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
+    ctx.lineCap =
+      "round";
+
+    ctx.lineJoin =
+      "round";
 
     ctx.strokeStyle =
       style.color;
@@ -542,61 +1107,17 @@ function drawRoads() {
 
 
 /* =========================================
-   MIEJSCOWOŚCI
+   DRAW PLACES
 ========================================= */
 
 function drawPlaces() {
 
-  if (!state.data) {
-    return;
-  }
-
-
-  const places =
-    getValue(state.data, [
-      "miejsca",
-      "places"
-    ]);
-
-
-  if (!Array.isArray(places)) {
-
-    console.warn(
-      "Nie znaleziono tablicy miejsca."
-    );
-
-    return;
-
-  }
-
-
-  for (const place of places) {
-
-    const coords =
-      getPlaceCoordinates(place);
-
-
-    if (!coords) {
-      continue;
-    }
-
-
-    const screen =
-      geoToScreen(
-        coords.lat,
-        coords.lon
-      );
-
-
-    /*
-      Pomijamy bardzo odległe punkty.
-    */
+  for (
+    const place of state.places
+  ) {
 
     if (
-      screen.x < -500 ||
-      screen.x > state.width + 500 ||
-      screen.y < -500 ||
-      screen.y > state.height + 500
+      !place.współrzędne
     ) {
 
       continue;
@@ -604,8 +1125,36 @@ function drawPlaces() {
     }
 
 
+    const lat =
+      Number(
+        place.współrzędne["szer."]
+      );
+
+    const lon =
+      Number(
+        place.współrzędne["długość"]
+      );
+
+
+    if (
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lon)
+    ) {
+
+      continue;
+
+    }
+
+
+    const screen =
+      geoToScreen(
+        lat,
+        lon
+      );
+
+
     /*
-      Punkt.
+      Marker
     */
 
     ctx.beginPath();
@@ -613,7 +1162,7 @@ function drawPlaces() {
     ctx.arc(
       screen.x,
       screen.y,
-      5,
+      7,
       0,
       Math.PI * 2
     );
@@ -624,16 +1173,12 @@ function drawPlaces() {
     ctx.fill();
 
 
-    /*
-      Środek.
-    */
-
     ctx.beginPath();
 
     ctx.arc(
       screen.x,
       screen.y,
-      2,
+      3,
       0,
       Math.PI * 2
     );
@@ -645,18 +1190,11 @@ function drawPlaces() {
 
 
     /*
-      Nazwa.
+      Nazwa
     */
 
-    const name =
-      getValue(place, [
-        "nazwa",
-        "name"
-      ]) || "Nieznane";
-
-
     ctx.font =
-      "600 14px Inter, system-ui, sans-serif";
+      "600 14px system-ui";
 
     ctx.textAlign =
       "center";
@@ -668,17 +1206,19 @@ function drawPlaces() {
       "#f1f5f9";
 
     ctx.shadowColor =
-      "rgba(0,0,0,0.85)";
+      "rgba(0,0,0,0.9)";
 
-    ctx.shadowBlur = 5;
+    ctx.shadowBlur =
+      5;
 
     ctx.fillText(
-      name,
+      place.nazwa || "Miejsce",
       screen.x,
-      screen.y + 10
+      screen.y + 12
     );
 
-    ctx.shadowBlur = 0;
+    ctx.shadowBlur =
+      0;
 
   }
 
@@ -723,14 +1263,15 @@ function updateCoordinates() {
 
 
 /* =========================================
-   MOUSE
+   MOUSE DRAG
 ========================================= */
 
 canvas.addEventListener(
   "mousedown",
   event => {
 
-    state.dragging = true;
+    state.dragging =
+      true;
 
     state.lastMouseX =
       event.clientX;
@@ -750,7 +1291,8 @@ window.addEventListener(
   "mouseup",
   () => {
 
-    state.dragging = false;
+    state.dragging =
+      false;
 
     canvas.classList.remove(
       "dragging"
@@ -771,7 +1313,9 @@ canvas.addEventListener(
       event.clientY;
 
 
-    if (state.dragging) {
+    if (
+      state.dragging
+    ) {
 
       const dx =
         event.clientX -
@@ -809,7 +1353,7 @@ canvas.addEventListener(
 
 
 /* =========================================
-   ZOOM
+   WHEEL ZOOM
 ========================================= */
 
 canvas.addEventListener(
@@ -828,16 +1372,20 @@ canvas.addEventListener(
 
     const factor =
       event.deltaY < 0
-        ? 1.15
-        : 1 / 1.15;
+        ? 1.25
+        : 0.8;
+
+
+    state.zoom *=
+      factor;
 
 
     state.zoom =
       Math.max(
-        1000,
+        10000,
         Math.min(
           1000000,
-          state.zoom * factor
+          state.zoom
         )
       );
 
@@ -849,14 +1397,13 @@ canvas.addEventListener(
       );
 
 
-    state.centerLon +=
-      before.lon -
-      after.lon;
-
-
     state.centerLat +=
       before.lat -
       after.lat;
+
+    state.centerLon +=
+      before.lon -
+      after.lon;
 
 
     render();
@@ -898,12 +1445,12 @@ document
     "click",
     () => {
 
-      state.zoom /= 1.25;
+      state.zoom *= 0.8;
 
       state.zoom =
         Math.max(
           state.zoom,
-          1000
+          10000
         );
 
       render();
@@ -913,7 +1460,7 @@ document
 
 
 /* =========================================
-   GEOLOCATION
+   LOCATION
 ========================================= */
 
 document
@@ -922,7 +1469,9 @@ document
     "click",
     () => {
 
-      if (!navigator.geolocation) {
+      if (
+        !navigator.geolocation
+      ) {
 
         alert(
           "Geolokalizacja nie jest obsługiwana."
@@ -969,8 +1518,12 @@ searchInput.addEventListener(
   "keydown",
   event => {
 
-    if (event.key !== "Enter") {
+    if (
+      event.key !== "Enter"
+    ) {
+
       return;
+
     }
 
 
@@ -980,38 +1533,20 @@ searchInput.addEventListener(
         .toLowerCase();
 
 
-    if (!query || !state.data) {
-      return;
-    }
-
-
-    const places =
-      getValue(state.data, [
-        "miejsca",
-        "places"
-      ]);
-
-
-    if (!Array.isArray(places)) {
+    if (!query) {
       return;
     }
 
 
     const result =
-      places.find(place => {
-
-        const name =
+      state.places.find(
+        place =>
           String(
-            getValue(place, [
-              "nazwa",
-              "name"
-            ]) || ""
-          ).toLowerCase();
-
-
-        return name.includes(query);
-
-      });
+            place.nazwa || ""
+          )
+          .toLowerCase()
+          .includes(query)
+      );
 
 
     if (!result) {
@@ -1025,34 +1560,23 @@ searchInput.addEventListener(
     }
 
 
-    const coords =
-      getPlaceCoordinates(result);
-
-
-    if (!coords) {
-      return;
-    }
-
-
     state.centerLat =
-      coords.lat;
+      Number(
+        result.współrzędne["szer."]
+      );
 
     state.centerLon =
-      coords.lon;
+      Number(
+        result.współrzędne["długość"]
+      );
 
 
     placeName.textContent =
-      getValue(result, [
-        "nazwa",
-        "name"
-      ]) || "Nieznane";
+      result.nazwa || "Miejsce";
 
 
     placeType.textContent =
-      getValue(result, [
-        "typ",
-        "type"
-      ]) || "Miejsce";
+      result.typ || "Miejsce";
 
 
     placeCard.classList.add(
@@ -1063,22 +1587,16 @@ searchInput.addEventListener(
     render();
 
 
-    clearTimeout(
-      window.placeCardTimer
+    setTimeout(
+      () => {
+
+        placeCard.classList.remove(
+          "visible"
+        );
+
+      },
+      3000
     );
-
-
-    window.placeCardTimer =
-      setTimeout(
-        () => {
-
-          placeCard.classList.remove(
-            "visible"
-          );
-
-        },
-        3000
-      );
 
   }
 );
@@ -1093,10 +1611,8 @@ document.addEventListener(
   event => {
 
     if (
-      (
-        event.ctrlKey ||
-        event.metaKey
-      ) &&
+      (event.ctrlKey ||
+       event.metaKey) &&
       event.key.toLowerCase() === "k"
     ) {
 
@@ -1119,23 +1635,19 @@ async function loadMapData() {
   try {
 
     engineStatus.textContent =
-      "Ładowanie KVGDV Map Data...";
+      "Ładowanie danych mapy...";
 
 
     /*
-      index.html znajduje się w głównym
-      katalogu repozytorium.
-
-      JSON:
-
-      data/zachodniopomorskie.json
+      index.html jest w głównym katalogu,
+      JSON jest w /data/.
     */
 
     const response =
       await fetch(
         "./data/zachodniopomorskie.json",
         {
-          cache: "no-cache"
+          cache: "no-store"
         }
       );
 
@@ -1144,93 +1656,98 @@ async function loadMapData() {
 
       throw new Error(
         "HTTP " +
-        response.status +
-        " — JSON nie został znaleziony."
+        response.status
       );
 
     }
 
 
-    state.data =
+    const json =
       await response.json();
 
 
     console.log(
-      "KVGDV JSON:",
-      state.data
+      "KVGDV Maps JSON:",
+      json
     );
 
 
-    /*
-      Szukamy miejsc.
-    */
-
-    const places =
-      getValue(state.data, [
-        "miejsca",
-        "places"
-      ]);
+    state.data =
+      json;
 
 
     /*
-      Szukamy dróg.
+      Twoje nazwy:
+        miejsca
+        drogi
     */
 
-    const roads =
-      getValue(state.data, [
-        "drogi",
-        "roads"
-      ]);
+    state.places =
+      Array.isArray(
+        json.miejsca
+      )
+        ? json.miejsca
+        : [];
 
 
-    const placesCount =
-      Array.isArray(places)
-        ? places.length
-        : 0;
-
-
-    const roadsCount =
-      Array.isArray(roads)
-        ? roads.length
-        : 0;
+    state.roads =
+      Array.isArray(
+        json.drogi
+      )
+        ? json.drogi
+        : [];
 
 
     console.log(
       "Miejsca:",
-      placesCount
+      state.places.length
     );
 
 
     console.log(
       "Drogi:",
-      roadsCount
+      state.roads.length
     );
 
 
     /*
-      Jeżeli znaleziono miejscowości,
-      ustawiamy mapę na pierwszą.
+      Centrum mapy ustawiamy na pierwszą
+      poprawną miejscowość.
     */
 
-    if (
-      placesCount > 0
+    for (
+      const place of state.places
     ) {
 
-      const first =
-        places[0];
+      if (
+        place.współrzędne
+      ) {
+
+        const lat =
+          Number(
+            place.współrzędne["szer."]
+          );
+
+        const lon =
+          Number(
+            place.współrzędne["długość"]
+          );
 
 
-      const coords =
-        getPlaceCoordinates(first);
+        if (
+          Number.isFinite(lat) &&
+          Number.isFinite(lon)
+        ) {
 
+          state.centerLat =
+            lat;
 
-      if (coords) {
+          state.centerLon =
+            lon;
 
-        state.centerLat =
-          coords.lat;
+          break;
 
-        state.centerLon =
-          coords.lon;
+        }
 
       }
 
@@ -1239,73 +1756,33 @@ async function loadMapData() {
 
     engineStatus.textContent =
       "KVGDV Maps Engine · " +
-      placesCount +
+      state.places.length +
       " miejsc · " +
-      roadsCount +
+      state.roads.length +
       " dróg";
 
 
     render();
 
   }
-
-
   catch (error) {
 
     console.error(
-      "KVGDV Maps:",
+      "KVGDV Maps ERROR:",
       error
     );
 
 
     engineStatus.textContent =
-      "KVGDV Maps Engine · błąd danych";
+      "KVGDV Maps Engine · błąd JSON";
 
 
-    ctx.fillStyle =
-      "#10161d";
+    /*
+      Nie robimy białego ekranu.
+      Interfejs pozostaje widoczny.
+    */
 
-
-    ctx.fillRect(
-      0,
-      0,
-      state.width,
-      state.height
-    );
-
-
-    ctx.textAlign =
-      "center";
-
-
-    ctx.fillStyle =
-      "#ff5c5c";
-
-
-    ctx.font =
-      "700 18px system-ui";
-
-
-    ctx.fillText(
-      "Nie udało się załadować mapy",
-      state.width / 2,
-      state.height / 2 - 20
-    );
-
-
-    ctx.fillStyle =
-      "#8b98a8";
-
-
-    ctx.font =
-      "13px system-ui";
-
-
-    ctx.fillText(
-      error.message,
-      state.width / 2,
-      state.height / 2 + 10
-    );
+    render();
 
   }
 
@@ -1321,3 +1798,6 @@ resizeCanvas();
 loadMapData();
 
 </script>
+
+</body>
+</html>
