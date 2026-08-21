@@ -1,460 +1,496 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0f14">
-
-  <title>KVGDV Maps</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #0b0f14;
-      --panel: rgba(17, 22, 29, 0.94);
-      --panel-2: #151b23;
-      --border: rgba(255,255,255,0.09);
-      --text: #f1f5f9;
-      --muted: #8b98a8;
-      --accent: #4f8cff;
-      --danger: #ff5c5c;
-      --shadow: 0 12px 40px rgba(0,0,0,0.35);
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    button, input {
-      font: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    #map {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      background: #10161d;
-    }
-
-    #mapCanvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      cursor: grab;
-    }
-
-    #mapCanvas.dragging {
-      cursor: grabbing;
-    }
-
-    /* TOP BAR */
-
-    .topbar {
-      position: fixed;
-      z-index: 20;
-      top: 16px;
-      left: 16px;
-      right: 16px;
-
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      pointer-events: none;
-    }
-
-    .topbar > * {
-      pointer-events: auto;
-    }
-
-    .brand {
-      height: 52px;
-
-      display: flex;
-      align-items: center;
-      gap: 11px;
-
-      padding: 0 17px;
-
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 15px;
-
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
-
-    .brand-icon {
-      width: 30px;
-      height: 30px;
-
-      display: grid;
-      place-items: center;
-
-      border-radius: 9px;
-
-      background: var(--accent);
-
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .brand-name {
-      font-weight: 750;
-      letter-spacing: -0.3px;
-      white-space: nowrap;
-    }
-
-    .search {
-      height: 52px;
-      width: min(500px, 48vw);
-
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      padding: 0 15px;
-
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 15px;
-
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
-
-    .search-icon {
-      color: var(--muted);
-      font-size: 19px;
-    }
-
-    .search input {
-      width: 100%;
-      border: 0;
-      outline: none;
-      background: transparent;
-      color: var(--text);
-      font-size: 14px;
-    }
-
-    .search input::placeholder {
-      color: #748090;
-    }
-
-    .search-shortcut {
-      padding: 4px 7px;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      color: var(--muted);
-      font-size: 11px;
-      white-space: nowrap;
-    }
-
-    /* LEFT PANEL */
-
-    .left-panel {
-      position: fixed;
-      z-index: 15;
-      top: 84px;
-      left: 16px;
-      width: 270px;
-
-      padding: 10px;
-
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 17px;
-
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
-
-    .panel-section {
-      padding: 8px;
-    }
-
-    .panel-title {
-      margin-bottom: 8px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .8px;
-      text-transform: uppercase;
-    }
-
-    .tool {
-      width: 100%;
-      min-height: 43px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0f14">
+
+<title>KVGDV Maps</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+:root{
+  --bg:#0b0f14;
+  --panel:rgba(17,22,29,.94);
+  --border:rgba(255,255,255,.09);
+  --text:#f1f5f9;
+  --muted:#8b98a8;
+  --accent:#4f8cff;
+  --shadow:0 12px 40px rgba(0,0,0,.35);
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background:var(--bg);
+  color:var(--text);
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+}
 
-      display: flex;
-      align-items: center;
-      gap: 11px;
+/* ================= MAP ================= */
+
+#map{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:#10161d;
+}
 
-      padding: 0 11px;
+#mapCanvas{
+  position:absolute;
+  inset:0;
 
-      border-radius: 11px;
+  width:100%;
+  height:100%;
 
-      background: transparent;
-      color: var(--text);
+  cursor:grab;
+}
 
-      text-align: left;
-      transition: .15s ease;
-    }
+#mapCanvas.dragging{
+  cursor:grabbing;
+}
 
-    .tool:hover {
-      background: rgba(255,255,255,.06);
-    }
+/* ================= TOP ================= */
 
-    .tool.active {
-      background: rgba(79,140,255,.13);
-      color: #9cbdff;
-    }
+.topbar{
+  position:fixed;
+  z-index:20;
 
-    .tool-icon {
-      width: 25px;
-      text-align: center;
-      font-size: 17px;
-    }
+  top:16px;
+  left:16px;
+  right:16px;
 
-    .tool-text {
-      font-size: 13px;
-      font-weight: 550;
-    }
+  display:flex;
+  align-items:center;
+  gap:12px;
 
-    /* CONTROLS */
+  pointer-events:none;
+}
 
-    .map-controls {
-      position: fixed;
-      z-index: 15;
+.topbar>*{
+  pointer-events:auto;
+}
 
-      right: 16px;
-      bottom: 104px;
+.brand{
+  height:52px;
 
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+  display:flex;
+  align-items:center;
+  gap:11px;
 
-    .control-group {
-      overflow: hidden;
+  padding:0 17px;
 
-      display: flex;
-      flex-direction: column;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
 
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 13px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+}
 
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
+.brand-icon{
+  width:30px;
+  height:30px;
 
-    .map-btn {
-      width: 46px;
-      height: 46px;
+  display:grid;
+  place-items:center;
 
-      display: grid;
-      place-items: center;
+  border-radius:9px;
 
-      background: transparent;
-      color: var(--text);
+  background:var(--accent);
 
-      font-size: 18px;
-    }
+  font-size:15px;
+  font-weight:800;
+}
 
-    .map-btn:hover {
-      background: rgba(255,255,255,.07);
-    }
+.brand-name{
+  font-weight:750;
+  white-space:nowrap;
+}
 
-    .divider {
-      height: 1px;
-      background: var(--border);
-    }
+.search{
+  height:52px;
+  width:min(500px,48vw);
 
-    /* LOCATION */
+  display:flex;
+  align-items:center;
+  gap:10px;
 
-    .location-btn {
-      position: fixed;
-      z-index: 15;
+  padding:0 15px;
 
-      right: 16px;
-      bottom: 16px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
 
-      width: 46px;
-      height: 46px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+}
 
-      border-radius: 13px;
+.search-icon{
+  color:var(--muted);
+  font-size:19px;
+}
 
-      background: var(--panel);
-      border: 1px solid var(--border);
+.search input{
+  width:100%;
 
-      color: var(--text);
+  border:0;
+  outline:none;
 
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
+  background:transparent;
+  color:var(--text);
 
-      font-size: 18px;
-    }
+  font-size:14px;
+}
 
-    /* BOTTOM */
+.search input::placeholder{
+  color:#748090;
+}
 
-    .bottom-bar {
-      position: fixed;
-      z-index: 20;
+.search-shortcut{
+  padding:4px 7px;
 
-      left: 16px;
-      right: 16px;
-      bottom: 16px;
+  border:1px solid var(--border);
+  border-radius:7px;
 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+  color:var(--muted);
 
-      pointer-events: none;
-    }
+  font-size:11px;
+  white-space:nowrap;
+}
 
-    .bottom-bar > * {
-      pointer-events: auto;
-    }
+/* ================= LEFT ================= */
 
-    .status,
-    .coordinates {
-      height: 44px;
+.left-panel{
+  position:fixed;
+  z-index:15;
 
-      display: flex;
-      align-items: center;
+  top:84px;
+  left:16px;
 
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+  width:270px;
 
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
+  padding:10px;
 
-      color: var(--muted);
-      font-size: 12px;
-    }
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:17px;
 
-    .status {
-      gap: 9px;
-      padding: 0 13px;
-    }
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+}
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #47d18c;
-      box-shadow: 0 0 10px rgba(71,209,140,.6);
-    }
+.panel-section{
+  padding:8px;
+}
 
-    .coordinates {
-      padding: 0 13px;
-      font-variant-numeric: tabular-nums;
-    }
+.panel-title{
+  margin-bottom:8px;
 
-    /* PLACE CARD */
+  color:var(--muted);
 
-    .place-card {
-      position: fixed;
-      z-index: 18;
+  font-size:11px;
+  font-weight:700;
 
-      left: 50%;
-      top: 50%;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+}
 
-      transform: translate(-50%, -100%);
+.tool{
+  width:100%;
+  min-height:43px;
 
-      display: none;
+  display:flex;
+  align-items:center;
+  gap:11px;
 
-      padding: 9px 13px;
+  padding:0 11px;
 
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 11px;
+  border-radius:11px;
 
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
+  background:transparent;
+  color:var(--text);
 
-      pointer-events: none;
-    }
+  text-align:left;
+}
 
-    .place-card.visible {
-      display: block;
-    }
+.tool:hover{
+  background:rgba(255,255,255,.06);
+}
 
-    .place-name {
-      font-size: 13px;
-      font-weight: 700;
-    }
+.tool.active{
+  background:rgba(79,140,255,.13);
+  color:#9cbdff;
+}
 
-    .place-type {
-      margin-top: 2px;
-      color: var(--muted);
-      font-size: 10px;
-    }
+.tool-icon{
+  width:25px;
+  text-align:center;
+  font-size:17px;
+}
 
-    @media (max-width:760px) {
+.tool-text{
+  font-size:13px;
+  font-weight:550;
+}
 
-      .topbar {
-        left:10px;
-        right:10px;
-        top:10px;
-      }
+/* ================= CONTROLS ================= */
 
-      .brand {
-        padding:0 13px;
-      }
+.map-controls{
+  position:fixed;
+  z-index:15;
 
-      .brand-name {
-        display:none;
-      }
+  right:16px;
+  bottom:104px;
 
-      .search {
-        width:100%;
-      }
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
 
-      .left-panel {
-        display:none;
-      }
+.control-group{
+  overflow:hidden;
 
-      .bottom-bar {
-        left:10px;
-        right:10px;
-        bottom:10px;
-      }
+  display:flex;
+  flex-direction:column;
 
-      .map-controls {
-        right:10px;
-        bottom:68px;
-      }
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:13px;
 
-      .location-btn {
-        right:10px;
-        bottom:10px;
-      }
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+}
 
-      .coordinates {
-        display:none;
-      }
-    }
-  </style>
+.map-btn{
+  width:46px;
+  height:46px;
+
+  display:grid;
+  place-items:center;
+
+  background:transparent;
+  color:var(--text);
+
+  font-size:18px;
+}
+
+.map-btn:hover{
+  background:rgba(255,255,255,.07);
+}
+
+.divider{
+  height:1px;
+  background:var(--border);
+}
+
+/* ================= LOCATION ================= */
+
+.location-btn{
+  position:fixed;
+  z-index:15;
+
+  right:16px;
+  bottom:16px;
+
+  width:46px;
+  height:46px;
+
+  border-radius:13px;
+
+  background:var(--panel);
+  border:1px solid var(--border);
+
+  color:var(--text);
+
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+
+  font-size:18px;
+}
+
+/* ================= BOTTOM ================= */
+
+.bottom-bar{
+  position:fixed;
+  z-index:20;
+
+  left:16px;
+  right:16px;
+  bottom:16px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  pointer-events:none;
+}
+
+.bottom-bar>*{
+  pointer-events:auto;
+}
+
+.status,
+.coordinates{
+  height:44px;
+
+  display:flex;
+  align-items:center;
+
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+
+  color:var(--muted);
+
+  font-size:12px;
+}
+
+.status{
+  gap:9px;
+  padding:0 13px;
+}
+
+.status-dot{
+  width:8px;
+  height:8px;
+
+  border-radius:50%;
+
+  background:#47d18c;
+
+  box-shadow:
+    0 0 10px rgba(71,209,140,.6);
+}
+
+.coordinates{
+  padding:0 13px;
+
+  font-variant-numeric:tabular-nums;
+}
+
+/* ================= PLACE CARD ================= */
+
+.place-card{
+  position:fixed;
+  z-index:18;
+
+  left:50%;
+  top:50%;
+
+  transform:translate(-50%,-100%);
+
+  display:none;
+
+  padding:9px 13px;
+
+  background:var(--panel);
+
+  border:1px solid var(--border);
+  border-radius:11px;
+
+  box-shadow:var(--shadow);
+
+  backdrop-filter:blur(18px);
+
+  pointer-events:none;
+}
+
+.place-card.visible{
+  display:block;
+}
+
+.place-name{
+  font-size:13px;
+  font-weight:700;
+}
+
+.place-type{
+  margin-top:2px;
+
+  color:var(--muted);
+
+  font-size:10px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:760px){
+
+  .topbar{
+    left:10px;
+    right:10px;
+    top:10px;
+  }
+
+  .brand{
+    padding:0 13px;
+  }
+
+  .brand-name{
+    display:none;
+  }
+
+  .search{
+    width:100%;
+  }
+
+  .left-panel{
+    display:none;
+  }
+
+  .bottom-bar{
+    left:10px;
+    right:10px;
+    bottom:10px;
+  }
+
+  .map-controls{
+    right:10px;
+    bottom:68px;
+  }
+
+  .location-btn{
+    right:10px;
+    bottom:10px;
+  }
+
+  .coordinates{
+    display:none;
+  }
+
+}
+
+</style>
 </head>
 
 <body>
@@ -463,15 +499,27 @@
   <canvas id="mapCanvas"></canvas>
 </main>
 
+
 <header class="topbar">
 
   <div class="brand">
-    <div class="brand-icon">K</div>
-    <div class="brand-name">KVGDV Maps</div>
+
+    <div class="brand-icon">
+      K
+    </div>
+
+    <div class="brand-name">
+      KVGDV Maps
+    </div>
+
   </div>
 
+
   <div class="search">
-    <div class="search-icon">⌕</div>
+
+    <div class="search-icon">
+      ⌕
+    </div>
 
     <input
       id="searchInput"
@@ -483,9 +531,11 @@
     <div class="search-shortcut">
       Ctrl K
     </div>
+
   </div>
 
 </header>
+
 
 <aside class="left-panel">
 
@@ -497,20 +547,27 @@
 
     <button class="tool active">
       <span class="tool-icon">🗺️</span>
-      <span class="tool-text">Mapa standardowa</span>
+      <span class="tool-text">
+        Mapa standardowa
+      </span>
     </button>
 
     <button class="tool">
       <span class="tool-icon">🛰️</span>
-      <span class="tool-text">Satelita</span>
+      <span class="tool-text">
+        Satelita
+      </span>
     </button>
 
     <button class="tool">
       <span class="tool-icon">⛰️</span>
-      <span class="tool-text">Teren</span>
+      <span class="tool-text">
+        Teren
+      </span>
     </button>
 
   </div>
+
 
   <div class="panel-section">
 
@@ -520,44 +577,66 @@
 
     <button class="tool">
       <span class="tool-icon">📍</span>
-      <span class="tool-text">Dodaj punkt</span>
+      <span class="tool-text">
+        Dodaj punkt
+      </span>
     </button>
 
     <button class="tool">
       <span class="tool-icon">🧭</span>
-      <span class="tool-text">Wyznacz trasę</span>
+      <span class="tool-text">
+        Wyznacz trasę
+      </span>
     </button>
 
     <button class="tool">
       <span class="tool-icon">📏</span>
-      <span class="tool-text">Zmierz odległość</span>
+      <span class="tool-text">
+        Zmierz odległość
+      </span>
     </button>
 
   </div>
 
 </aside>
 
+
 <div class="map-controls">
 
   <div class="control-group">
 
-    <button class="map-btn" id="zoomIn">+</button>
+    <button
+      class="map-btn"
+      id="zoomIn"
+    >
+      +
+    </button>
 
     <div class="divider"></div>
 
-    <button class="map-btn" id="zoomOut">−</button>
+    <button
+      class="map-btn"
+      id="zoomOut"
+    >
+      −
+    </button>
 
   </div>
 
+
   <div class="control-group">
 
-    <button class="map-btn" id="layersButton">
+    <button
+      class="map-btn"
+      id="layersButton"
+    >
       ◈
     </button>
 
   </div>
 
 </div>
+
 
 <button
   class="location-btn"
@@ -566,7 +645,11 @@
   ◎
 </button>
 
-<div class="place-card" id="placeCard">
+
+<div
+  class="place-card"
+  id="placeCard"
+>
 
   <div
     class="place-name"
@@ -584,6 +667,7 @@
 
 </div>
 
+
 <footer class="bottom-bar">
 
   <div class="status">
@@ -595,6 +679,7 @@
     </span>
 
   </div>
+
 
   <div
     class="coordinates"
@@ -608,17 +693,27 @@
 
 <script>
 
+/* =====================================================
+   KVGDV MAPS ENGINE
+   GeoJSON / OpenStreetMap / Overpass Turbo
+===================================================== */
+
+
 const canvas =
   document.getElementById("mapCanvas");
 
 const ctx =
   canvas.getContext("2d");
 
-const coordinatesElement =
-  document.getElementById("coordinates");
 
 const engineStatus =
   document.getElementById("engineStatus");
+
+const coordinatesElement =
+  document.getElementById("coordinates");
+
+const searchInput =
+  document.getElementById("searchInput");
 
 const placeCard =
   document.getElementById("placeCard");
@@ -629,45 +724,43 @@ const placeName =
 const placeType =
   document.getElementById("placeType");
 
-const searchInput =
-  document.getElementById("searchInput");
 
-
-/* =========================================
+/* =====================================================
    STATE
-========================================= */
+===================================================== */
 
 const state = {
 
-  width: 0,
-  height: 0,
+  width:0,
+  height:0,
 
-  zoom: 30000,
+  zoom:30000,
 
-  centerLat: 54.025456959035,
-  centerLon: 15.9012336035926,
+  centerLat:54.025,
+  centerLon:15.90,
 
-  mouseX: 0,
-  mouseY: 0,
+  mouseX:0,
+  mouseY:0,
 
-  dragging: false,
+  dragging:false,
 
-  lastMouseX: 0,
-  lastMouseY: 0,
+  lastMouseX:0,
+  lastMouseY:0,
 
-  geojson: null,
+  geojson:null,
 
-  places: [],
-  roads: []
+  places:[],
+
+  bounds:null
 
 };
 
 
-/* =========================================
+/* =====================================================
    RESIZE
-========================================= */
+===================================================== */
 
-function resizeCanvas() {
+function resizeCanvas(){
 
   const dpr =
     window.devicePixelRatio || 1;
@@ -700,6 +793,7 @@ function resizeCanvas() {
   );
 
   render();
+
 }
 
 window.addEventListener(
@@ -708,11 +802,14 @@ window.addEventListener(
 );
 
 
-/* =========================================
+/* =====================================================
    GEO → SCREEN
-========================================= */
+===================================================== */
 
-function geoToScreen(lat, lon) {
+function geoToScreen(
+  lat,
+  lon
+){
 
   return {
 
@@ -731,11 +828,14 @@ function geoToScreen(lat, lon) {
 }
 
 
-/* =========================================
+/* =====================================================
    SCREEN → GEO
-========================================= */
+===================================================== */
 
-function screenToGeo(x, y) {
+function screenToGeo(
+  x,
+  y
+){
 
   return {
 
@@ -754,13 +854,14 @@ function screenToGeo(x, y) {
 }
 
 
-/* =========================================
+/* =====================================================
    BACKGROUND
-========================================= */
+===================================================== */
 
-function drawBackground() {
+function drawBackground(){
 
-  ctx.fillStyle = "#10161d";
+  ctx.fillStyle =
+    "#10161d";
 
   ctx.fillRect(
     0,
@@ -772,147 +873,176 @@ function drawBackground() {
 }
 
 
-/* =========================================
-   GEOJSON GEOMETRY
-========================================= */
+/* =====================================================
+   GET HIGHWAY STYLE
+===================================================== */
 
-function drawGeometry(
-  geometry,
-  properties
-) {
+function getRoadStyle(
+  props
+){
 
-  if (!geometry) return;
-
-  const type =
-    geometry.type;
-
-  const coordinates =
-    geometry.coordinates;
+  const highway =
+    String(
+      props.highway || ""
+    ).toLowerCase();
 
 
-  /* LINE */
+  if(
+    highway === "motorway"
+  ){
 
-  if (type === "LineString") {
-
-    drawLineString(
-      coordinates,
-      properties
-    );
+    return {
+      color:"#d66b6b",
+      width:8
+    };
 
   }
 
 
-  /* MULTI LINE */
+  if(
+    highway === "trunk"
+  ){
 
-  else if (
-    type === "MultiLineString"
-  ) {
-
-    coordinates.forEach(
-      line => {
-
-        drawLineString(
-          line,
-          properties
-        );
-
-      }
-    );
+    return {
+      color:"#d69b5f",
+      width:7
+    };
 
   }
 
 
-  /* POLYGON */
+  if(
+    highway === "primary"
+  ){
 
-  else if (type === "Polygon") {
-
-    drawPolygon(coordinates);
-
-  }
-
-
-  /* MULTI POLYGON */
-
-  else if (
-    type === "MultiPolygon"
-  ) {
-
-    coordinates.forEach(
-      polygon => {
-
-        drawPolygon(polygon);
-
-      }
-    );
+    return {
+      color:"#d6ad62",
+      width:6
+    };
 
   }
 
 
-  /* POINT */
+  if(
+    highway === "secondary"
+  ){
 
-  else if (type === "Point") {
-
-    drawPoint(
-      coordinates,
-      properties
-    );
+    return {
+      color:"#8f9baa",
+      width:5
+    };
 
   }
+
+
+  if(
+    highway === "tertiary"
+  ){
+
+    return {
+      color:"#707b89",
+      width:4
+    };
+
+  }
+
+
+  if(
+    highway === "residential"
+  ){
+
+    return {
+      color:"#4d5967",
+      width:3
+    };
+
+  }
+
+
+  if(
+    highway === "service"
+  ){
+
+    return {
+      color:"#3b4652",
+      width:2
+    };
+
+  }
+
+
+  return {
+
+    color:"#3b4652",
+    width:2
+
+  };
 
 }
 
 
-/* =========================================
-   LINE
-========================================= */
+/* =====================================================
+   DRAW LINE
+===================================================== */
 
 function drawLineString(
   coordinates,
-  properties
-) {
+  props
+){
 
-  if (
+  if(
     !coordinates ||
     coordinates.length < 2
-  ) {
+  ){
+
     return;
+
   }
+
+
+  const style =
+    getRoadStyle(
+      props
+    );
+
 
   ctx.beginPath();
 
+
   coordinates.forEach(
-    (coord, index) => {
-
-      /*
-        GeoJSON:
-
-        [longitude, latitude]
-      */
+    (
+      coordinate,
+      index
+    )=>{
 
       const lon =
-        coord[0];
+        coordinate[0];
 
       const lat =
-        coord[1];
+        coordinate[1];
 
-      const p =
+
+      const point =
         geoToScreen(
           lat,
           lon
         );
 
-      if (index === 0) {
+
+      if(
+        index === 0
+      ){
 
         ctx.moveTo(
-          p.x,
-          p.y
+          point.x,
+          point.y
         );
 
-      } else {
+      }else{
 
         ctx.lineTo(
-          p.x,
-          p.y
+          point.x,
+          point.y
         );
 
       }
@@ -920,83 +1050,181 @@ function drawLineString(
     }
   );
 
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
 
-  const highway =
-    properties &&
-    properties.highway;
+  ctx.lineCap =
+    "round";
 
+  ctx.lineJoin =
+    "round";
 
-  if (
-    highway === "motorway" ||
-    highway === "trunk" ||
-    highway === "primary"
-  ) {
+  ctx.strokeStyle =
+    style.color;
 
-    ctx.strokeStyle =
-      "#697584";
-
-    ctx.lineWidth =
-      Math.max(
-        2,
-        state.zoom / 5000
-      );
-
-  } else {
-
-    ctx.strokeStyle =
-      "#3b4652";
-
-    ctx.lineWidth =
-      Math.max(
-        1,
-        state.zoom / 9000
-      );
-
-  }
+  ctx.lineWidth =
+    style.width;
 
   ctx.stroke();
+
+
+  /*
+    Numer drogi
+  */
+
+  const ref =
+    props.ref;
+
+
+  if(
+    ref &&
+    state.zoom > 15000
+  ){
+
+    drawRoadLabel(
+      coordinates,
+      String(ref)
+    );
+
+  }
 
 }
 
 
-/* =========================================
+/* =====================================================
+   ROAD LABEL
+===================================================== */
+
+function drawRoadLabel(
+  coordinates,
+  text
+){
+
+  if(
+    !coordinates ||
+    coordinates.length < 2
+  ){
+
+    return;
+
+  }
+
+
+  const middle =
+    coordinates[
+      Math.floor(
+        coordinates.length / 2
+      )
+    ];
+
+
+  const p =
+    geoToScreen(
+      middle[1],
+      middle[0]
+    );
+
+
+  if(
+    p.x < -100 ||
+    p.x > state.width + 100 ||
+    p.y < -100 ||
+    p.y > state.height + 100
+  ){
+
+    return;
+
+  }
+
+
+  ctx.font =
+    "600 10px system-ui";
+
+
+  const width =
+    ctx.measureText(text).width + 8;
+
+
+  ctx.fillStyle =
+    "rgba(20,26,34,.9)";
+
+
+  ctx.fillRect(
+    p.x - width / 2,
+    p.y - 8,
+    width,
+    16
+  );
+
+
+  ctx.fillStyle =
+    "#dce5ef";
+
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+
+  ctx.fillText(
+    text,
+    p.x,
+    p.y
+  );
+
+}
+
+
+/* =====================================================
    POLYGON
-========================================= */
+===================================================== */
 
 function drawPolygon(
   rings
-) {
+){
 
-  if (!rings) return;
+  if(
+    !rings
+  ){
+
+    return;
+
+  }
+
 
   ctx.beginPath();
+
 
   rings.forEach(
     ring => {
 
       ring.forEach(
-        (coord, index) => {
+        (
+          coordinate,
+          index
+        )=>{
 
-          const p =
+          const point =
             geoToScreen(
-              coord[1],
-              coord[0]
+              coordinate[1],
+              coordinate[0]
             );
 
-          if (index === 0) {
+
+          if(
+            index === 0
+          ){
 
             ctx.moveTo(
-              p.x,
-              p.y
+              point.x,
+              point.y
             );
 
-          } else {
+          }else{
 
             ctx.lineTo(
-              p.x,
-              p.y
+              point.x,
+              point.y
             );
 
           }
@@ -1009,6 +1237,7 @@ function drawPolygon(
     }
   );
 
+
   ctx.fillStyle =
     "#142534";
 
@@ -1017,72 +1246,171 @@ function drawPolygon(
 }
 
 
-/* =========================================
-   POINT
-========================================= */
+/* =====================================================
+   GEOMETRY
+===================================================== */
 
-function drawPoint(
-  coordinates,
-  properties
-) {
+function drawGeometry(
+  geometry,
+  props
+){
 
-  const p =
-    geoToScreen(
-      coordinates[1],
-      coordinates[0]
-    );
+  if(
+    !geometry
+  ){
 
-  ctx.beginPath();
+    return;
 
-  ctx.arc(
-    p.x,
-    p.y,
-    6,
-    0,
-    Math.PI * 2
-  );
+  }
 
-  ctx.fillStyle =
-    "#4f8cff";
 
-  ctx.fill();
+  switch(
+    geometry.type
+  ){
+
+    case "LineString":
+
+      drawLineString(
+        geometry.coordinates,
+        props
+      );
+
+      break;
+
+
+    case "MultiLineString":
+
+      geometry.coordinates.forEach(
+        line => {
+
+          drawLineString(
+            line,
+            props
+          );
+
+        }
+      );
+
+      break;
+
+
+    case "Polygon":
+
+      drawPolygon(
+        geometry.coordinates
+      );
+
+      break;
+
+
+    case "MultiPolygon":
+
+      geometry.coordinates.forEach(
+        polygon => {
+
+          drawPolygon(
+            polygon
+          );
+
+        }
+      );
+
+      break;
+
+  }
 
 }
 
 
-/* =========================================
-   GEOJSON
-========================================= */
+/* =====================================================
+   DRAW FEATURES
+===================================================== */
 
-function renderGeoJSON() {
+function drawFeatures(){
 
-  if (!state.geojson) {
+  if(
+    !state.geojson
+  ){
+
     return;
+
   }
+
 
   const features =
     state.geojson.features || [];
 
 
-  for (
-    const feature of features
-  ) {
+  /*
+    Najpierw obiekty powierzchniowe
+  */
 
-    if (!feature.geometry) {
-      continue;
+  features.forEach(
+    feature => {
+
+      if(
+        !feature.geometry
+      ){
+
+        return;
+
+      }
+
+
+      if(
+        feature.geometry.type ===
+        "Polygon" ||
+        feature.geometry.type ===
+        "MultiPolygon"
+      ){
+
+        drawGeometry(
+          feature.geometry,
+          feature.properties || {}
+        );
+
+      }
+
     }
-
-    drawGeometry(
-      feature.geometry,
-      feature.properties || {}
-    );
-
-  }
+  );
 
 
   /*
-    Miejscowości rysujemy na końcu,
-    żeby były nad drogami.
+    Potem drogi
+  */
+
+  features.forEach(
+    feature => {
+
+      if(
+        !feature.geometry
+      ){
+
+        return;
+
+      }
+
+
+      if(
+        feature.geometry.type ===
+        "LineString" ||
+        feature.geometry.type ===
+        "MultiLineString"
+      ){
+
+        drawGeometry(
+          feature.geometry,
+          feature.properties || {}
+        );
+
+      }
+
+    }
+  );
+
+
+  /*
+    Na końcu miejscowości
   */
 
   drawPlaces();
@@ -1090,17 +1418,78 @@ function renderGeoJSON() {
 }
 
 
-/* =========================================
-   PLACES
-========================================= */
+/* =====================================================
+   PLACE SIZE
+===================================================== */
 
-function drawPlaces() {
+function getPlaceStyle(
+  type
+){
 
-  for (
+  switch(
+    type
+  ){
+
+    case "city":
+
+      return {
+        radius:7,
+        size:17,
+        weight:"800"
+      };
+
+
+    case "town":
+
+      return {
+        radius:6,
+        size:15,
+        weight:"700"
+      };
+
+
+    case "village":
+
+      return {
+        radius:5,
+        size:13,
+        weight:"600"
+      };
+
+
+    case "hamlet":
+
+      return {
+        radius:4,
+        size:11,
+        weight:"500"
+      };
+
+
+    default:
+
+      return {
+        radius:4,
+        size:11,
+        weight:"500"
+      };
+
+  }
+
+}
+
+
+/* =====================================================
+   DRAW PLACES
+===================================================== */
+
+function drawPlaces(){
+
+  for(
     const place of state.places
-  ) {
+  ){
 
-    const p =
+    const point =
       geoToScreen(
         place.lat,
         place.lon
@@ -1108,26 +1497,62 @@ function drawPlaces() {
 
 
     /*
-      Nie rysuj bardzo odległych
-      elementów.
+      Widoczność na ekranie
     */
 
-    if (
-      p.x < -100 ||
-      p.x > state.width + 100 ||
-      p.y < -100 ||
-      p.y > state.height + 100
-    ) {
+    if(
+      point.x < -200 ||
+      point.x > state.width + 200 ||
+      point.y < -200 ||
+      point.y > state.height + 200
+    ){
+
       continue;
+
     }
 
+
+    const style =
+      getPlaceStyle(
+        place.type
+      );
+
+
+    /*
+      Przy małym zoomie pokazujemy
+      tylko większe miejscowości.
+    */
+
+    if(
+      state.zoom < 9000 &&
+      place.type !== "city"
+    ){
+
+      continue;
+
+    }
+
+
+    if(
+      state.zoom < 15000 &&
+      place.type === "hamlet"
+    ){
+
+      continue;
+
+    }
+
+
+    /*
+      Punkt
+    */
 
     ctx.beginPath();
 
     ctx.arc(
-      p.x,
-      p.y,
-      7,
+      point.x,
+      point.y,
+      style.radius,
       0,
       Math.PI * 2
     );
@@ -1138,38 +1563,45 @@ function drawPlaces() {
     ctx.fill();
 
 
-    ctx.beginPath();
-
-    ctx.arc(
-      p.x,
-      p.y,
-      2.5,
-      0,
-      Math.PI * 2
-    );
-
-    ctx.fillStyle =
-      "#ffffff";
-
-    ctx.fill();
-
+    /*
+      Nazwa
+    */
 
     ctx.font =
-      "600 14px Inter, system-ui, sans-serif";
+      `${style.weight} ${style.size}px system-ui`;
+
 
     ctx.textAlign =
-      "center";
+      "left";
 
     ctx.textBaseline =
-      "top";
+      "middle";
+
+
+    /*
+      Cień tekstu
+    */
+
+    ctx.strokeStyle =
+      "rgba(0,0,0,.85)";
+
+    ctx.lineWidth =
+      4;
+
+    ctx.strokeText(
+      place.name,
+      point.x + style.radius + 7,
+      point.y
+    );
+
 
     ctx.fillStyle =
       "#f1f5f9";
 
     ctx.fillText(
       place.name,
-      p.x,
-      p.y + 12
+      point.x + style.radius + 7,
+      point.y
     );
 
   }
@@ -1177,32 +1609,363 @@ function drawPlaces() {
 }
 
 
-/* =========================================
-   RENDER
-========================================= */
+/* =====================================================
+   EXTRACT PLACES
+===================================================== */
 
-function render() {
+function extractPlaces(){
+
+  state.places = [];
+
+
+  if(
+    !state.geojson ||
+    !state.geojson.features
+  ){
+
+    return;
+
+  }
+
+
+  for(
+    const feature of
+    state.geojson.features
+  ){
+
+    if(
+      !feature.geometry
+    ){
+
+      continue;
+
+    }
+
+
+    if(
+      feature.geometry.type !==
+      "Point"
+    ){
+
+      continue;
+
+    }
+
+
+    const props =
+      feature.properties || {};
+
+
+    const type =
+      props.place ||
+      props["place:type"] ||
+      "";
+
+
+    /*
+      Tylko obiekty będące miejscowościami
+    */
+
+    if(
+      !type
+    ){
+
+      continue;
+
+    }
+
+
+    const allowed = [
+
+      "city",
+      "town",
+      "village",
+      "hamlet",
+      "suburb",
+      "quarter",
+      "isolated_dwelling"
+
+    ];
+
+
+    if(
+      !allowed.includes(type)
+    ){
+
+      continue;
+
+    }
+
+
+    const name =
+      props.name ||
+      props["name:pl"] ||
+      props["name:pol"];
+
+
+    if(
+      !name
+    ){
+
+      continue;
+
+    }
+
+
+    state.places.push({
+
+      name:String(name),
+
+      type:String(type),
+
+      lat:
+        feature.geometry.coordinates[1],
+
+      lon:
+        feature.geometry.coordinates[0]
+
+    });
+
+  }
+
+
+  console.log(
+    "KVGDV: znaleziono miejscowości:",
+    state.places.length
+  );
+
+}
+
+
+/* =====================================================
+   FIND BOUNDS
+===================================================== */
+
+function findBounds(){
+
+  if(
+    !state.geojson ||
+    !state.geojson.features
+  ){
+
+    return;
+
+  }
+
+
+  let minLat =
+    Infinity;
+
+  let maxLat =
+    -Infinity;
+
+  let minLon =
+    Infinity;
+
+  let maxLon =
+    -Infinity;
+
+
+  function inspect(
+    coordinates
+  ){
+
+    if(
+      typeof coordinates[0] ===
+      "number"
+    ){
+
+      const lon =
+        coordinates[0];
+
+      const lat =
+        coordinates[1];
+
+
+      minLon =
+        Math.min(
+          minLon,
+          lon
+        );
+
+      maxLon =
+        Math.max(
+          maxLon,
+          lon
+        );
+
+      minLat =
+        Math.min(
+          minLat,
+          lat
+        );
+
+      maxLat =
+        Math.max(
+          maxLat,
+          lat
+        );
+
+      return;
+
+    }
+
+
+    coordinates.forEach(
+      inspect
+    );
+
+  }
+
+
+  state.geojson.features.forEach(
+    feature => {
+
+      if(
+        feature.geometry &&
+        feature.geometry.coordinates
+      ){
+
+        inspect(
+          feature.geometry.coordinates
+        );
+
+      }
+
+    }
+  );
+
+
+  if(
+    minLat === Infinity
+  ){
+
+    return;
+
+  }
+
+
+  state.bounds = {
+
+    minLat,
+    maxLat,
+    minLon,
+    maxLon
+
+  };
+
+}
+
+
+/* =====================================================
+   FIT MAP
+===================================================== */
+
+function fitMap(){
+
+  if(
+    !state.bounds
+  ){
+
+    return;
+
+  }
+
+
+  state.centerLat =
+    (
+      state.bounds.minLat +
+      state.bounds.maxLat
+    ) / 2;
+
+
+  state.centerLon =
+    (
+      state.bounds.minLon +
+      state.bounds.maxLon
+    ) / 2;
+
+
+  const latRange =
+    state.bounds.maxLat -
+    state.bounds.minLat;
+
+
+  const lonRange =
+    state.bounds.maxLon -
+    state.bounds.minLon;
+
+
+  const padding =
+    80;
+
+
+  const zoomX =
+    (
+      state.width -
+      padding * 2
+    ) /
+    lonRange;
+
+
+  const zoomY =
+    (
+      state.height -
+      padding * 2
+    ) /
+    latRange;
+
+
+  state.zoom =
+    Math.min(
+      zoomX,
+      zoomY
+    );
+
+
+  /*
+    Ograniczenia
+  */
+
+  state.zoom =
+    Math.max(
+      1000,
+      Math.min(
+        1000000,
+        state.zoom
+      )
+    );
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function render(){
 
   drawBackground();
 
-  renderGeoJSON();
+  drawFeatures();
 
   updateCoordinates();
 
 }
 
 
-/* =========================================
+/* =====================================================
    COORDINATES
-========================================= */
+===================================================== */
 
-function updateCoordinates() {
+function updateCoordinates(){
 
   const geo =
     screenToGeo(
       state.mouseX,
       state.mouseY
     );
+
 
   coordinatesElement.textContent =
     `${geo.lat.toFixed(6)}° N · ` +
@@ -1211,15 +1974,16 @@ function updateCoordinates() {
 }
 
 
-/* =========================================
-   MOUSE
-========================================= */
+/* =====================================================
+   MOUSE DOWN
+===================================================== */
 
 canvas.addEventListener(
   "mousedown",
   event => {
 
-    state.dragging = true;
+    state.dragging =
+      true;
 
     state.lastMouseX =
       event.clientX;
@@ -1235,11 +1999,16 @@ canvas.addEventListener(
 );
 
 
+/* =====================================================
+   MOUSE UP
+===================================================== */
+
 window.addEventListener(
   "mouseup",
   () => {
 
-    state.dragging = false;
+    state.dragging =
+      false;
 
     canvas.classList.remove(
       "dragging"
@@ -1248,6 +2017,10 @@ window.addEventListener(
   }
 );
 
+
+/* =====================================================
+   MOUSE MOVE
+===================================================== */
 
 canvas.addEventListener(
   "mousemove",
@@ -1260,9 +2033,9 @@ canvas.addEventListener(
       event.clientY;
 
 
-    if (
+    if(
       state.dragging
-    ) {
+    ){
 
       const dx =
         event.clientX -
@@ -1289,7 +2062,7 @@ canvas.addEventListener(
 
       render();
 
-    } else {
+    }else{
 
       updateCoordinates();
 
@@ -1299,15 +2072,16 @@ canvas.addEventListener(
 );
 
 
-/* =========================================
-   ZOOM
-========================================= */
+/* =====================================================
+   WHEEL
+===================================================== */
 
 canvas.addEventListener(
   "wheel",
   event => {
 
     event.preventDefault();
+
 
     const before =
       screenToGeo(
@@ -1322,7 +2096,9 @@ canvas.addEventListener(
         : 1 / 1.25;
 
 
-    state.zoom *= factor;
+    state.zoom *=
+      factor;
+
 
     state.zoom =
       Math.max(
@@ -1345,6 +2121,7 @@ canvas.addEventListener(
       before.lon -
       after.lon;
 
+
     state.centerLat +=
       before.lat -
       after.lat;
@@ -1354,14 +2131,14 @@ canvas.addEventListener(
 
   },
   {
-    passive: false
+    passive:false
   }
 );
 
 
-/* =========================================
-   ZOOM BUTTONS
-========================================= */
+/* =====================================================
+   BUTTON ZOOM
+===================================================== */
 
 document
   .getElementById("zoomIn")
@@ -1403,9 +2180,9 @@ document
   );
 
 
-/* =========================================
+/* =====================================================
    LOCATION
-========================================= */
+===================================================== */
 
 document
   .getElementById("locationButton")
@@ -1413,7 +2190,9 @@ document
     "click",
     () => {
 
-      if (!navigator.geolocation) {
+      if(
+        !navigator.geolocation
+      ){
 
         alert(
           "Geolokalizacja nie jest obsługiwana."
@@ -1425,6 +2204,7 @@ document
 
 
       navigator.geolocation.getCurrentPosition(
+
         position => {
 
           state.centerLat =
@@ -1432,6 +2212,12 @@ document
 
           state.centerLon =
             position.coords.longitude;
+
+          state.zoom =
+            Math.max(
+              state.zoom,
+              50000
+            );
 
           render();
 
@@ -1451,18 +2237,20 @@ document
   );
 
 
-/* =========================================
+/* =====================================================
    SEARCH
-========================================= */
+===================================================== */
 
 searchInput.addEventListener(
   "keydown",
   event => {
 
-    if (
+    if(
       event.key !== "Enter"
-    ) {
+    ){
+
       return;
+
     }
 
 
@@ -1470,6 +2258,15 @@ searchInput.addEventListener(
       searchInput.value
         .trim()
         .toLowerCase();
+
+
+    if(
+      !query
+    ){
+
+      return;
+
+    }
 
 
     const result =
@@ -1481,10 +2278,12 @@ searchInput.addEventListener(
       );
 
 
-    if (!result) {
+    if(
+      !result
+    ){
 
       alert(
-        "KVGDV Maps: nie znaleziono miejsca."
+        "KVGDV Maps: nie znaleziono miejscowości."
       );
 
       return;
@@ -1499,11 +2298,24 @@ searchInput.addEventListener(
       result.lon;
 
 
+    /*
+      Przy wyszukiwaniu
+      mocno przybliżamy.
+    */
+
+    state.zoom =
+      Math.max(
+        state.zoom,
+        50000
+      );
+
+
     placeName.textContent =
       result.name;
 
+
     placeType.textContent =
-      result.type || "Miejscowość";
+      result.type;
 
 
     placeCard.classList.add(
@@ -1517,19 +2329,19 @@ searchInput.addEventListener(
 );
 
 
-/* =========================================
+/* =====================================================
    CTRL + K
-========================================= */
+===================================================== */
 
 document.addEventListener(
   "keydown",
   event => {
 
-    if (
+    if(
       (event.ctrlKey ||
        event.metaKey) &&
       event.key.toLowerCase() === "k"
-    ) {
+    ){
 
       event.preventDefault();
 
@@ -1541,94 +2353,17 @@ document.addEventListener(
 );
 
 
-/* =========================================
-   EXTRACT PLACES
-========================================= */
-
-function extractPlaces() {
-
-  state.places = [];
-
-
-  const features =
-    state.geojson.features || [];
-
-
-  for (
-    const feature of features
-  ) {
-
-    const geometry =
-      feature.geometry;
-
-    const props =
-      feature.properties || {};
-
-
-    if (
-      !geometry ||
-      geometry.type !== "Point"
-    ) {
-      continue;
-    }
-
-
-    const name =
-      props.name ||
-      props.nazwa ||
-      props["name:pl"];
-
-
-    if (!name) {
-      continue;
-    }
-
-
-    const type =
-      props.place ||
-      props.typ ||
-      "Miejscowość";
-
-
-    state.places.push({
-
-      name: String(name),
-
-      type: String(type),
-
-      lon:
-        geometry.coordinates[0],
-
-      lat:
-        geometry.coordinates[1]
-
-    });
-
-  }
-
-}
-
-
-/* =========================================
+/* =====================================================
    LOAD GEOJSON
-========================================= */
+===================================================== */
 
-async function loadMapData() {
+async function loadMapData(){
 
-  try {
+  try{
 
     engineStatus.textContent =
-      "Ładowanie KVGDV Map Data...";
+      "Ładowanie mapy Zachodniopomorskiego...";
 
-
-    /*
-      WAŻNE:
-
-      index.html jest w głównym katalogu repo,
-      a GeoJSON znajduje się w:
-
-      data/zachodniopomorskie.geojson
-    */
 
     const response =
       await fetch(
@@ -1636,7 +2371,9 @@ async function loadMapData() {
       );
 
 
-    if (!response.ok) {
+    if(
+      !response.ok
+    ){
 
       throw new Error(
         "HTTP " +
@@ -1650,12 +2387,13 @@ async function loadMapData() {
       await response.json();
 
 
-    if (
-      data.type !== "FeatureCollection"
-    ) {
+    if(
+      data.type !==
+      "FeatureCollection"
+    ){
 
       throw new Error(
-        "Plik nie jest prawidłowym GeoJSON FeatureCollection."
+        "Plik nie jest poprawnym GeoJSON FeatureCollection."
       );
 
     }
@@ -1665,42 +2403,40 @@ async function loadMapData() {
       data;
 
 
+    /*
+      Miejscowości
+    */
+
     extractPlaces();
 
 
     /*
-      Ustawienie centrum na pierwszą
-      znalezioną miejscowość.
+      Granice danych
     */
 
-    if (
-      state.places.length > 0
-    ) {
+    findBounds();
 
-      state.centerLat =
-        state.places[0].lat;
 
-      state.centerLon =
-        state.places[0].lon;
+    /*
+      Dopasowanie całego województwa
+    */
 
-    }
+    fitMap();
 
 
     engineStatus.textContent =
-      "KVGDV Maps Engine · " +
+      "KVGDV Maps · " +
       state.places.length +
       " miejsc · " +
       data.features.length +
       " obiektów";
 
 
-    render();
-
-
     console.log(
-      "KVGDV GeoJSON załadowany:",
+      "KVGDV GeoJSON:",
       data
     );
+
 
     console.log(
       "Miejscowości:",
@@ -1708,7 +2444,10 @@ async function loadMapData() {
     );
 
 
-  } catch (error) {
+    render();
+
+
+  }catch(error){
 
     console.error(
       "KVGDV Maps:",
@@ -1717,14 +2456,11 @@ async function loadMapData() {
 
 
     engineStatus.textContent =
-      "KVGDV Maps Engine · BŁĄD GEOJSON";
+      "KVGDV Maps · BŁĄD GEOJSON";
 
-
-    /*
-      Nie robimy białego ekranu.
-    */
 
     render();
+
 
     alert(
       "Nie udało się załadować GeoJSON.\n\n" +
@@ -1736,9 +2472,9 @@ async function loadMapData() {
 }
 
 
-/* =========================================
+/* =====================================================
    START
-========================================= */
+===================================================== */
 
 resizeCanvas();
 
