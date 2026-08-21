@@ -1,0 +1,31 @@
+{
+  "schema": "kvgdv-map",
+  "version": "0.1.0",
+  "region": {
+    "name": "Województwo zachodniopomorskie",
+    "country": "Polska",
+    "countryCode": "PL",
+    "regionCode": "PL-32"
+  },
+  "map": {
+    "projection": "WGS84",
+    "units": "degrees"
+  },
+  "places": [
+    {
+      "id": "place-redlino",
+      "name": "Redlino",
+      "type": "village",
+      "coordinates": {
+        "lat": 54.025457,
+        "lon": 15.901234
+      }
+    }
+  ],
+  "roads": [],
+  "buildings": [],
+  "water": [],
+  "forests": [],
+  "boundaries": [],
+  "pointsOfInterest": []
+}
