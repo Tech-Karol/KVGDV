@@ -1,99 +1,65 @@
-# KVGDV 🚀
+like the project, consider giving the repository a star!
+🗺️ KVGDV Maps
 
-**KVGDV** is a modern developer launcher designed to make starting and managing development projects faster and easier.
+KVGDV Maps to projekt własnej platformy mapowej tworzonej od podstaw.
 
-Instead of opening multiple terminals, navigating through folders and remembering different commands, KVGDV puts your projects and development tools in one place.
+Celem projektu jest stworzenie niezależnego systemu obejmującego aplikację mapową, własny silnik map, własne API, format danych oraz system wyszukiwania i routingu.
 
-## ✨ Features
+🚧 Status projektu
 
-* 🚀 **Quick Launch** — start projects with one click
-* 📁 **Project Manager** — keep your projects organized
-* ⌨️ **Integrated Terminal** — access your terminal directly
-* 🐙 **Git Integration** — manage your repositories faster
-* 🐳 **Docker Support** — work with containerized projects
-* ⚙️ **Custom Commands** — configure individual project launch commands
-* 🌐 **Localhost Support** — quickly access local development servers
-* 📊 **Project Status** — see which projects are running
-* 🔧 **Developer Tools** — keep your most-used tools in one place
+Wersja: "0.1.0"
+Status: Early Development
 
-## 🖥️ Supported Environments
+Obecna wersja jest prototypem interfejsu użytkownika. Mapa jest obecnie demonstracyjnym rendererem UI — własny silnik mapowy i API będą rozwijane w kolejnych wersjach.
 
-KVGDV is designed to work with common development environments, including:
+✨ Planowane funkcje
 
-* Node.js
-* Python
-* Rust
-* Java
-* Git
-* Docker
-* PowerShell
-* Windows Terminal
+- 🗺️ własny renderer map
+- 🔎 wyszukiwanie miejsc i adresów
+- 📍 geolokalizacja użytkownika
+- 🧭 wyznaczanie tras
+- 📏 pomiar odległości
+- 🛰️ obsługa różnych warstw mapy
+- 📦 własny format danych mapowych
+- 🌐 KVGDV Maps API
+- 💾 mapy offline
+- 📱 aplikacja mobilna
+- 💻 aplikacja desktopowa
+- 🔐 system kont i synchronizacji w przyszłości
 
-## 🎯 Why KVGDV?
+🏗️ Docelowa architektura
 
-Developers often have multiple projects, terminals and tools open at the same time.
+KVGDV Maps
+│
+├── KVGDV Maps App
+│
+├── KVGDV Map Engine
+│
+├── KVGDV Maps API
+│   ├── Search
+│   ├── Geocoding
+│   ├── Routing
+│   ├── Places
+│   └── Tiles
+│
+├── KVGDV Map Format
+│
+└── KVGDV Cloud
 
-KVGDV aims to simplify that workflow.
+🌐 GitHub Pages
 
-**Open KVGDV → choose a project → start working.**
+Pierwsze wersje projektu mogą działać bez własnego serwera.
 
-No unnecessary setup every time.
+Frontend jest przygotowywany tak, aby można było uruchomić go bezpośrednio przez GitHub Pages.
 
-## 📸 Preview
+Docelowo aplikacja będzie komunikować się z własnym API KVGDV Maps.
 
-Add screenshots of the KVGDV interface here.
+🎯 Cel
 
-```text
-KVGDV
-├── Projects
-├── Terminal
-├── Tools
-├── Git
-├── Docker
-└── Settings
-```
+KVGDV Maps ma być niezależną platformą mapową, rozwijaną od podstaw i kontrolowaną przez twórców projektu.
 
-## 📥 Installation
-
-Download the latest version from the **Releases** section of this repository.
-
-> KVGDV is currently under development.
-
-## 🛠️ Development
-
-Clone the repository:
-
-```bash
-git clone https://github.com/YOUR-USERNAME/KVGDV.git
-cd KVGDV
-```
-
-Then open the project in your preferred development environment.
-
-## 🗺️ Roadmap
-
-* [x] Landing page
-* [ ] Project manager
-* [ ] One-click project launcher
-* [ ] Integrated terminal
-* [ ] Custom project profiles
-* [ ] Git integration
-* [ ] Docker integration
-* [ ] Port manager
-* [ ] System monitoring
-* [ ] Plugin system
-* [ ] Automatic updates
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 👨‍💻 Author
-
-**Tech Karol**
-
-KVGDV — a developer launcher built to make development simpler.
+Projekt zaczyna się od prostego interfejsu, ale docelowo ma zostać rozbudowany do kompletnego ekosystemu mapowego.
 
 ---
 
-⭐ If you like the project, consider giving the repository a star!
+KVGDV Maps — własne mapy. Własna technologia.
