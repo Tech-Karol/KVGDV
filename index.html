@@ -32,6 +32,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+
       font-family:
         Inter,
         ui-sans-serif,
@@ -40,6 +41,7 @@
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
+
       background: var(--bg);
       color: var(--text);
     }
@@ -53,6 +55,10 @@
       border: 0;
       cursor: pointer;
     }
+
+    /* =========================================
+       MAP
+    ========================================= */
 
     #map {
       position: fixed;
@@ -80,9 +86,14 @@
       cursor: grabbing;
     }
 
+    /* =========================================
+       TOP BAR
+    ========================================= */
+
     .topbar {
       position: fixed;
       z-index: 20;
+
       top: 16px;
       left: 16px;
       right: 16px;
@@ -161,9 +172,12 @@
 
     .search input {
       width: 100%;
+
       border: 0;
       outline: none;
+
       background: transparent;
+
       color: var(--text);
       font-size: 14px;
     }
@@ -174,18 +188,27 @@
 
     .search-shortcut {
       padding: 4px 7px;
+
       border: 1px solid var(--border);
       border-radius: 7px;
+
       color: var(--muted);
+
       font-size: 11px;
       white-space: nowrap;
     }
 
+    /* =========================================
+       LEFT PANEL
+    ========================================= */
+
     .left-panel {
       position: fixed;
       z-index: 15;
+
       top: 84px;
       left: 16px;
+
       width: 270px;
 
       padding: 10px;
@@ -204,9 +227,12 @@
 
     .panel-title {
       margin-bottom: 8px;
+
       color: var(--muted);
+
       font-size: 11px;
       font-weight: 700;
+
       letter-spacing: 0.8px;
       text-transform: uppercase;
     }
@@ -227,6 +253,7 @@
       color: var(--text);
 
       text-align: left;
+
       transition: 0.15s ease;
     }
 
@@ -249,6 +276,10 @@
       font-size: 13px;
       font-weight: 550;
     }
+
+    /* =========================================
+       RIGHT CONTROLS
+    ========================================= */
 
     .map-controls {
       position: fixed;
@@ -287,6 +318,7 @@
       color: var(--text);
 
       font-size: 18px;
+
       transition: 0.15s ease;
     }
 
@@ -298,6 +330,10 @@
       height: 1px;
       background: var(--border);
     }
+
+    /* =========================================
+       LOCATION
+    ========================================= */
 
     .location-btn {
       position: fixed;
@@ -325,6 +361,10 @@
     .location-btn:hover {
       background: rgba(255, 255, 255, 0.08);
     }
+
+    /* =========================================
+       BOTTOM BAR
+    ========================================= */
 
     .bottom-bar {
       position: fixed;
@@ -398,6 +438,10 @@
       font-variant-numeric: tabular-nums;
     }
 
+    /* =========================================
+       PLACE INFO
+    ========================================= */
+
     .place-card {
       position: fixed;
       z-index: 18;
@@ -434,11 +478,18 @@
 
     .place-type {
       margin-top: 2px;
+
       color: var(--muted);
+
       font-size: 10px;
     }
 
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
     @media (max-width: 760px) {
+
       .topbar {
         left: 10px;
         right: 10px;
@@ -486,19 +537,35 @@
 
 <body>
 
+  <!-- =========================================
+       MAP
+  ========================================== -->
+
   <main id="map">
+
     <canvas id="mapCanvas"></canvas>
+
   </main>
+
+
+  <!-- =========================================
+       TOP BAR
+  ========================================== -->
 
   <header class="topbar">
 
     <div class="brand">
-      <div class="brand-icon">K</div>
+
+      <div class="brand-icon">
+        K
+      </div>
 
       <div class="brand-name">
         KVGDV Maps
       </div>
+
     </div>
+
 
     <div class="search">
 
@@ -521,6 +588,11 @@
 
   </header>
 
+
+  <!-- =========================================
+       LEFT PANEL
+  ========================================== -->
+
   <aside class="left-panel">
 
     <div class="panel-section">
@@ -529,21 +601,21 @@
         Mapa
       </div>
 
-      <button class="tool active" id="standardMap">
+      <button class="tool active">
         <span class="tool-icon">🗺️</span>
         <span class="tool-text">
           Mapa standardowa
         </span>
       </button>
 
-      <button class="tool" id="satelliteMap">
+      <button class="tool">
         <span class="tool-icon">🛰️</span>
         <span class="tool-text">
           Satelita
         </span>
       </button>
 
-      <button class="tool" id="terrainMap">
+      <button class="tool">
         <span class="tool-icon">⛰️</span>
         <span class="tool-text">
           Teren
@@ -551,6 +623,7 @@
       </button>
 
     </div>
+
 
     <div class="panel-section">
 
@@ -583,6 +656,11 @@
 
   </aside>
 
+
+  <!-- =========================================
+       RIGHT CONTROLS
+  ========================================== -->
+
   <div class="map-controls">
 
     <div class="control-group">
@@ -607,6 +685,7 @@
 
     </div>
 
+
     <div class="control-group">
 
       <button
@@ -621,6 +700,11 @@
 
   </div>
 
+
+  <!-- =========================================
+       LOCATION
+  ========================================== -->
+
   <button
     class="location-btn"
     id="locationButton"
@@ -628,6 +712,11 @@
   >
     ◎
   </button>
+
+
+  <!-- =========================================
+       PLACE CARD
+  ========================================== -->
 
   <div
     class="place-card"
@@ -650,6 +739,11 @@
 
   </div>
 
+
+  <!-- =========================================
+       BOTTOM BAR
+  ========================================== -->
+
   <footer class="bottom-bar">
 
     <div class="status">
@@ -662,6 +756,7 @@
 
     </div>
 
+
     <div
       class="coordinates"
       id="coordinates"
@@ -672,1961 +767,252 @@
   </footer>
 
 
-<script>
+  <!-- =========================================
+       KVGDV MAP ENGINE
+  ========================================== -->
 
-  /*
-  ==========================================================
-  KVGDV MAPS ENGINE
-  ==========================================================
-
-  Renderer:
-    HTML5 Canvas
-
-  Dane:
-    data/zachodniopomorskie.json
-
-  Obsługiwany format:
-    GeoJSON FeatureCollection
-
-  Obsługiwane geometrie:
-    Point
-    MultiPoint
-    LineString
-    MultiLineString
-    Polygon
-    MultiPolygon
-
-  ==========================================================
-  */
-
-
-  const canvas =
-    document.getElementById("mapCanvas");
-
-  const ctx =
-    canvas.getContext("2d");
-
-  const coordinatesElement =
-    document.getElementById("coordinates");
-
-  const engineStatus =
-    document.getElementById("engineStatus");
-
-  const placeCard =
-    document.getElementById("placeCard");
-
-  const placeName =
-    document.getElementById("placeName");
-
-  const placeType =
-    document.getElementById("placeType");
-
-  const searchInput =
-    document.getElementById("searchInput");
-
-
-  /*
-  ==========================================================
-  STATE
-  ==========================================================
-  */
-
-  const state = {
-
-    width: 0,
-    height: 0,
+  <script>
 
     /*
-      Skala mapy.
-      Zaczynamy od stosunkowo dużego obszaru.
+      ============================================
+      KVGDV MAPS ENGINE
+      ============================================
+
+      Własny renderer:
+        HTML5 Canvas
+
+      Dane:
+        data/zachodniopomorskie.json
+
+      FORMAT TWOJEGO JSON:
+
+        {
+          "miejsca": [
+            {
+              "nazwa": "Redlino",
+              "typ": "wieś",
+              "współrzędne": {
+                "szer.": 54.025,
+                "długość": 15.901
+              }
+            }
+          ],
+
+          "drogi": [
+            {
+              "nazwa": null,
+              "ref": "112",
+              "typ": "wtórny",
+              "autostrada": "drugorzędna",
+              "geometria": [
+                {
+                  "szer.": 54.030,
+                  "długość": 15.891
+                }
+              ]
+            }
+          ]
+        }
+
     */
 
-    zoom: 25000,
 
-    centerLat: 54.025457,
-    centerLon: 15.901234,
+    const canvas =
+      document.getElementById("mapCanvas");
 
-    mouseX: 0,
-    mouseY: 0,
-
-    dragging: false,
-
-    lastMouseX: 0,
-    lastMouseY: 0,
-
-    data: null,
-
-    /*
-      Granice całego GeoJSON.
-    */
-
-    bounds: null
-
-  };
+    const ctx =
+      canvas.getContext("2d");
 
 
-  /*
-  ==========================================================
-  CANVAS RESIZE
-  ==========================================================
-  */
-
-  function resizeCanvas() {
-
-    const dpr =
-      window.devicePixelRatio || 1;
-
-    state.width =
-      window.innerWidth;
-
-    state.height =
-      window.innerHeight;
-
-    canvas.width =
-      state.width * dpr;
-
-    canvas.height =
-      state.height * dpr;
-
-    canvas.style.width =
-      state.width + "px";
-
-    canvas.style.height =
-      state.height + "px";
-
-    ctx.setTransform(
-      dpr,
-      0,
-      0,
-      dpr,
-      0,
-      0
-    );
-
-    render();
-
-  }
+    const coordinatesElement =
+      document.getElementById("coordinates");
 
 
-  window.addEventListener(
-    "resize",
-    resizeCanvas
-  );
+    const engineStatus =
+      document.getElementById("engineStatus");
 
 
-  /*
-  ==========================================================
-  GEO → SCREEN
-  ==========================================================
-  */
+    const placeCard =
+      document.getElementById("placeCard");
 
-  function geoToScreen(lat, lon) {
 
-    return {
+    const placeName =
+      document.getElementById("placeName");
 
-      x:
-        state.width / 2 +
-        (lon - state.centerLon) *
-        state.zoom,
 
-      y:
-        state.height / 2 -
-        (lat - state.centerLat) *
-        state.zoom
+    const placeType =
+      document.getElementById("placeType");
+
+
+    const searchInput =
+      document.getElementById("searchInput");
+
+
+    /* =========================================
+       STATE
+    ========================================= */
+
+    const state = {
+
+      width: 0,
+
+      height: 0,
+
+      zoom: 25000,
+
+      centerLat: 54.025457,
+
+      centerLon: 15.901234,
+
+      mouseX: 0,
+
+      mouseY: 0,
+
+      dragging: false,
+
+      lastMouseX: 0,
+
+      lastMouseY: 0,
+
+      data: null
 
     };
 
-  }
 
+    /* =========================================
+       RESIZE
+    ========================================= */
 
-  /*
-  ==========================================================
-  SCREEN → GEO
-  ==========================================================
-  */
+    function resizeCanvas() {
 
-  function screenToGeo(x, y) {
+      const dpr =
+        window.devicePixelRatio || 1;
 
-    return {
 
-      lon:
-        state.centerLon +
-        (x - state.width / 2) /
-        state.zoom,
+      state.width =
+        window.innerWidth;
 
-      lat:
-        state.centerLat -
-        (y - state.height / 2) /
-        state.zoom
 
-    };
+      state.height =
+        window.innerHeight;
 
-  }
 
+      canvas.width =
+        state.width * dpr;
 
-  /*
-  ==========================================================
-  BACKGROUND
-  ==========================================================
-  */
 
-  function drawBackground() {
+      canvas.height =
+        state.height * dpr;
 
-    ctx.fillStyle =
-      "#10161d";
 
-    ctx.fillRect(
-      0,
-      0,
-      state.width,
-      state.height
-    );
+      canvas.style.width =
+        state.width + "px";
 
 
-    const grid =
-      Math.max(
-        40,
-        Math.min(
-          100,
-          state.zoom / 300
-        )
-      );
+      canvas.style.height =
+        state.height + "px";
 
 
-    ctx.strokeStyle =
-      "rgba(255,255,255,0.025)";
-
-    ctx.lineWidth = 1;
-
-
-    for (
-      let x = 0;
-      x < state.width;
-      x += grid
-    ) {
-
-      ctx.beginPath();
-
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, state.height);
-
-      ctx.stroke();
-
-    }
-
-
-    for (
-      let y = 0;
-      y < state.height;
-      y += grid
-    ) {
-
-      ctx.beginPath();
-
-      ctx.moveTo(0, y);
-      ctx.lineTo(state.width, y);
-
-      ctx.stroke();
-
-    }
-
-  }
-
-
-  /*
-  ==========================================================
-  GEOJSON COORDINATE HELPERS
-  ==========================================================
-  */
-
-  function drawCoordinatePath(
-    coordinates
-  ) {
-
-    if (
-      !Array.isArray(coordinates)
-    ) {
-      return;
-    }
-
-
-    coordinates.forEach(
-      (coordinate, index) => {
-
-        if (
-          !Array.isArray(coordinate) ||
-          coordinate.length < 2
-        ) {
-          return;
-        }
-
-
-        /*
-          GeoJSON:
-
-          [longitude, latitude]
-        */
-
-        const lon =
-          Number(coordinate[0]);
-
-        const lat =
-          Number(coordinate[1]);
-
-
-        if (
-          !Number.isFinite(lon) ||
-          !Number.isFinite(lat)
-        ) {
-          return;
-        }
-
-
-        const point =
-          geoToScreen(
-            lat,
-            lon
-          );
-
-
-        if (index === 0) {
-
-          ctx.moveTo(
-            point.x,
-            point.y
-          );
-
-        } else {
-
-          ctx.lineTo(
-            point.x,
-            point.y
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /*
-  ==========================================================
-  POLYGON
-  ==========================================================
-  */
-
-  function drawPolygon(
-    polygon,
-    fillStyle,
-    strokeStyle
-  ) {
-
-    if (
-      !Array.isArray(polygon)
-    ) {
-      return;
-    }
-
-
-    ctx.beginPath();
-
-
-    for (
-      const ring of polygon
-    ) {
-
-      if (
-        !Array.isArray(ring) ||
-        ring.length < 3
-      ) {
-        continue;
-      }
-
-
-      ring.forEach(
-        (coordinate, index) => {
-
-          const lon =
-            Number(coordinate[0]);
-
-          const lat =
-            Number(coordinate[1]);
-
-
-          if (
-            !Number.isFinite(lon) ||
-            !Number.isFinite(lat)
-          ) {
-            return;
-          }
-
-
-          const point =
-            geoToScreen(
-              lat,
-              lon
-            );
-
-
-          if (index === 0) {
-
-            ctx.moveTo(
-              point.x,
-              point.y
-            );
-
-          } else {
-
-            ctx.lineTo(
-              point.x,
-              point.y
-            );
-
-          }
-
-        }
-      );
-
-      ctx.closePath();
-
-    }
-
-
-    ctx.fillStyle =
-      fillStyle;
-
-    ctx.fill("evenodd");
-
-
-    if (strokeStyle) {
-
-      ctx.strokeStyle =
-        strokeStyle;
-
-      ctx.stroke();
-
-    }
-
-  }
-
-
-  /*
-  ==========================================================
-  DRAW WATER / POLYGONS
-  ==========================================================
-  */
-
-  function drawPolygons() {
-
-    if (
-      !state.data
-    ) {
-      return;
-    }
-
-
-    for (
-      const feature of state.data.features
-    ) {
-
-      if (
-        !feature.geometry
-      ) {
-        continue;
-      }
-
-
-      const properties =
-        feature.properties || {};
-
-      const geometry =
-        feature.geometry;
-
-
-      /*
-        Rozpoznajemy wodę.
-
-        OSM / GeoJSON często używa:
-          natural=water
-          waterway=river
-          waterway=stream
-          water=lake
-      */
-
-      const isWater =
-        properties.natural === "water" ||
-        properties.waterway === "river" ||
-        properties.waterway === "stream" ||
-        properties.water === "lake" ||
-        properties.water === "reservoir";
-
-
-      if (
-        !isWater
-      ) {
-        continue;
-      }
-
-
-      if (
-        geometry.type === "Polygon"
-      ) {
-
-        drawPolygon(
-          geometry.coordinates,
-          "#142d40",
-          "#214963"
-        );
-
-      }
-
-
-      if (
-        geometry.type === "MultiPolygon"
-      ) {
-
-        for (
-          const polygon
-          of geometry.coordinates
-        ) {
-
-          drawPolygon(
-            polygon,
-            "#142d40",
-            "#214963"
-          );
-
-        }
-
-      }
-
-    }
-
-  }
-
-
-  /*
-  ==========================================================
-  ROAD STYLE
-  ==========================================================
-  */
-
-  function getRoadStyle(
-    properties
-  ) {
-
-    const highway =
-      properties.highway ||
-      properties.type ||
-      "";
-
-
-    switch (highway) {
-
-      case "motorway":
-      case "motorway_link":
-
-        return {
-          width: 8,
-          color: "#d18b55"
-        };
-
-
-      case "trunk":
-      case "trunk_link":
-
-        return {
-          width: 7,
-          color: "#c28b5d"
-        };
-
-
-      case "primary":
-      case "primary_link":
-
-        return {
-          width: 6,
-          color: "#a87855"
-        };
-
-
-      case "secondary":
-      case "secondary_link":
-
-        return {
-          width: 5,
-          color: "#777f8b"
-        };
-
-
-      case "tertiary":
-      case "tertiary_link":
-
-        return {
-          width: 4,
-          color: "#656e7a"
-        };
-
-
-      case "residential":
-      case "unclassified":
-
-        return {
-          width: 3,
-          color: "#4d5764"
-        };
-
-
-      case "service":
-      case "living_street":
-
-        return {
-          width: 2,
-          color: "#3d4651"
-        };
-
-
-      case "track":
-      case "path":
-
-        return {
-          width: 1.5,
-          color: "#454c55"
-        };
-
-
-      default:
-
-        return {
-          width: 2,
-          color: "#46515e"
-        };
-
-    }
-
-  }
-
-
-  /*
-  ==========================================================
-  DRAW LINESTRING
-  ==========================================================
-  */
-
-  function drawLineString(
-    coordinates,
-    properties
-  ) {
-
-    if (
-      !Array.isArray(coordinates) ||
-      coordinates.length < 2
-    ) {
-      return;
-    }
-
-
-    const style =
-      getRoadStyle(
-        properties
-      );
-
-
-    ctx.beginPath();
-
-    drawCoordinatePath(
-      coordinates
-    );
-
-
-    ctx.lineCap =
-      "round";
-
-    ctx.lineJoin =
-      "round";
-
-    ctx.strokeStyle =
-      style.color;
-
-    ctx.lineWidth =
-      style.width;
-
-    ctx.stroke();
-
-  }
-
-
-  /*
-  ==========================================================
-  DRAW ROADS
-  ==========================================================
-  */
-
-  function drawRoads() {
-
-    if (
-      !state.data ||
-      !Array.isArray(
-        state.data.features
-      )
-    ) {
-      return;
-    }
-
-
-    for (
-      const feature
-      of state.data.features
-    ) {
-
-      if (
-        !feature.geometry
-      ) {
-        continue;
-      }
-
-
-      const geometry =
-        feature.geometry;
-
-      const properties =
-        feature.properties || {};
-
-
-      /*
-        Drogi w OSM zazwyczaj mają:
-          highway=...
-      */
-
-      const isRoad =
-        Boolean(
-          properties.highway
-        );
-
-
-      if (
-        !isRoad
-      ) {
-        continue;
-      }
-
-
-      if (
-        geometry.type === "LineString"
-      ) {
-
-        drawLineString(
-          geometry.coordinates,
-          properties
-        );
-
-      }
-
-
-      else if (
-        geometry.type === "MultiLineString"
-      ) {
-
-        for (
-          const line
-          of geometry.coordinates
-        ) {
-
-          drawLineString(
-            line,
-            properties
-          );
-
-        }
-
-      }
-
-    }
-
-  }
-
-
-  /*
-  ==========================================================
-  PLACE TYPE
-  ==========================================================
-  */
-
-  function getPlaceType(
-    properties
-  ) {
-
-    if (
-      properties.place
-    ) {
-
-      switch (
-        properties.place
-      ) {
-
-        case "city":
-          return "Miasto";
-
-        case "town":
-          return "Miasto";
-
-        case "village":
-          return "Wieś";
-
-        case "hamlet":
-          return "Przysiółek";
-
-        case "suburb":
-          return "Dzielnica";
-
-        case "neighbourhood":
-          return "Osiedle";
-
-        default:
-          return properties.place;
-
-      }
-
-    }
-
-
-    return "Miejsce";
-
-  }
-
-
-  /*
-  ==========================================================
-  GET FEATURE NAME
-  ==========================================================
-  */
-
-  function getFeatureName(
-    properties
-  ) {
-
-    return (
-      properties.name ||
-      properties["name:pl"] ||
-      properties.Name ||
-      properties.NAME ||
-      null
-    );
-
-  }
-
-
-  /*
-  ==========================================================
-  DRAW PLACES
-  ==========================================================
-  */
-
-  function drawPlaces() {
-
-    if (
-      !state.data ||
-      !Array.isArray(
-        state.data.features
-      )
-    ) {
-      return;
-    }
-
-
-    for (
-      const feature
-      of state.data.features
-    ) {
-
-      if (
-        !feature.geometry
-      ) {
-        continue;
-      }
-
-
-      if (
-        feature.geometry.type !== "Point"
-      ) {
-        continue;
-      }
-
-
-      const properties =
-        feature.properties || {};
-
-
-      const name =
-        getFeatureName(
-          properties
-        );
-
-
-      if (
-        !name
-      ) {
-        continue;
-      }
-
-
-      /*
-        Pokazujemy głównie miejscowości.
-      */
-
-      const place =
-        properties.place;
-
-
-      if (
-        !place &&
-        !properties.population
-      ) {
-        continue;
-      }
-
-
-      const coordinates =
-        feature.geometry.coordinates;
-
-
-      if (
-        !Array.isArray(coordinates) ||
-        coordinates.length < 2
-      ) {
-        continue;
-      }
-
-
-      const lon =
-        Number(coordinates[0]);
-
-      const lat =
-        Number(coordinates[1]);
-
-
-      const point =
-        geoToScreen(
-          lat,
-          lon
-        );
-
-
-      /*
-        Nie rysujemy etykiet bardzo
-        daleko poza ekranem.
-      */
-
-      if (
-        point.x < -300 ||
-        point.x > state.width + 300 ||
-        point.y < -300 ||
-        point.y > state.height + 300
-      ) {
-        continue;
-      }
-
-
-      /*
-        Marker
-      */
-
-      ctx.beginPath();
-
-      ctx.arc(
-        point.x,
-        point.y,
-        place === "city" ||
-        place === "town"
-          ? 6
-          : 4,
+      ctx.setTransform(
+        dpr,
         0,
-        Math.PI * 2
+        0,
+        dpr,
+        0,
+        0
       );
 
-      ctx.fillStyle =
-        "#4f8cff";
 
-      ctx.fill();
-
-
-      /*
-        Etykieta
-      */
-
-      ctx.font =
-        place === "city" ||
-        place === "town"
-          ? "700 15px Inter, system-ui, sans-serif"
-          : "600 13px Inter, system-ui, sans-serif";
-
-      ctx.textAlign =
-        "center";
-
-      ctx.textBaseline =
-        "top";
-
-      ctx.fillStyle =
-        "#f1f5f9";
-
-      ctx.shadowColor =
-        "rgba(0,0,0,0.8)";
-
-      ctx.shadowBlur =
-        5;
-
-      ctx.fillText(
-        name,
-        point.x,
-        point.y + 8
-      );
-
-      ctx.shadowBlur = 0;
+      render();
 
     }
 
-  }
+
+    window.addEventListener(
+      "resize",
+      resizeCanvas
+    );
 
 
-  /*
-  ==========================================================
-  RENDER
-  ==========================================================
-  */
+    /* =========================================
+       GEO → SCREEN
+    ========================================== */
 
-  function render() {
+    function geoToScreen(
+      lat,
+      lon
+    ) {
 
-    drawBackground();
-
-    drawPolygons();
-
-    drawRoads();
-
-    drawPlaces();
-
-    updateCoordinates();
-
-  }
+      const x =
+        state.width / 2 +
+        (
+          lon -
+          state.centerLon
+        ) *
+        state.zoom;
 
 
-  /*
-  ==========================================================
-  COORDINATES
-  ==========================================================
-  */
-
-  function updateCoordinates() {
-
-    const geo =
-      screenToGeo(
-        state.mouseX,
-        state.mouseY
-      );
+      const y =
+        state.height / 2 -
+        (
+          lat -
+          state.centerLat
+        ) *
+        state.zoom;
 
 
-    coordinatesElement.textContent =
-      `${geo.lat.toFixed(6)}° N · ` +
-      `${geo.lon.toFixed(6)}° E`;
-
-  }
-
-
-  /*
-  ==========================================================
-  MOUSE DOWN
-  ==========================================================
-  */
-
-  canvas.addEventListener(
-    "mousedown",
-    event => {
-
-      state.dragging =
-        true;
-
-      state.lastMouseX =
-        event.clientX;
-
-      state.lastMouseY =
-        event.clientY;
-
-      canvas.classList.add(
-        "dragging"
-      );
-
-    }
-  );
-
-
-  /*
-  ==========================================================
-  MOUSE UP
-  ==========================================================
-  */
-
-  window.addEventListener(
-    "mouseup",
-    () => {
-
-      state.dragging =
-        false;
-
-      canvas.classList.remove(
-        "dragging"
-      );
-
-    }
-  );
-
-
-  /*
-  ==========================================================
-  MOUSE MOVE
-  ==========================================================
-  */
-
-  canvas.addEventListener(
-    "mousemove",
-    event => {
-
-      state.mouseX =
-        event.clientX;
-
-      state.mouseY =
-        event.clientY;
-
-
-      if (
-        state.dragging
-      ) {
-
-        const dx =
-          event.clientX -
-          state.lastMouseX;
-
-        const dy =
-          event.clientY -
-          state.lastMouseY;
-
-
-        state.centerLon -=
-          dx / state.zoom;
-
-        state.centerLat +=
-          dy / state.zoom;
-
-
-        state.lastMouseX =
-          event.clientX;
-
-        state.lastMouseY =
-          event.clientY;
-
-
-        render();
-
-      } else {
-
-        updateCoordinates();
-
-      }
-
-    }
-  );
-
-
-  /*
-  ==========================================================
-  TOUCH SUPPORT
-  ==========================================================
-  */
-
-  let touchStart = null;
-
-
-  canvas.addEventListener(
-    "touchstart",
-    event => {
-
-      if (
-        event.touches.length !== 1
-      ) {
-        return;
-      }
-
-
-      const touch =
-        event.touches[0];
-
-      touchStart = {
-
-        x: touch.clientX,
-        y: touch.clientY
-
+      return {
+        x,
+        y
       };
 
-    },
-    {
-      passive: true
     }
-  );
 
 
-  canvas.addEventListener(
-    "touchmove",
-    event => {
+    /* =========================================
+       SCREEN → GEO
+    ========================================== */
 
-      if (
-        !touchStart ||
-        event.touches.length !== 1
-      ) {
-        return;
-      }
-
-
-      event.preventDefault();
-
-
-      const touch =
-        event.touches[0];
-
-
-      const dx =
-        touch.clientX -
-        touchStart.x;
-
-      const dy =
-        touch.clientY -
-        touchStart.y;
-
-
-      state.centerLon -=
-        dx / state.zoom;
-
-      state.centerLat +=
-        dy / state.zoom;
-
-
-      touchStart.x =
-        touch.clientX;
-
-      touchStart.y =
-        touch.clientY;
-
-
-      render();
-
-    },
-    {
-      passive: false
-    }
-  );
-
-
-  canvas.addEventListener(
-    "touchend",
-    () => {
-
-      touchStart = null;
-
-    }
-  );
-
-
-  /*
-  ==========================================================
-  WHEEL ZOOM
-  ==========================================================
-  */
-
-  canvas.addEventListener(
-    "wheel",
-    event => {
-
-      event.preventDefault();
-
-
-      const mouseBefore =
-        screenToGeo(
-          event.clientX,
-          event.clientY
-        );
-
-
-      const factor =
-        event.deltaY < 0
-          ? 1.20
-          : 1 / 1.20;
-
-
-      state.zoom =
-        Math.max(
-          1000,
-          Math.min(
-            1000000,
-            state.zoom * factor
-          )
-        );
-
-
-      const mouseAfter =
-        screenToGeo(
-          event.clientX,
-          event.clientY
-        );
-
-
-      state.centerLon +=
-        mouseBefore.lon -
-        mouseAfter.lon;
-
-      state.centerLat +=
-        mouseBefore.lat -
-        mouseAfter.lat;
-
-
-      render();
-
-    },
-    {
-      passive: false
-    }
-  );
-
-
-  /*
-  ==========================================================
-  ZOOM BUTTONS
-  ==========================================================
-  */
-
-  document
-    .getElementById("zoomIn")
-    .addEventListener(
-      "click",
-      () => {
-
-        state.zoom =
-          Math.min(
-            state.zoom * 1.25,
-            1000000
-          );
-
-        render();
-
-      }
-    );
-
-
-  document
-    .getElementById("zoomOut")
-    .addEventListener(
-      "click",
-      () => {
-
-        state.zoom =
-          Math.max(
-            state.zoom / 1.25,
-            1000
-          );
-
-        render();
-
-      }
-    );
-
-
-  /*
-  ==========================================================
-  GEOLOCATION
-  ==========================================================
-  */
-
-  document
-    .getElementById("locationButton")
-    .addEventListener(
-      "click",
-      () => {
-
-        if (
-          !navigator.geolocation
-        ) {
-
-          alert(
-            "Geolokalizacja nie jest obsługiwana."
-          );
-
-          return;
-
-        }
-
-
-        engineStatus.textContent =
-          "Pobieranie lokalizacji...";
-
-
-        navigator.geolocation.getCurrentPosition(
-
-          position => {
-
-            state.centerLat =
-              position.coords.latitude;
-
-            state.centerLon =
-              position.coords.longitude;
-
-
-            engineStatus.textContent =
-              "KVGDV Maps Engine";
-
-            render();
-
-          },
-
-          () => {
-
-            engineStatus.textContent =
-              "KVGDV Maps Engine";
-
-            alert(
-              "Nie udało się pobrać lokalizacji."
-            );
-
-          }
-
-        );
-
-      }
-    );
-
-
-  /*
-  ==========================================================
-  SEARCH
-  ==========================================================
-  */
-
-  searchInput.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.key !== "Enter"
-      ) {
-        return;
-      }
-
-
-      const query =
-        searchInput.value
-          .trim()
-          .toLowerCase();
-
-
-      if (
-        !query ||
-        !state.data
-      ) {
-        return;
-      }
-
-
-      let result = null;
-
-
-      for (
-        const feature
-        of state.data.features
-      ) {
-
-        if (
-          !feature.geometry
-        ) {
-          continue;
-        }
-
-
-        if (
-          feature.geometry.type !== "Point"
-        ) {
-          continue;
-        }
-
-
-        const properties =
-          feature.properties || {};
-
-
-        const name =
-          getFeatureName(
-            properties
-          );
-
-
-        if (
-          name &&
-          name.toLowerCase()
-            .includes(query)
-        ) {
-
-          result = feature;
-
-          break;
-
-        }
-
-      }
-
-
-      if (
-        !result
-      ) {
-
-        alert(
-          "KVGDV Maps: nie znaleziono miejsca."
-        );
-
-        return;
-
-      }
-
-
-      const coordinates =
-        result.geometry.coordinates;
-
-
-      state.centerLon =
-        Number(coordinates[0]);
-
-      state.centerLat =
-        Number(coordinates[1]);
-
-
-      const properties =
-        result.properties || {};
-
-
-      placeName.textContent =
-        getFeatureName(
-          properties
-        ) || "Nieznane miejsce";
-
-
-      placeType.textContent =
-        getPlaceType(
-          properties
-        );
-
-
-      placeCard.classList.add(
-        "visible"
-      );
-
-
-      render();
-
-
-      /*
-        Ukrywamy kartę po 3 sekundach.
-      */
-
-      clearTimeout(
-        window.placeCardTimer
-      );
-
-
-      window.placeCardTimer =
-        setTimeout(
-          () => {
-
-            placeCard.classList.remove(
-              "visible"
-            );
-
-          },
-          3000
-        );
-
-    }
-  );
-
-
-  /*
-  ==========================================================
-  CTRL + K
-  ==========================================================
-  */
-
-  document.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        (event.ctrlKey ||
-          event.metaKey) &&
-        event.key.toLowerCase() === "k"
-      ) {
-
-        event.preventDefault();
-
-        searchInput.focus();
-
-      }
-
-    }
-  );
-
-
-  /*
-  ==========================================================
-  FIT GEOJSON
-  ==========================================================
-  */
-
-  function calculateGeoJSONBounds(
-    geojson
-  ) {
-
-    let minLon = Infinity;
-    let maxLon = -Infinity;
-
-    let minLat = Infinity;
-    let maxLat = -Infinity;
-
-
-    function processCoordinates(
-      coordinates
+    function screenToGeo(
+      x,
+      y
     ) {
 
-      if (
-        !Array.isArray(coordinates)
-      ) {
-        return;
-      }
+      const lon =
+        state.centerLon +
+        (
+          x -
+          state.width / 2
+        ) /
+        state.zoom;
 
 
-      /*
-        Punkt:
-        [lon, lat]
-      */
-
-      if (
-        coordinates.length >= 2 &&
-        typeof coordinates[0] === "number" &&
-        typeof coordinates[1] === "number"
-      ) {
-
-        const lon =
-          coordinates[0];
-
-        const lat =
-          coordinates[1];
+      const lat =
+        state.centerLat -
+        (
+          y -
+          state.height / 2
+        ) /
+        state.zoom;
 
 
-        minLon =
-          Math.min(
-            minLon,
-            lon
-          );
-
-        maxLon =
-          Math.max(
-            maxLon,
-            lon
-          );
-
-        minLat =
-          Math.min(
-            minLat,
-            lat
-          );
-
-        maxLat =
-          Math.max(
-            maxLat,
-            lat
-          );
-
-        return;
-
-      }
-
-
-      for (
-        const item
-        of coordinates
-      ) {
-
-        processCoordinates(
-          item
-        );
-
-      }
+      return {
+        lat,
+        lon
+      };
 
     }
 
 
-    for (
-      const feature
-      of geojson.features
-    ) {
-
-      if (
-        feature.geometry
-      ) {
-
-        processCoordinates(
-          feature.geometry.coordinates
-        );
-
-      }
-
-    }
-
-
-    if (
-      !Number.isFinite(minLat)
-    ) {
-      return null;
-    }
-
-
-    return {
-
-      minLat,
-      maxLat,
-      minLon,
-      maxLon
-
-    };
-
-  }
-
-
-  /*
-  ==========================================================
-  LOAD GEOJSON
-  ==========================================================
-  */
-
-  async function loadMapData() {
-
-    try {
-
-      engineStatus.textContent =
-        "Ładowanie KVGDV Map Data...";
-
-
-      const response =
-        await fetch(
-          "data/zachodniopomorskie.json"
-        );
-
-
-      if (
-        !response.ok
-      ) {
-
-        throw new Error(
-          `HTTP ${response.status}`
-        );
-
-      }
-
-
-      const geojson =
-        await response.json();
-
-
-      /*
-        Sprawdzenie formatu.
-      */
-
-      if (
-        geojson.type !==
-        "FeatureCollection"
-      ) {
-
-        throw new Error(
-          "Plik nie jest GeoJSON FeatureCollection."
-        );
-
-      }
-
-
-      if (
-        !Array.isArray(
-          geojson.features
-        )
-      ) {
-
-        throw new Error(
-          "GeoJSON nie posiada tablicy features."
-        );
-
-      }
-
-
-      state.data =
-        geojson;
-
-
-      /*
-        Obliczamy granice.
-      */
-
-      state.bounds =
-        calculateGeoJSONBounds(
-          geojson
-        );
-
-
-      /*
-        Jeżeli są granice,
-        ustawiamy mapę na środek danych.
-      */
-
-      if (
-        state.bounds
-      ) {
-
-        state.centerLat =
-          (
-            state.bounds.minLat +
-            state.bounds.maxLat
-          ) / 2;
-
-        state.centerLon =
-          (
-            state.bounds.minLon +
-            state.bounds.maxLon
-          ) / 2;
-
-
-        /*
-          Dopasowanie zoomu
-          do wielkości danych.
-        */
-
-        const latRange =
-          state.bounds.maxLat -
-          state.bounds.minLat;
-
-        const lonRange =
-          state.bounds.maxLon -
-          state.bounds.minLon;
-
-
-        const range =
-          Math.max(
-            latRange,
-            lonRange
-          );
-
-
-        if (
-          range > 5
-        ) {
-
-          state.zoom = 15000;
-
-        }
-
-        else if (
-          range > 1
-        ) {
-
-          state.zoom = 35000;
-
-        }
-
-        else if (
-          range > 0.2
-        ) {
-
-          state.zoom = 80000;
-
-        }
-
-        else {
-
-          state.zoom = 250000;
-
-        }
-
-      }
-
-
-      /*
-        Liczniki.
-      */
-
-      let roads = 0;
-      let places = 0;
-
-
-      for (
-        const feature
-        of geojson.features
-      ) {
-
-        if (
-          !feature.geometry
-        ) {
-          continue;
-        }
-
-
-        const properties =
-          feature.properties || {};
-
-
-        if (
-          properties.highway
-        ) {
-
-          roads++;
-
-        }
-
-
-        if (
-          feature.geometry.type === "Point" &&
-          getFeatureName(properties)
-        ) {
-
-          places++;
-
-        }
-
-      }
-
-
-      engineStatus.textContent =
-        `KVGDV Maps Engine · ` +
-        `${roads} dróg · ` +
-        `${places} miejsc`;
-
-
-      render();
-
-
-    } catch (error) {
-
-      console.error(
-        "KVGDV Maps:",
-        error
-      );
-
-
-      engineStatus.textContent =
-        "KVGDV Maps Engine · błąd GeoJSON";
-
+    /* =========================================
+       BACKGROUND
+    ========================================= */
+
+    function drawBackground() {
 
       ctx.fillStyle =
         "#10161d";
+
 
       ctx.fillRect(
         0,
@@ -2636,150 +1022,1376 @@
       );
 
 
-      ctx.fillStyle =
-        "#ff5c5c";
-
-      ctx.font =
-        "700 18px system-ui";
-
-
-      ctx.textAlign =
-        "center";
-
-
-      ctx.fillText(
-        "Nie udało się załadować mapy",
-        state.width / 2,
-        state.height / 2 - 20
-      );
+      const grid =
+        Math.max(
+          50,
+          Math.min(
+            100,
+            state.zoom / 300
+          )
+        );
 
 
-      ctx.fillStyle =
-        "#8b98a8";
-
-      ctx.font =
-        "13px system-ui";
+      ctx.strokeStyle =
+        "rgba(255,255,255,0.025)";
 
 
-      ctx.fillText(
-        error.message,
-        state.width / 2,
-        state.height / 2 + 10
-      );
+      ctx.lineWidth = 1;
+
+
+      for (
+        let x = 0;
+        x < state.width;
+        x += grid
+      ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+          x,
+          0
+        );
+
+        ctx.lineTo(
+          x,
+          state.height
+        );
+
+        ctx.stroke();
+
+      }
+
+
+      for (
+        let y = 0;
+        y < state.height;
+        y += grid
+      ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+          0,
+          y
+        );
+
+        ctx.lineTo(
+          state.width,
+          y
+        );
+
+        ctx.stroke();
+
+      }
 
     }
 
-  }
+
+    /* =========================================
+       ROAD STYLE
+    ========================================= */
+
+    function getRoadStyle(
+      road
+    ) {
+
+      const type =
+        String(
+          road.autostrada ||
+          road.typ ||
+          ""
+        ).toLowerCase();
 
 
-  /*
-  ==========================================================
-  MAP TYPE BUTTONS
-  ==========================================================
-  */
+      /*
+        Drogi główne.
+      */
 
-  const mapButtons =
-    document.querySelectorAll(
-      ".left-panel .tool"
-    );
+      if (
+        type.includes("autostrada") ||
+        type.includes("motorowa")
+      ) {
 
+        return {
+          color: "#d18b55",
+          width: 8
+        };
 
-  mapButtons.forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          if (
-            !button.closest(
-              ".panel-section"
-            )
-          ) {
-            return;
-          }
+      }
 
 
-          const title =
-            button
-              .querySelector(
-                ".tool-text"
+      if (
+        type.includes("ekspresowa")
+      ) {
+
+        return {
+          color: "#c78a58",
+          width: 7
+        };
+
+      }
+
+
+      if (
+        type.includes("główna") ||
+        type.includes("glowna")
+      ) {
+
+        return {
+          color: "#b07b57",
+          width: 6
+        };
+
+      }
+
+
+      if (
+        type.includes("drugorzędna") ||
+        type.includes("drugorzedna") ||
+        type.includes("wtórny") ||
+        type.includes("wtorny")
+      ) {
+
+        return {
+          color: "#737d89",
+          width: 5
+        };
+
+      }
+
+
+      if (
+        type.includes("trzeciorzędna") ||
+        type.includes("trzeciorzedna")
+      ) {
+
+        return {
+          color: "#626d79",
+          width: 4
+        };
+
+      }
+
+
+      /*
+        Drogi lokalne.
+      */
+
+      if (
+        type.includes("lokal")
+      ) {
+
+        return {
+          color: "#4b5663",
+          width: 3
+        };
+
+      }
+
+
+      return {
+
+        color: "#46515e",
+
+        width: 3
+
+      };
+
+    }
+
+
+    /* =========================================
+       DRAW ROADS
+    ========================================= */
+
+    function drawRoads() {
+
+      if (
+        !state.data
+      ) {
+        return;
+      }
+
+
+      if (
+        !Array.isArray(
+          state.data.drogi
+        )
+      ) {
+        return;
+      }
+
+
+      for (
+        const road
+        of state.data.drogi
+      ) {
+
+        if (
+          !Array.isArray(
+            road.geometria
+          )
+        ) {
+          continue;
+        }
+
+
+        if (
+          road.geometria.length < 2
+        ) {
+          continue;
+        }
+
+
+        const style =
+          getRoadStyle(
+            road
+          );
+
+
+        ctx.beginPath();
+
+
+        road.geometria.forEach(
+          (
+            point,
+            index
+          ) => {
+
+            if (
+              !point
+            ) {
+              return;
+            }
+
+
+            const lat =
+              Number(
+                point["szer."]
               );
 
 
-          if (
-            !title
-          ) {
-            return;
+            const lon =
+              Number(
+                point["długość"]
+              );
+
+
+            if (
+              !Number.isFinite(lat) ||
+              !Number.isFinite(lon)
+            ) {
+              return;
+            }
+
+
+            const screen =
+              geoToScreen(
+                lat,
+                lon
+              );
+
+
+            if (
+              index === 0
+            ) {
+
+              ctx.moveTo(
+                screen.x,
+                screen.y
+              );
+
+            } else {
+
+              ctx.lineTo(
+                screen.x,
+                screen.y
+              );
+
+            }
+
           }
+        );
 
 
-          const text =
-            title.textContent.trim();
+        ctx.lineCap =
+          "round";
 
 
-          if (
-            text ===
-            "Mapa standardowa"
-          ) {
+        ctx.lineJoin =
+          "round";
 
-            mapButtons.forEach(
-              b =>
-                b.classList.remove(
-                  "active"
-                )
-            );
 
-            button.classList.add(
-              "active"
-            );
+        ctx.strokeStyle =
+          style.color;
 
-            render();
 
-          }
+        ctx.lineWidth =
+          style.width;
 
-        }
-      );
+
+        ctx.stroke();
+
+      }
 
     }
-  );
 
 
-  /*
-  ==========================================================
-  LAYERS BUTTON
-  ==========================================================
-  */
+    /* =========================================
+       DRAW WATER
+       =========================================
 
-  document
-    .getElementById("layersButton")
-    .addEventListener(
-      "click",
-      () => {
+       Obsługujemy opcjonalne dane,
+       jeżeli Twój JSON będzie je posiadał.
+    ========================================= */
 
-        alert(
-          "Warstwy KVGDV Maps\n\n" +
-          "• Drogi\n" +
-          "• Miejscowości\n" +
-          "• Wody\n" +
-          "• Dane GeoJSON"
+    function drawWater() {
+
+      if (
+        !state.data
+      ) {
+        return;
+      }
+
+
+      if (
+        !Array.isArray(
+          state.data.wody
+        )
+      ) {
+        return;
+      }
+
+
+      for (
+        const water
+        of state.data.wody
+      ) {
+
+        const geometry =
+          water.geometria;
+
+
+        if (
+          !Array.isArray(
+            geometry
+          ) ||
+          geometry.length < 3
+        ) {
+          continue;
+        }
+
+
+        ctx.beginPath();
+
+
+        geometry.forEach(
+          (
+            point,
+            index
+          ) => {
+
+            const lat =
+              Number(
+                point["szer."]
+              );
+
+
+            const lon =
+              Number(
+                point["długość"]
+              );
+
+
+            const screen =
+              geoToScreen(
+                lat,
+                lon
+              );
+
+
+            if (
+              index === 0
+            ) {
+
+              ctx.moveTo(
+                screen.x,
+                screen.y
+              );
+
+            } else {
+
+              ctx.lineTo(
+                screen.x,
+                screen.y
+              );
+
+            }
+
+          }
+        );
+
+
+        ctx.closePath();
+
+
+        ctx.fillStyle =
+          "#142534";
+
+
+        ctx.fill();
+
+      }
+
+    }
+
+
+    /* =========================================
+       PLACE TYPE
+    ========================================= */
+
+    function getPlaceType(
+      type
+    ) {
+
+      if (
+        !type
+      ) {
+        return "Miejsce";
+      }
+
+
+      const value =
+        String(
+          type
+        ).toLowerCase();
+
+
+      if (
+        value === "wieś" ||
+        value === "wies"
+      ) {
+
+        return "Wieś";
+
+      }
+
+
+      if (
+        value === "miasto"
+      ) {
+
+        return "Miasto";
+
+      }
+
+
+      if (
+        value === "miasteczko"
+      ) {
+
+        return "Miasto";
+
+      }
+
+
+      if (
+        value === "przysiółek" ||
+        value === "przysiolek"
+      ) {
+
+        return "Przysiółek";
+
+      }
+
+
+      return type;
+
+    }
+
+
+    /* =========================================
+       DRAW PLACES
+    ========================================= */
+
+    function drawPlaces() {
+
+      if (
+        !state.data
+      ) {
+        return;
+      }
+
+
+      if (
+        !Array.isArray(
+          state.data.miejsca
+        )
+      ) {
+        return;
+      }
+
+
+      for (
+        const place
+        of state.data.miejsca
+      ) {
+
+        if (
+          !place["współrzędne"]
+        ) {
+          continue;
+        }
+
+
+        const lat =
+          Number(
+            place["współrzędne"]["szer."]
+          );
+
+
+        const lon =
+          Number(
+            place["współrzędne"]["długość"]
+          );
+
+
+        if (
+          !Number.isFinite(lat) ||
+          !Number.isFinite(lon)
+        ) {
+          continue;
+        }
+
+
+        const screen =
+          geoToScreen(
+            lat,
+            lon
+          );
+
+
+        /*
+          Nie renderujemy rzeczy
+          bardzo daleko poza ekranem.
+        */
+
+        if (
+          screen.x < -500 ||
+          screen.x > state.width + 500 ||
+          screen.y < -500 ||
+          screen.y > state.height + 500
+        ) {
+          continue;
+        }
+
+
+        /*
+          Marker.
+        */
+
+        ctx.beginPath();
+
+
+        ctx.arc(
+          screen.x,
+          screen.y,
+          5,
+          0,
+          Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+          "#4f8cff";
+
+
+        ctx.fill();
+
+
+        /*
+          Biała kropka.
+        */
+
+        ctx.beginPath();
+
+
+        ctx.arc(
+          screen.x,
+          screen.y,
+          2,
+          0,
+          Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+          "#ffffff";
+
+
+        ctx.fill();
+
+
+        /*
+          Nazwa miejscowości.
+        */
+
+        const name =
+          place["nazwa"] ||
+          "Nieznane";
+
+
+        ctx.font =
+          "600 14px Inter, system-ui, sans-serif";
+
+
+        ctx.textAlign =
+          "center";
+
+
+        ctx.textBaseline =
+          "top";
+
+
+        ctx.fillStyle =
+          "#f1f5f9";
+
+
+        ctx.shadowColor =
+          "rgba(0,0,0,0.8)";
+
+
+        ctx.shadowBlur =
+          5;
+
+
+        ctx.fillText(
+          name,
+          screen.x,
+          screen.y + 10
+        );
+
+
+        ctx.shadowBlur = 0;
+
+      }
+
+    }
+
+
+    /* =========================================
+       RENDER
+    ========================================= */
+
+    function render() {
+
+      drawBackground();
+
+      drawWater();
+
+      drawRoads();
+
+      drawPlaces();
+
+      updateCoordinates();
+
+    }
+
+
+    /* =========================================
+       COORDINATES
+    ========================================= */
+
+    function updateCoordinates() {
+
+      const geo =
+        screenToGeo(
+          state.mouseX,
+          state.mouseY
+        );
+
+
+      coordinatesElement.textContent =
+        `${geo.lat.toFixed(6)}° N · ` +
+        `${geo.lon.toFixed(6)}° E`;
+
+    }
+
+
+    /* =========================================
+       MOUSE DOWN
+    ========================================= */
+
+    canvas.addEventListener(
+      "mousedown",
+      event => {
+
+        state.dragging =
+          true;
+
+
+        state.lastMouseX =
+          event.clientX;
+
+
+        state.lastMouseY =
+          event.clientY;
+
+
+        canvas.classList.add(
+          "dragging"
         );
 
       }
     );
 
 
-  /*
-  ==========================================================
-  START
-  ==========================================================
-  */
+    /* =========================================
+       MOUSE UP
+    ========================================= */
 
-  resizeCanvas();
+    window.addEventListener(
+      "mouseup",
+      () => {
 
-  loadMapData();
+        state.dragging =
+          false;
 
-</script>
+
+        canvas.classList.remove(
+          "dragging"
+        );
+
+      }
+    );
+
+
+    /* =========================================
+       MOUSE MOVE
+    ========================================= */
+
+    canvas.addEventListener(
+      "mousemove",
+      event => {
+
+        state.mouseX =
+          event.clientX;
+
+
+        state.mouseY =
+          event.clientY;
+
+
+        if (
+          state.dragging
+        ) {
+
+          const dx =
+            event.clientX -
+            state.lastMouseX;
+
+
+          const dy =
+            event.clientY -
+            state.lastMouseY;
+
+
+          state.centerLon -=
+            dx / state.zoom;
+
+
+          state.centerLat +=
+            dy / state.zoom;
+
+
+          state.lastMouseX =
+            event.clientX;
+
+
+          state.lastMouseY =
+            event.clientY;
+
+
+          render();
+
+        } else {
+
+          updateCoordinates();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================
+       WHEEL ZOOM
+    ========================================= */
+
+    canvas.addEventListener(
+      "wheel",
+      event => {
+
+        event.preventDefault();
+
+
+        const mouseBefore =
+          screenToGeo(
+            event.clientX,
+            event.clientY
+          );
+
+
+        const factor =
+          event.deltaY < 0
+            ? 1.15
+            : 1 / 1.15;
+
+
+        state.zoom =
+          Math.max(
+            1000,
+            Math.min(
+              1000000,
+              state.zoom * factor
+            )
+          );
+
+
+        const mouseAfter =
+          screenToGeo(
+            event.clientX,
+            event.clientY
+          );
+
+
+        state.centerLon +=
+          mouseBefore.lon -
+          mouseAfter.lon;
+
+
+        state.centerLat +=
+          mouseBefore.lat -
+          mouseAfter.lat;
+
+
+        render();
+
+      },
+      {
+        passive: false
+      }
+    );
+
+
+    /* =========================================
+       ZOOM IN
+    ========================================= */
+
+    document
+      .getElementById("zoomIn")
+      .addEventListener(
+        "click",
+        () => {
+
+          state.zoom *=
+            1.25;
+
+
+          state.zoom =
+            Math.min(
+              state.zoom,
+              1000000
+            );
+
+
+          render();
+
+        }
+      );
+
+
+    /* =========================================
+       ZOOM OUT
+    ========================================= */
+
+    document
+      .getElementById("zoomOut")
+      .addEventListener(
+        "click",
+        () => {
+
+          state.zoom /=
+            1.25;
+
+
+          state.zoom =
+            Math.max(
+              state.zoom,
+              1000
+            );
+
+
+          render();
+
+        }
+      );
+
+
+    /* =========================================
+       GEOLOCATION
+    ========================================= */
+
+    document
+      .getElementById("locationButton")
+      .addEventListener(
+        "click",
+        () => {
+
+          if (
+            !navigator.geolocation
+          ) {
+
+            alert(
+              "Geolokalizacja nie jest obsługiwana."
+            );
+
+
+            return;
+
+          }
+
+
+          engineStatus.textContent =
+            "Pobieranie lokalizacji...";
+
+
+          navigator.geolocation.getCurrentPosition(
+
+            position => {
+
+              state.centerLat =
+                position.coords.latitude;
+
+
+              state.centerLon =
+                position.coords.longitude;
+
+
+              engineStatus.textContent =
+                "KVGDV Maps Engine";
+
+
+              render();
+
+            },
+
+
+            () => {
+
+              engineStatus.textContent =
+                "KVGDV Maps Engine";
+
+
+              alert(
+                "Nie udało się pobrać lokalizacji."
+              );
+
+            }
+
+          );
+
+        }
+      );
+
+
+    /* =========================================
+       SEARCH
+    ========================================= */
+
+    searchInput.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key !== "Enter"
+        ) {
+          return;
+        }
+
+
+        const query =
+          searchInput.value
+            .trim()
+            .toLowerCase();
+
+
+        if (
+          !query ||
+          !state.data
+        ) {
+          return;
+        }
+
+
+        if (
+          !Array.isArray(
+            state.data.miejsca
+          )
+        ) {
+          return;
+        }
+
+
+        const result =
+          state.data.miejsca.find(
+            place => {
+
+              const name =
+                String(
+                  place["nazwa"] || ""
+                ).toLowerCase();
+
+
+              return name.includes(
+                query
+              );
+
+            }
+          );
+
+
+        if (
+          !result
+        ) {
+
+          alert(
+            "KVGDV Maps: nie znaleziono miejsca."
+          );
+
+
+          return;
+
+        }
+
+
+        if (
+          !result["współrzędne"]
+        ) {
+          return;
+        }
+
+
+        state.centerLat =
+          Number(
+            result["współrzędne"]["szer."]
+          );
+
+
+        state.centerLon =
+          Number(
+            result["współrzędne"]["długość"]
+          );
+
+
+        placeName.textContent =
+          result["nazwa"] ||
+          "Nieznane miejsce";
+
+
+        placeType.textContent =
+          getPlaceType(
+            result["typ"]
+          );
+
+
+        placeCard.classList.add(
+          "visible"
+        );
+
+
+        render();
+
+
+        clearTimeout(
+          window.placeCardTimer
+        );
+
+
+        window.placeCardTimer =
+          setTimeout(
+            () => {
+
+              placeCard.classList.remove(
+                "visible"
+              );
+
+            },
+            3000
+          );
+
+      }
+    );
+
+
+    /* =========================================
+       CTRL + K
+    ========================================= */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          (
+            event.ctrlKey ||
+            event.metaKey
+          ) &&
+          event.key.toLowerCase() === "k"
+        ) {
+
+          event.preventDefault();
+
+          searchInput.focus();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================
+       LOAD MAP DATA
+    ========================================= */
+
+    async function loadMapData() {
+
+      try {
+
+        engineStatus.textContent =
+          "Ładowanie KVGDV Map Data...";
+
+
+        /*
+          WAŻNE:
+
+          index.html:
+            /
+
+          JSON:
+            /data/zachodniopomorskie.json
+        */
+
+        const response =
+          await fetch(
+            "data/zachodniopomorskie.json",
+            {
+              cache: "no-cache"
+            }
+          );
+
+
+        if (
+          !response.ok
+        ) {
+
+          throw new Error(
+            "HTTP " +
+            response.status +
+            " — nie znaleziono pliku JSON."
+          );
+
+        }
+
+
+        state.data =
+          await response.json();
+
+
+        /*
+          Sprawdzenie struktury.
+        */
+
+        if (
+          !state.data
+        ) {
+
+          throw new Error(
+            "JSON jest pusty."
+          );
+
+        }
+
+
+        if (
+          !Array.isArray(
+            state.data.miejsca
+          )
+        ) {
+
+          console.warn(
+            "Brak tablicy 'miejsca'."
+          );
+
+        }
+
+
+        if (
+          !Array.isArray(
+            state.data.drogi
+          )
+        ) {
+
+          console.warn(
+            "Brak tablicy 'drogi'."
+          );
+
+        }
+
+
+        /*
+          Ustawiamy centrum
+          na pierwszą miejscowość.
+        */
+
+        if (
+          Array.isArray(
+            state.data.miejsca
+          ) &&
+          state.data.miejsca.length > 0
+        ) {
+
+          const first =
+            state.data.miejsca[0];
+
+
+          if (
+            first["współrzędne"]
+          ) {
+
+            state.centerLat =
+              Number(
+                first["współrzędne"]["szer."]
+              );
+
+
+            state.centerLon =
+              Number(
+                first["współrzędne"]["długość"]
+              );
+
+          }
+
+        }
+
+
+        /*
+          Statystyki.
+        */
+
+        const placesCount =
+          Array.isArray(
+            state.data.miejsca
+          )
+            ? state.data.miejsca.length
+            : 0;
+
+
+        const roadsCount =
+          Array.isArray(
+            state.data.drogi
+          )
+            ? state.data.drogi.length
+            : 0;
+
+
+        engineStatus.textContent =
+          "KVGDV Maps Engine · " +
+          placesCount +
+          " miejsc · " +
+          roadsCount +
+          " dróg";
+
+
+        render();
+
+
+      } catch (error) {
+
+        console.error(
+          "KVGDV Maps:",
+          error
+        );
+
+
+        engineStatus.textContent =
+          "KVGDV Maps Engine · błąd danych";
+
+
+        /*
+          Czytelny komunikat
+          bez rozwalania interfejsu.
+        */
+
+        ctx.fillStyle =
+          "#10161d";
+
+
+        ctx.fillRect(
+          0,
+          0,
+          state.width,
+          state.height
+        );
+
+
+        ctx.textAlign =
+          "center";
+
+
+        ctx.fillStyle =
+          "#ff5c5c";
+
+
+        ctx.font =
+          "700 18px system-ui";
+
+
+        ctx.fillText(
+          "Nie udało się załadować mapy",
+          state.width / 2,
+          state.height / 2 - 20
+        );
+
+
+        ctx.fillStyle =
+          "#8b98a8";
+
+
+        ctx.font =
+          "13px system-ui";
+
+
+        ctx.fillText(
+          error.message,
+          state.width / 2,
+          state.height / 2 + 10
+        );
+
+      }
+
+    }
+
+
+    /* =========================================
+       START
+    ========================================= */
+
+    resizeCanvas();
+
+    loadMapData();
+
+  </script>
 
 </body>
 </html>
