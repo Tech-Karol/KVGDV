@@ -1,832 +1,787 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>KVGDV — Developer Launcher</title>
-    <meta name="description" content="KVGDV — szybki i nowoczesny launcher dla programistów. Zarządzaj projektami, terminalami i narzędziami z jednego miejsca.">
-
-    <style>
-        :root {
-            --bg: #08090d;
-            --bg-secondary: #0d0f14;
-            --card: rgba(255,255,255,0.045);
-            --card-hover: rgba(255,255,255,0.075);
-            --border: rgba(255,255,255,0.09);
-            --text: #f5f7fa;
-            --muted: #9298a5;
-            --accent: #7c5cff;
-            --accent-2: #00d4ff;
-            --success: #37d67a;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background:
-                radial-gradient(circle at 50% -20%, rgba(124,92,255,.20), transparent 35%),
-                radial-gradient(circle at 80% 20%, rgba(0,212,255,.08), transparent 25%),
-                var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .container {
-            width: min(1120px, calc(100% - 40px));
-            margin: auto;
-        }
-
-        /* NAVBAR */
-
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,.06);
-            background: rgba(8,9,13,.72);
-            backdrop-filter: blur(18px);
-        }
-
-        .nav-inner {
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .logo-mark {
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            color: white;
-            font-size: 15px;
-            box-shadow: 0 0 30px rgba(124,92,255,.3);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .nav-links a {
-            transition: .2s;
-        }
-
-        .nav-links a:hover {
-            color: white;
-        }
-
-        .nav-github {
-            padding: 9px 15px;
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            color: white !important;
-        }
-
-        /* HERO */
-
-        .hero {
-            min-height: 850px;
-            display: flex;
-            align-items: center;
-            text-align: center;
-            padding-top: 70px;
-        }
-
-        .hero-content {
-            max-width: 850px;
-            margin: auto;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 13px;
-            border: 1px solid rgba(124,92,255,.25);
-            border-radius: 999px;
-            background: rgba(124,92,255,.08);
-            color: #c8bcff;
-            font-size: 13px;
-            margin-bottom: 25px;
-        }
-
-        .badge-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 10px var(--success);
-        }
-
-        h1 {
-            font-size: clamp(60px, 10vw, 110px);
-            line-height: .95;
-            letter-spacing: -6px;
-            font-weight: 900;
-            margin-bottom: 28px;
-        }
-
-        .gradient-text {
-            background: linear-gradient(110deg, #fff 20%, #a99aff 55%, #66e7ff 90%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .hero-description {
-            max-width: 650px;
-            margin: auto;
-            color: var(--muted);
-            font-size: 18px;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 35px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 9px;
-            min-width: 150px;
-            padding: 13px 20px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            transition: .2s;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: white;
-            color: #08090d;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 35px rgba(255,255,255,.15);
-        }
-
-        .btn-secondary {
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,.03);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255,255,255,.08);
-            transform: translateY(-2px);
-        }
-
-        /* APP PREVIEW */
-
-        .preview-wrapper {
-            margin-top: 75px;
-            perspective: 1000px;
-        }
-
-        .app-preview {
-            position: relative;
-            max-width: 900px;
-            margin: auto;
-            border: 1px solid rgba(255,255,255,.13);
-            border-radius: 15px;
-            overflow: hidden;
-            background: #0b0d12;
-            box-shadow:
-                0 40px 100px rgba(0,0,0,.6),
-                0 0 100px rgba(124,92,255,.10);
-            transform: rotateX(4deg);
-        }
-
-        .window-bar {
-            height: 42px;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            padding: 0 15px;
-            border-bottom: 1px solid rgba(255,255,255,.07);
-            background: #101219;
-        }
-
-        .window-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #444;
-        }
-
-        .window-title {
-            margin-left: 10px;
-            font-size: 12px;
-            color: #777e8c;
-        }
-
-        .app-body {
-            display: grid;
-            grid-template-columns: 190px 1fr;
-            min-height: 430px;
-        }
-
-        .sidebar {
-            padding: 20px 12px;
-            border-right: 1px solid rgba(255,255,255,.06);
-            background: #0d0f14;
-        }
-
-        .sidebar-logo {
-            font-size: 18px;
-            font-weight: 800;
-            padding: 5px 10px 20px;
-        }
-
-        .side-item {
-            padding: 9px 11px;
-            border-radius: 7px;
-            color: #777e8c;
-            font-size: 12px;
-            margin-bottom: 3px;
-        }
-
-        .side-item.active {
-            background: rgba(124,92,255,.13);
-            color: #bdb0ff;
-        }
-
-        .dashboard {
-            padding: 25px;
-            text-align: left;
-        }
-
-        .dashboard h3 {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        .dashboard-subtitle {
-            color: #6f7582;
-            font-size: 11px;
-            margin-bottom: 22px;
-        }
-
-        .projects {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .project {
-            padding: 15px;
-            border: 1px solid rgba(255,255,255,.07);
-            border-radius: 10px;
-            background: rgba(255,255,255,.025);
-        }
-
-        .project-name {
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .project-status {
-            color: #6f7582;
-            font-size: 10px;
-            margin-top: 7px;
-        }
-
-        .status {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-
-        .online {
-            background: var(--success);
-            box-shadow: 0 0 7px var(--success);
-        }
-
-        .offline {
-            background: #555b68;
-        }
-
-        /* FEATURES */
-
-        section {
-            padding: 110px 0;
-        }
-
-        .section-header {
-            text-align: center;
-            max-width: 650px;
-            margin: 0 auto 55px;
-        }
-
-        .section-header span {
-            color: #a99aff;
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .section-header h2 {
-            font-size: clamp(34px, 5vw, 52px);
-            line-height: 1.1;
-            letter-spacing: -2px;
-            margin: 10px 0 15px;
-        }
-
-        .section-header p {
-            color: var(--muted);
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .feature {
-            padding: 28px;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            background: var(--card);
-            transition: .25s;
-        }
-
-        .feature:hover {
-            transform: translateY(-5px);
-            background: var(--card-hover);
-            border-color: rgba(124,92,255,.3);
-        }
-
-        .feature-icon {
-            width: 42px;
-            height: 42px;
-            display: grid;
-            place-items: center;
-            border-radius: 10px;
-            background: rgba(124,92,255,.12);
-            font-size: 20px;
-            margin-bottom: 18px;
-        }
-
-        .feature h3 {
-            font-size: 17px;
-            margin-bottom: 8px;
-        }
-
-        .feature p {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        /* TECH */
-
-        .tech {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 35px;
-        }
-
-        .tech-item {
-            padding: 10px 16px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: #aeb4c0;
-            background: rgba(255,255,255,.025);
-            font-size: 13px;
-        }
-
-        /* CTA */
-
-        .cta {
-            padding: 90px 30px;
-            border: 1px solid rgba(124,92,255,.18);
-            border-radius: 20px;
-            text-align: center;
-            background:
-                radial-gradient(circle at 50% 0%, rgba(124,92,255,.15), transparent 50%),
-                rgba(255,255,255,.025);
-        }
-
-        .cta h2 {
-            font-size: clamp(32px, 5vw, 55px);
-            letter-spacing: -2px;
-            margin-bottom: 12px;
-        }
-
-        .cta p {
-            color: var(--muted);
-            margin-bottom: 28px;
-        }
-
-        /* FOOTER */
-
-        footer {
-            padding: 35px 0;
-            border-top: 1px solid rgba(255,255,255,.06);
-            color: #666c78;
-            font-size: 13px;
-        }
-
-        .footer-inner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* RESPONSIVE */
-
-        @media (max-width: 800px) {
-            .nav-links a:not(.nav-github) {
-                display: none;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-            }
-
-            .app-body {
-                grid-template-columns: 130px 1fr;
-            }
-
-            .projects {
-                grid-template-columns: 1fr;
-            }
-
-            .hero {
-                min-height: 760px;
-            }
-
-            h1 {
-                letter-spacing: -4px;
-            }
-        }
-
-        @media (max-width: 520px) {
-            .container {
-                width: min(100% - 24px, 1120px);
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .app-body {
-                grid-template-columns: 1fr;
-            }
-
-            .dashboard {
-                padding: 18px;
-            }
-
-            .footer-inner {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0f14">
+  <meta name="description" content="KVGDV Maps — własna platforma mapowa">
+
+  <title>KVGDV Maps</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0b0f14;
+      --panel: rgba(17, 22, 29, 0.94);
+      --panel-2: #151b23;
+      --border: rgba(255, 255, 255, 0.09);
+      --text: #f1f5f9;
+      --muted: #8b98a8;
+      --accent: #4f8cff;
+      --accent-hover: #6b9eff;
+      --danger: #ff5c5c;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    /* =========================
+       MAP
+    ========================= */
+
+    #map {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(45, 57, 72, 0.35), transparent 42%),
+        #10161d;
+    }
+
+    .map-grid {
+      position: absolute;
+      inset: -100px;
+      opacity: 0.65;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 80px 80px;
+      transform: rotate(0deg);
+    }
+
+    .map-land {
+      position: absolute;
+      width: 850px;
+      height: 620px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(-7deg);
+      border-radius: 46% 54% 52% 48% / 48% 43% 57% 52%;
+      background: #1a222b;
+      box-shadow:
+        inset 0 0 80px rgba(0,0,0,0.18),
+        0 0 100px rgba(0,0,0,0.12);
+    }
+
+    .road {
+      position: absolute;
+      height: 5px;
+      background: #3b4652;
+      border-radius: 99px;
+      transform-origin: left center;
+      opacity: 0.9;
+    }
+
+    .road::after {
+      content: "";
+      position: absolute;
+      inset: 1px 0;
+      border-radius: inherit;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .road.main {
+      height: 8px;
+      background: #697584;
+    }
+
+    .road.r1 {
+      width: 720px;
+      left: 8%;
+      top: 28%;
+      transform: rotate(13deg);
+    }
+
+    .road.r2 {
+      width: 680px;
+      left: 15%;
+      top: 63%;
+      transform: rotate(-19deg);
+    }
+
+    .road.r3 {
+      width: 540px;
+      left: 36%;
+      top: 12%;
+      transform: rotate(72deg);
+    }
+
+    .road.r4 {
+      width: 420px;
+      left: 48%;
+      top: 80%;
+      transform: rotate(-71deg);
+    }
+
+    .road.r5 {
+      width: 500px;
+      left: 2%;
+      top: 50%;
+      transform: rotate(2deg);
+    }
+
+    .road.r6 {
+      width: 340px;
+      left: 62%;
+      top: 35%;
+      transform: rotate(45deg);
+    }
+
+    .road.small {
+      height: 3px;
+      background: #313b46;
+    }
+
+    .road.r7 {
+      width: 300px;
+      left: 18%;
+      top: 38%;
+      transform: rotate(50deg);
+    }
+
+    .road.r8 {
+      width: 280px;
+      left: 53%;
+      top: 56%;
+      transform: rotate(15deg);
+    }
+
+    .road.r9 {
+      width: 250px;
+      left: 36%;
+      top: 72%;
+      transform: rotate(32deg);
+    }
+
+    .water {
+      position: absolute;
+      width: 900px;
+      height: 230px;
+      left: 50%;
+      top: 76%;
+      transform: translateX(-50%) rotate(-5deg);
+      background: #111c27;
+      border-radius: 50%;
+      opacity: 0.85;
+    }
+
+    /* =========================
+       TOP BAR
+    ========================= */
+
+    .topbar {
+      position: fixed;
+      z-index: 20;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .topbar > * {
+      pointer-events: auto;
+    }
+
+    .brand {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 17px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .brand-name {
+      font-weight: 750;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+    }
+
+    .search {
+      height: 52px;
+      width: min(500px, 48vw);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 15px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .search-icon {
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .search input::placeholder {
+      color: #748090;
+    }
+
+    .search-shortcut {
+      padding: 4px 7px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    /* =========================
+       LEFT PANEL
+    ========================= */
+
+    .left-panel {
+      position: fixed;
+      z-index: 15;
+      top: 84px;
+      left: 16px;
+      width: 270px;
+      padding: 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .panel-section {
+      padding: 8px;
+    }
+
+    .panel-title {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .tool {
+      width: 100%;
+      min-height: 43px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 11px;
+      border-radius: 11px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      transition: 0.15s ease;
+    }
+
+    .tool:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .tool.active {
+      background: rgba(79,140,255,0.13);
+      color: #9cbdff;
+    }
+
+    .tool-icon {
+      width: 25px;
+      text-align: center;
+      font-size: 17px;
+    }
+
+    .tool-text {
+      font-size: 13px;
+      font-weight: 550;
+    }
+
+    /* =========================
+       RIGHT CONTROLS
+    ========================= */
+
+    .map-controls {
+      position: fixed;
+      z-index: 15;
+      right: 16px;
+      bottom: 104px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .map-btn {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      color: var(--text);
+      font-size: 18px;
+      transition: 0.15s ease;
+    }
+
+    .map-btn:hover {
+      background: rgba(255,255,255,0.07);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* =========================
+       BOTTOM BAR
+    ========================= */
+
+    .bottom-bar {
+      position: fixed;
+      z-index: 20;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .bottom-bar > * {
+      pointer-events: auto;
+    }
+
+    .status {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 13px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #47d18c;
+      box-shadow: 0 0 10px rgba(71,209,140,0.6);
+    }
+
+    .coordinates {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 13px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      color: var(--muted);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* =========================
+       LOCATION BUTTON
+    ========================= */
+
+    .location-btn {
+      position: fixed;
+      z-index: 15;
+      right: 16px;
+      bottom: 16px;
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      font-size: 18px;
+    }
+
+    .location-btn:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* =========================
+       MAP MARKER
+    ========================= */
+
+    .marker {
+      position: absolute;
+      z-index: 5;
+      left: 55%;
+      top: 47%;
+      width: 38px;
+      height: 38px;
+      transform: translate(-50%, -100%);
+      border-radius: 50% 50% 50% 0;
+      rotate: -45deg;
+      background: var(--accent);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    }
+
+    .marker::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      left: 13px;
+      top: 13px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 760px) {
+      .topbar {
+        left: 10px;
+        right: 10px;
+        top: 10px;
+      }
+
+      .brand {
+        padding: 0 13px;
+      }
+
+      .brand-name {
+        display: none;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .left-panel {
+        display: none;
+      }
+
+      .bottom-bar {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+      }
+
+      .map-controls {
+        right: 10px;
+        bottom: 68px;
+      }
+
+      .location-btn {
+        right: 10px;
+        bottom: 10px;
+      }
+
+      .coordinates {
+        display: none;
+      }
+
+      .map-land {
+        width: 700px;
+        height: 500px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-    <!-- NAVIGATION -->
-    <nav>
-        <div class="container nav-inner">
-            <a href="#" class="logo">
-                <div class="logo-mark">K</div>
-                KVGDV
-            </a>
+  <!-- MAP -->
+  <main id="map">
+    <div class="map-grid"></div>
 
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#about">About</a>
-                <a href="https://github.com/" class="nav-github" target="_blank">
-                    GitHub ↗
-                </a>
-            </div>
-        </div>
-    </nav>
+    <div class="map-land">
 
+      <div class="water"></div>
 
-    <!-- HERO -->
-    <main>
+      <div class="road main r1"></div>
+      <div class="road main r2"></div>
+      <div class="road main r3"></div>
+      <div class="road main r4"></div>
+      <div class="road main r5"></div>
+      <div class="road main r6"></div>
 
-        <section class="hero">
-            <div class="container hero-content">
+      <div class="road small r7"></div>
+      <div class="road small r8"></div>
+      <div class="road small r9"></div>
 
-                <div class="badge">
-                    <span class="badge-dot"></span>
-                    Developer tools, simplified
-                </div>
+    </div>
 
-                <h1>
-                    <span class="gradient-text">KVGDV</span>
-                </h1>
+    <div class="marker"></div>
+  </main>
 
-                <p class="hero-description">
-                    A modern developer launcher designed to keep your projects,
-                    terminals and development tools in one fast and simple place.
-                </p>
+  <!-- TOP -->
+  <header class="topbar">
 
-                <div class="buttons">
-                    <!-- ZMIEŃ LINK NA PRAWDZIWY LINK DO WYDANIA -->
-                    <a href="https://github.com/" class="btn btn-primary" target="_blank">
-                        ⬇ Download
-                    </a>
+    <div class="brand">
+      <div class="brand-icon">K</div>
+      <div class="brand-name">KVGDV Maps</div>
+    </div>
 
-                    <a href="https://github.com/" class="btn btn-secondary" target="_blank">
-                        ◇ View on GitHub
-                    </a>
-                </div>
+    <div class="search">
+      <div class="search-icon">⌕</div>
 
-                <!-- APP PREVIEW -->
-                <div class="preview-wrapper">
-                    <div class="app-preview">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Szukaj miejsca, adresu lub współrzędnych..."
+        autocomplete="off"
+      >
 
-                        <div class="window-bar">
-                            <span class="window-dot"></span>
-                            <span class="window-dot"></span>
-                            <span class="window-dot"></span>
-                            <span class="window-title">KVGDV</span>
-                        </div>
+      <div class="search-shortcut">Ctrl K</div>
+    </div>
 
-                        <div class="app-body">
+  </header>
 
-                            <aside class="sidebar">
-                                <div class="sidebar-logo">KVGDV</div>
+  <!-- LEFT MENU -->
+  <aside class="left-panel">
 
-                                <div class="side-item active">⌂ Dashboard</div>
-                                <div class="side-item">▣ Projects</div>
-                                <div class="side-item">⌘ Terminal</div>
-                                <div class="side-item">◈ Tools</div>
-                                <div class="side-item">◉ Git</div>
-                                <div class="side-item">⚙ Settings</div>
-                            </aside>
+    <div class="panel-section">
 
-                            <div class="dashboard">
-                                <h3>Projects</h3>
-                                <div class="dashboard-subtitle">
-                                    Your development environment
-                                </div>
+      <div class="panel-title">
+        Mapa
+      </div>
 
-                                <div class="projects">
+      <button class="tool active">
+        <span class="tool-icon">🗺️</span>
+        <span class="tool-text">Mapa standardowa</span>
+      </button>
 
-                                    <div class="project">
-                                        <div class="project-name">
-                                            <span class="status online"></span>
-                                            MyWebsite
-                                        </div>
-                                        <div class="project-status">
-                                            Node.js · localhost:3000
-                                        </div>
-                                    </div>
+      <button class="tool">
+        <span class="tool-icon">🛰️</span>
+        <span class="tool-text">Satelita</span>
+      </button>
 
-                                    <div class="project">
-                                        <div class="project-name">
-                                            <span class="status offline"></span>
-                                            DiscordBot
-                                        </div>
-                                        <div class="project-status">
-                                            Python · Stopped
-                                        </div>
-                                    </div>
+      <button class="tool">
+        <span class="tool-icon">⛰️</span>
+        <span class="tool-text">Teren</span>
+      </button>
 
-                                    <div class="project">
-                                        <div class="project-name">
-                                            <span class="status online"></span>
-                                            API Server
-                                        </div>
-                                        <div class="project-status">
-                                            Node.js · localhost:8080
-                                        </div>
-                                    </div>
+    </div>
 
-                                    <div class="project">
-                                        <div class="project-name">
-                                            <span class="status offline"></span>
-                                            LinuxTool
-                                        </div>
-                                        <div class="project-status">
-                                            Rust · Stopped
-                                        </div>
-                                    </div>
+    <div class="panel-section">
 
-                                </div>
-                            </div>
+      <div class="panel-title">
+        Narzędzia
+      </div>
 
-                        </div>
-                    </div>
-                </div>
+      <button class="tool">
+        <span class="tool-icon">📍</span>
+        <span class="tool-text">Dodaj punkt</span>
+      </button>
 
-            </div>
-        </section>
+      <button class="tool">
+        <span class="tool-icon">🧭</span>
+        <span class="tool-text">Wyznacz trasę</span>
+      </button>
 
+      <button class="tool">
+        <span class="tool-icon">📏</span>
+        <span class="tool-text">Zmierz odległość</span>
+      </button>
 
-        <!-- FEATURES -->
-        <section id="features">
-            <div class="container">
+    </div>
 
-                <div class="section-header">
-                    <span>Features</span>
-                    <h2>Everything you need.<br>One launcher.</h2>
-                    <p>
-                        KVGDV gives you a single place to manage the projects
-                        and tools you use every day.
-                    </p>
-                </div>
+  </aside>
 
-                <div class="features">
+  <!-- MAP CONTROLS -->
+  <div class="map-controls">
 
-                    <div class="feature">
-                        <div class="feature-icon">🚀</div>
-                        <h3>Quick Launch</h3>
-                        <p>
-                            Start your development projects with a single click
-                            instead of opening multiple terminals manually.
-                        </p>
-                    </div>
+    <div class="control-group">
 
-                    <div class="feature">
-                        <div class="feature-icon">⌨️</div>
-                        <h3>Integrated Terminal</h3>
-                        <p>
-                            Keep your terminal workflow close to your projects
-                            without switching between applications.
-                        </p>
-                    </div>
+      <button class="map-btn" id="zoomIn" title="Przybliż">
+        +
+      </button>
 
-                    <div class="feature">
-                        <div class="feature-icon">📁</div>
-                        <h3>Project Manager</h3>
-                        <p>
-                            Organize all your development projects and launch
-                            them using their individual configurations.
-                        </p>
-                    </div>
+      <div class="divider"></div>
 
-                    <div class="feature">
-                        <div class="feature-icon">🐙</div>
-                        <h3>Git Integration</h3>
-                        <p>
-                            Quickly check repository status and access your
-                            Git workflow directly from KVGDV.
-                        </p>
-                    </div>
+      <button class="map-btn" id="zoomOut" title="Oddal">
+        −
+      </button>
 
-                    <div class="feature">
-                        <div class="feature-icon">🐳</div>
-                        <h3>Docker Ready</h3>
-                        <p>
-                            Keep Docker-based development environments
-                            accessible from the same interface.
-                        </p>
-                    </div>
+    </div>
 
-                    <div class="feature">
-                        <div class="feature-icon">⚙️</div>
-                        <h3>Custom Commands</h3>
-                        <p>
-                            Configure custom start commands, directories,
-                            ports and development environments.
-                        </p>
-                    </div>
+    <div class="control-group">
 
-                </div>
-            </div>
-        </section>
+      <button class="map-btn" title="Warstwy">
+        ◈
+      </button>
 
+    </div>
 
-        <!-- ABOUT -->
-        <section id="about">
-            <div class="container">
+  </div>
 
-                <div class="section-header">
-                    <span>Built for developers</span>
-                    <h2>Simple by design.</h2>
-                    <p>
-                        KVGDV is focused on one thing: making the process
-                        between opening your computer and starting work faster.
-                    </p>
-                </div>
+  <!-- LOCATION -->
+  <button
+    class="location-btn"
+    id="locationButton"
+    title="Moja lokalizacja"
+  >
+    ◎
+  </button>
 
-                <div class="tech">
-                    <div class="tech-item">Node.js</div>
-                    <div class="tech-item">Python</div>
-                    <div class="tech-item">Rust</div>
-                    <div class="tech-item">Java</div>
-                    <div class="tech-item">Git</div>
-                    <div class="tech-item">Docker</div>
-                    <div class="tech-item">PowerShell</div>
-                    <div class="tech-item">Terminal</div>
-                </div>
+  <!-- BOTTOM -->
+  <footer class="bottom-bar">
 
-            </div>
-        </section>
+    <div class="status">
+      <span class="status-dot"></span>
+      KVGDV Maps Engine — offline
+    </div>
 
+    <div class="coordinates" id="coordinates">
+      53.12345° N · 15.67890° E
+    </div>
 
-        <!-- CTA -->
-        <section>
-            <div class="container">
+  </footer>
 
-                <div class="cta">
-                    <h2>Ready to build?</h2>
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const coordinates = document.getElementById("coordinates");
+    const map = document.getElementById("map");
 
-                    <p>
-                        Get KVGDV and put your development environment
-                        in one place.
-                    </p>
+    /* Ctrl + K */
+    document.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        searchInput.focus();
+      }
+    });
 
-                    <div class="buttons">
-                        <a href="https://github.com/" class="btn btn-primary" target="_blank">
-                            ⬇ Get KVGDV
-                        </a>
+    /* Zoom prototype */
+    let zoom = 1;
 
-                        <a href="https://github.com/" class="btn btn-secondary" target="_blank">
-                            GitHub ↗
-                        </a>
-                    </div>
-                </div>
+    document.getElementById("zoomIn").addEventListener("click", () => {
+      zoom = Math.min(zoom + 0.15, 2);
+      map.style.transform = `scale(${zoom})`;
+    });
 
-            </div>
-        </section>
+    document.getElementById("zoomOut").addEventListener("click", () => {
+      zoom = Math.max(zoom - 0.15, 0.75);
+      map.style.transform = `scale(${zoom})`;
+    });
 
-    </main>
+    /* Geolocation */
+    document.getElementById("locationButton").addEventListener("click", () => {
 
+      if (!navigator.geolocation) {
+        alert("Geolokalizacja nie jest obsługiwana przez tę przeglądarkę.");
+        return;
+      }
 
-    <!-- FOOTER -->
-    <footer>
-        <div class="container footer-inner">
-            <div>© 2026 KVGDV</div>
-            <div>Built for developers.</div>
-        </div>
-    </footer>
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude.toFixed(5);
+          const lon = position.coords.longitude.toFixed(5);
 
+          coordinates.textContent = `${lat}° · ${lon}°`;
+        },
+        () => {
+          alert("Nie udało się pobrać lokalizacji.");
+        }
+      );
 
-    <script>
-        // Delikatny efekt pojawiania się elementów przy scrollowaniu
+    });
 
-        const observer = new IntersectionObserver(
-            entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = "1";
-                        entry.target.style.transform = "translateY(0)";
-                    }
-                });
-            },
-            { threshold: 0.12 }
-        );
+    /* Fake search for UI prototype */
+    searchInput.addEventListener("keydown", (event) => {
 
-        document.querySelectorAll(".feature, .section-header, .cta").forEach(el => {
-            el.style.opacity = "0";
-            el.style.transform = "translateY(20px)";
-            el.style.transition = "opacity .6s ease, transform .6s ease";
-            observer.observe(el);
-        });
-    </script>
+      if (event.key !== "Enter") {
+        return;
+      }
+
+      const query = searchInput.value.trim();
+
+      if (!query) {
+        return;
+      }
+
+      console.log("KVGDV Maps search:", query);
+
+      alert(
+        "KVGDV Maps\n\n" +
+        "Wyszukiwanie zostanie podłączone do KVGDV Maps API."
+      );
+
+    });
+  </script>
 
 </body>
 </html>
