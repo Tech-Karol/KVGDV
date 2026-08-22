@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b0f14">
 
-<title>KVGDV AI 0.4</title>
+<title>KVGDV AI</title>
 
 <style>
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -17,65 +16,60 @@
 
 :root {
     --bg: #0b0f14;
-    --panel: rgba(17,22,29,.95);
-    --panel2: #151b23;
-    --border: rgba(255,255,255,.09);
+    --panel: #11161d;
+    --panel2: #171d26;
+    --border: rgba(255,255,255,.08);
     --text: #f1f5f9;
-    --muted: #8b98a8;
+    --muted: #8995a5;
     --accent: #4f8cff;
-    --accent-hover: #6b9eff;
-    --user: #1b2636;
+    --accent2: #6b9eff;
+    --danger: #ff5c5c;
+    --user: #1d4ed8;
 }
 
 html,
 body {
     width: 100%;
     height: 100%;
-}
-
-body {
     overflow: hidden;
-
     font-family:
         Inter,
-        ui-sans-serif,
         system-ui,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
-
-    background:
-        radial-gradient(
-            circle at 50% 15%,
-            rgba(79,140,255,.08),
-            transparent 35%
-        ),
-        var(--bg);
-
+    background: var(--bg);
     color: var(--text);
 }
 
+button,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: 0;
+}
 
 /* =========================================
    APP
 ========================================= */
 
-.app {
+#app {
     width: 100%;
-    height: 100vh;
-
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
-
 
 /* =========================================
    HEADER
 ========================================= */
 
 .header {
-    height: 64px;
+    height: 68px;
     flex-shrink: 0;
 
     display: flex;
@@ -84,8 +78,7 @@ body {
 
     padding: 0 22px;
 
-    background: rgba(11,15,20,.9);
-
+    background: rgba(11,15,20,.94);
     border-bottom: 1px solid var(--border);
 
     backdrop-filter: blur(20px);
@@ -94,24 +87,31 @@ body {
 .brand {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 12px;
 }
 
 .logo {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
 
     display: grid;
     place-items: center;
 
-    border-radius: 10px;
+    border-radius: 11px;
 
     background: var(--accent);
 
+    color: white;
     font-weight: 800;
+    font-size: 17px;
 
     box-shadow:
-        0 0 22px rgba(79,140,255,.25);
+        0 0 25px rgba(79,140,255,.25);
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
 }
 
 .brand-name {
@@ -120,34 +120,32 @@ body {
 }
 
 .brand-version {
-    margin-top: 1px;
+    margin-top: 2px;
 
     color: var(--muted);
-
     font-size: 10px;
 }
 
-.new-chat {
-    height: 38px;
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-    padding: 0 13px;
-
-    border: 1px solid var(--border);
-    border-radius: 10px;
-
-    background: rgba(255,255,255,.035);
-
-    color: var(--text);
-
-    cursor: pointer;
-
-    transition: .15s;
+    color: var(--muted);
+    font-size: 11px;
 }
 
-.new-chat:hover {
-    background: rgba(255,255,255,.08);
-}
+.status-dot {
+    width: 8px;
+    height: 8px;
 
+    border-radius: 50%;
+
+    background: #47d18c;
+
+    box-shadow:
+        0 0 10px rgba(71,209,140,.6);
+}
 
 /* =========================================
    CHAT
@@ -157,29 +155,24 @@ body {
     flex: 1;
 
     overflow-y: auto;
+
+    padding: 30px 18px 130px;
 }
 
 .chat-inner {
-    width: min(900px, 100%);
-
-    margin: auto;
-
-    padding:
-        35px 20px
-        150px;
+    width: min(850px, 100%);
+    margin: 0 auto;
 }
-
 
 /* =========================================
    WELCOME
 ========================================= */
 
 .welcome {
-    min-height: 65vh;
+    min-height: 55vh;
 
     display: flex;
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
 
@@ -187,75 +180,55 @@ body {
 }
 
 .welcome-logo {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
 
     display: grid;
     place-items: center;
 
     margin-bottom: 20px;
 
-    border-radius: 18px;
+    border-radius: 22px;
 
     background: var(--accent);
 
-    font-size: 27px;
+    font-size: 30px;
     font-weight: 800;
 
     box-shadow:
-        0 0 40px rgba(79,140,255,.2);
+        0 0 50px rgba(79,140,255,.22);
 }
 
 .welcome h1 {
-    margin-bottom: 10px;
-
-    font-size: 30px;
-
-    letter-spacing: -.7px;
+    font-size: clamp(26px, 5vw, 40px);
+    letter-spacing: -1px;
 }
 
 .welcome p {
-    max-width: 570px;
+    max-width: 520px;
+
+    margin-top: 10px;
 
     color: var(--muted);
 
     font-size: 14px;
-
     line-height: 1.6;
 }
 
-.examples {
-    display: flex;
-    flex-wrap: wrap;
-
-    justify-content: center;
-
-    gap: 8px;
-
+.welcome-hint {
     margin-top: 25px;
-}
 
-.example {
-    padding: 10px 13px;
+    padding: 10px 14px;
 
     border: 1px solid var(--border);
-    border-radius: 11px;
+    border-radius: 10px;
 
-    background: rgba(255,255,255,.035);
+    background: var(--panel);
 
-    color: #cbd5e1;
+    color: var(--muted);
 
-    cursor: pointer;
-
-    font-size: 12px;
-
-    transition: .15s;
+    font-size: 11px;
 }
-
-.example:hover {
-    background: rgba(255,255,255,.08);
-}
-
 
 /* =========================================
    MESSAGE
@@ -263,16 +236,18 @@ body {
 
 .message {
     display: flex;
+    gap: 12px;
 
-    gap: 13px;
-
-    margin-bottom: 28px;
+    margin-bottom: 25px;
 }
 
-.avatar {
+.message.user {
+    justify-content: flex-end;
+}
+
+.message-avatar {
     width: 34px;
     height: 34px;
-
     flex-shrink: 0;
 
     display: grid;
@@ -280,320 +255,57 @@ body {
 
     border-radius: 10px;
 
-    font-size: 12px;
+    background: var(--panel2);
+
+    border: 1px solid var(--border);
+
+    font-size: 13px;
     font-weight: 750;
 }
 
-.message.user .avatar {
-    background: #263449;
-}
+.message.user .message-avatar {
+    order: 2;
 
-.message.ai .avatar {
-    background: var(--accent);
+    background: var(--user);
+    border-color: transparent;
 }
 
 .message-content {
-    flex: 1;
-    min-width: 0;
-}
+    max-width: min(700px, 80%);
 
-.message-name {
-    margin-bottom: 6px;
+    padding: 12px 15px;
 
-    color: var(--muted);
+    border-radius: 15px;
 
-    font-size: 11px;
-    font-weight: 650;
-}
+    background: var(--panel);
 
-.message-text {
-    color: #e7edf5;
+    border: 1px solid var(--border);
 
+    line-height: 1.55;
     font-size: 14px;
 
-    line-height: 1.7;
-
     white-space: pre-wrap;
-
     overflow-wrap: anywhere;
 }
 
-.message.user .message-text {
-    display: inline-block;
-
-    padding: 11px 14px;
-
-    border: 1px solid rgba(255,255,255,.05);
-
-    border-radius: 13px;
-
+.message.user .message-content {
     background: var(--user);
+    border-color: transparent;
 }
-
 
 /* =========================================
-   LINK
+   LINKS
 ========================================= */
 
-.detected-link {
-    display: inline-block;
-
-    max-width: 100%;
-
-    margin-top: 9px;
-
-    padding: 8px 10px;
-
-    border: 1px solid rgba(79,140,255,.2);
-
-    border-radius: 9px;
-
-    background: rgba(79,140,255,.07);
-
-    color: #9cbdff;
-
-    font-size: 12px;
-
-    text-decoration: none;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
+.message-content a {
+    color: #9fc0ff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
-
-/* =========================================
-   ACTIONS
-========================================= */
-
-.message-actions {
-    display: flex;
-
-    gap: 6px;
-
-    margin-top: 7px;
-}
-
-.message-action {
-    padding: 5px 7px;
-
-    border: 0;
-    border-radius: 7px;
-
-    background: transparent;
-
-    color: #718096;
-
-    cursor: pointer;
-
-    font-size: 11px;
-}
-
-.message-action:hover {
-    background: rgba(255,255,255,.05);
-
-    color: var(--text);
-}
-
-
-/* =========================================
-   LEARNING CARD
-========================================= */
-
-.learning {
-    margin-top: 12px;
-
-    padding: 13px;
-
-    border: 1px solid rgba(79,140,255,.2);
-
-    border-radius: 12px;
-
-    background: rgba(79,140,255,.06);
-}
-
-.learning-title {
-    margin-bottom: 8px;
-
-    color: #9cbdff;
-
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.learning-text {
-    margin-bottom: 10px;
-
-    color: var(--muted);
-
-    font-size: 11px;
-
-    line-height: 1.5;
-}
-
-.learning-button {
-    padding: 8px 11px;
-
-    border: 0;
-    border-radius: 8px;
-
-    background: var(--accent);
-
+.message.user .message-content a {
     color: white;
-
-    cursor: pointer;
-
-    font-size: 11px;
 }
-
-.learning-button:hover {
-    background: var(--accent-hover);
-}
-
-
-/* =========================================
-   INPUT
-========================================= */
-
-.input-area {
-    position: fixed;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    padding:
-        15px
-        20px
-        20px;
-
-    background:
-        linear-gradient(
-            to top,
-            var(--bg) 65%,
-            transparent
-        );
-}
-
-.input-wrap {
-    width: min(900px, 100%);
-
-    margin: auto;
-}
-
-.input-box {
-    display: flex;
-
-    align-items: flex-end;
-
-    gap: 10px;
-
-    min-height: 58px;
-
-    padding:
-        9px
-        9px
-        9px
-        15px;
-
-    border: 1px solid rgba(255,255,255,.12);
-
-    border-radius: 17px;
-
-    background: rgba(17,22,29,.97);
-
-    box-shadow:
-        0 15px 45px rgba(0,0,0,.35);
-
-    backdrop-filter: blur(20px);
-}
-
-.input-box:focus-within {
-    border-color:
-        rgba(79,140,255,.45);
-
-    box-shadow:
-        0 15px 45px rgba(0,0,0,.35),
-        0 0 0 3px rgba(79,140,255,.08);
-}
-
-textarea {
-    flex: 1;
-
-    width: 100%;
-
-    min-height: 38px;
-    max-height: 180px;
-
-    resize: none;
-
-    border: 0;
-    outline: 0;
-
-    background: transparent;
-
-    color: var(--text);
-
-    font-family: inherit;
-
-    font-size: 14px;
-
-    line-height: 1.5;
-}
-
-textarea::placeholder {
-    color: #687586;
-}
-
-.send {
-    width: 40px;
-    height: 40px;
-
-    flex-shrink: 0;
-
-    display: grid;
-    place-items: center;
-
-    border: 0;
-    border-radius: 11px;
-
-    background: var(--accent);
-
-    color: white;
-
-    cursor: pointer;
-
-    font-size: 17px;
-
-    transition: .15s;
-}
-
-.send:hover {
-    background: var(--accent-hover);
-
-    transform: translateY(-1px);
-}
-
-.send:disabled {
-    opacity: .35;
-
-    cursor: default;
-
-    transform: none;
-}
-
-.input-info {
-    margin-top: 8px;
-
-    text-align: center;
-
-    color: #657181;
-
-    font-size: 10px;
-}
-
 
 /* =========================================
    TYPING
@@ -601,12 +313,8 @@ textarea::placeholder {
 
 .typing {
     display: flex;
-
-    align-items: center;
-
     gap: 5px;
-
-    height: 25px;
+    align-items: center;
 }
 
 .typing span {
@@ -615,9 +323,9 @@ textarea::placeholder {
 
     border-radius: 50%;
 
-    background: #7e8da1;
+    background: var(--muted);
 
-    animation: typing 1.2s infinite;
+    animation: typing 1s infinite;
 }
 
 .typing span:nth-child(2) {
@@ -629,19 +337,168 @@ textarea::placeholder {
 }
 
 @keyframes typing {
-
     0%, 60%, 100% {
+        opacity: .25;
         transform: translateY(0);
-        opacity: .4;
     }
 
     30% {
-        transform: translateY(-4px);
         opacity: 1;
+        transform: translateY(-3px);
     }
-
 }
 
+/* =========================================
+   INPUT AREA
+========================================= */
+
+.input-area {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding: 15px 18px 18px;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(11,15,20,1) 45%,
+            rgba(11,15,20,.85),
+            transparent
+        );
+
+    pointer-events: none;
+}
+
+.input-container {
+    width: min(850px, 100%);
+    margin: 0 auto;
+
+    pointer-events: auto;
+}
+
+.input-box {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+
+    padding: 10px;
+
+    background: rgba(17,22,29,.96);
+
+    border: 1px solid var(--border);
+    border-radius: 17px;
+
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.35);
+
+    backdrop-filter: blur(20px);
+}
+
+#messageInput {
+    width: 100%;
+    min-height: 40px;
+    max-height: 150px;
+
+    padding: 9px 8px;
+
+    resize: none;
+
+    outline: none;
+    border: 0;
+
+    background: transparent;
+
+    color: var(--text);
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#messageInput::placeholder {
+    color: #718093;
+}
+
+.send-button {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: var(--accent);
+    color: white;
+
+    font-size: 18px;
+
+    transition: .15s ease;
+}
+
+.send-button:hover {
+    background: var(--accent2);
+    transform: translateY(-1px);
+}
+
+.send-button:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.input-info {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 7px;
+    padding: 0 5px;
+
+    color: #667384;
+
+    font-size: 10px;
+}
+
+/* =========================================
+   NEW CHAT
+========================================= */
+
+.new-chat {
+    position: fixed;
+
+    top: 82px;
+    right: 18px;
+
+    z-index: 10;
+
+    height: 38px;
+
+    padding: 0 13px;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    border-radius: 10px;
+
+    background: var(--panel);
+
+    border: 1px solid var(--border);
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    transition: .15s ease;
+}
+
+.new-chat:hover {
+    color: var(--text);
+    background: var(--panel2);
+}
 
 /* =========================================
    MOBILE
@@ -650,52 +507,52 @@ textarea::placeholder {
 @media (max-width: 700px) {
 
     .header {
-        height: 58px;
-
+        height: 60px;
         padding: 0 12px;
     }
 
-    .chat-inner {
+    .header-status {
+        display: none;
+    }
+
+    .chat {
         padding:
-            25px
-            13px
-            140px;
+            20px
+            10px
+            130px;
     }
 
-    .welcome h1 {
-        font-size: 25px;
+    .message-content {
+        max-width: 85%;
     }
 
-    .message {
-        gap: 9px;
-    }
-
-    .avatar {
-        width: 31px;
-        height: 31px;
-    }
-
-    .message-text {
-        font-size: 13px;
+    .new-chat {
+        top: 70px;
+        right: 10px;
     }
 
     .input-area {
         padding:
             10px
             10px
-            13px;
+            12px;
     }
 
-}
+    .welcome {
+        min-height: 60vh;
+    }
 
+    .welcome-logo {
+        width: 62px;
+        height: 62px;
+    }
+}
 </style>
 </head>
 
-
 <body>
 
-<div class="app">
-
+<div id="app">
 
     <!-- HEADER -->
 
@@ -707,29 +564,42 @@ textarea::placeholder {
                 K
             </div>
 
-            <div>
+            <div class="brand-text">
 
                 <div class="brand-name">
                     KVGDV AI
                 </div>
 
                 <div class="brand-version">
-                    Local Brain · 0.4
+                    Local Brain · v0.5
                 </div>
 
             </div>
 
         </div>
 
+        <div class="header-status">
 
-        <button
-            class="new-chat"
-            id="newChat"
-        >
-            ＋ Nowa rozmowa
-        </button>
+            <span class="status-dot"></span>
+
+            <span id="statusText">
+                Ładowanie wiedzy...
+            </span>
+
+        </div>
 
     </header>
+
+
+    <!-- NEW CHAT -->
+
+    <button
+        class="new-chat"
+        id="newChatButton"
+    >
+        ＋
+        Nowa rozmowa
+    </button>
 
 
     <!-- CHAT -->
@@ -744,6 +614,8 @@ textarea::placeholder {
             id="chatInner"
         >
 
+            <!-- WELCOME -->
+
             <section
                 class="welcome"
                 id="welcome"
@@ -754,46 +626,16 @@ textarea::placeholder {
                 </div>
 
                 <h1>
-                    W czym mogę pomóc?
+                    KVGDV AI
                 </h1>
 
                 <p>
-                    KVGDV AI 0.4 korzysta z lokalnej
-                    bazy wiedzy. Możesz normalnie
-                    prowadzić rozmowę i podawać linki.
+                    Twój lokalny eksperymentalny asystent AI.
+                    Napisz wiadomość, zadaj pytanie albo wklej link.
                 </p>
 
-
-                <div class="examples">
-
-                    <button
-                        class="example"
-                        data-text="Cześć"
-                    >
-                        Cześć 👋
-                    </button>
-
-                    <button
-                        class="example"
-                        data-text="Kim jesteś?"
-                    >
-                        Kim jesteś?
-                    </button>
-
-                    <button
-                        class="example"
-                        data-text="Co potrafisz?"
-                    >
-                        Co potrafisz?
-                    </button>
-
-                    <button
-                        class="example"
-                        data-text="Czym jest HTML?"
-                    >
-                        Czym jest HTML?
-                    </button>
-
+                <div class="welcome-hint">
+                    Enter — wyślij · Shift + Enter — nowa linia
                 </div>
 
             </section>
@@ -807,7 +649,7 @@ textarea::placeholder {
 
     <div class="input-area">
 
-        <div class="input-wrap">
+        <div class="input-container">
 
             <div class="input-box">
 
@@ -818,9 +660,8 @@ textarea::placeholder {
                     autocomplete="off"
                 ></textarea>
 
-
                 <button
-                    class="send"
+                    class="send-button"
                     id="sendButton"
                     title="Wyślij"
                 >
@@ -829,9 +670,16 @@ textarea::placeholder {
 
             </div>
 
-
             <div class="input-info">
-                Enter — wyślij · Shift + Enter — nowa linia
+
+                <span>
+                    KVGDV AI
+                </span>
+
+                <span id="databaseInfo">
+                    Baza: ładowanie...
+                </span>
+
             </div>
 
         </div>
@@ -844,10 +692,24 @@ textarea::placeholder {
 <script>
 
 /* =========================================
-   KVGDV AI 0.4
+   KVGDV AI 0.5
    LOCAL BRAIN
 ========================================= */
 
+const state = {
+
+    data: null,
+
+    messages: [],
+
+    isTyping: false
+
+};
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
 
 const chat =
     document.getElementById("chat");
@@ -855,292 +717,333 @@ const chat =
 const chatInner =
     document.getElementById("chatInner");
 
+const welcome =
+    document.getElementById("welcome");
+
 const input =
     document.getElementById("messageInput");
 
 const sendButton =
     document.getElementById("sendButton");
 
-const newChat =
-    document.getElementById("newChat");
+const statusText =
+    document.getElementById("statusText");
 
-const welcome =
-    document.getElementById("welcome");
+const databaseInfo =
+    document.getElementById("databaseInfo");
 
-
-let knowledge = [];
-
-let messages =
-    JSON.parse(
-        localStorage.getItem(
-            "kvgdv_ai_messages"
-        ) || "[]"
-    );
+const newChatButton =
+    document.getElementById("newChatButton");
 
 
 /* =========================================
-   LOAD KNOWLEDGE.JSON
+   NORMALIZE TEXT
 ========================================= */
 
-async function loadKnowledge() {
-
-    try {
-
-        const response =
-            await fetch(
-                "./data/knowledge.json"
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Nie można załadować knowledge.json"
-            );
-
-        }
-
-        const data =
-            await response.json();
-
-        knowledge =
-            Array.isArray(data.knowledge)
-                ? data.knowledge
-                : [];
-
-        console.log(
-            "KVGDV AI: załadowano",
-            knowledge.length,
-            "wpisów wiedzy."
-        );
-
-    } catch (error) {
-
-        console.error(
-            "KVGDV AI:",
-            error
-        );
-
-        knowledge = [];
-
-    }
-
-}
-
-
-/* =========================================
-   NORMALIZE
-========================================= */
-
-function normalize(text) {
+function normalizeText(text) {
 
     return text
         .toLowerCase()
         .normalize("NFD")
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        )
-        .replace(
-            /[^a-z0-9ąćęłńóśźż\s]/gi,
-            " "
-        )
-        .replace(
-            /\s+/g,
-            " "
-        )
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,!?;:()[\]{}"'`]/g, "")
+        .replace(/\s+/g, " ")
         .trim();
 
 }
 
 
 /* =========================================
-   URL
+   RANDOM ANSWER
 ========================================= */
 
-function findURL(text) {
-
-    const match =
-        text.match(
-            /https?:\/\/[^\s]+/i
-        );
-
-    if (!match) {
-        return null;
-    }
-
-    return match[0].replace(
-        /[.,!?;:)\]]+$/,
-        ""
-    );
-
-}
-
-
-/* =========================================
-   SIMILARITY
-========================================= */
-
-function calculateScore(
-    question,
-    userText
-) {
-
-    const a =
-        normalize(question);
-
-    const b =
-        normalize(userText);
-
-
-    if (!a || !b) {
-        return 0;
-    }
-
-
-    if (a === b) {
-        return 100;
-    }
-
+function randomAnswer(responses) {
 
     if (
-        b.includes(a) ||
-        a.includes(b)
+        !responses ||
+        responses.length === 0
     ) {
 
-        return 80;
+        return "Nie mam jeszcze odpowiedzi na to pytanie.";
 
     }
 
-
-    const wordsA =
-        new Set(a.split(" "));
-
-    const wordsB =
-        new Set(b.split(" "));
-
-
-    let matches = 0;
-
-
-    wordsA.forEach(word => {
-
-        if (
-            word.length > 2 &&
-            wordsB.has(word)
-        ) {
-
-            matches++;
-
-        }
-
-    });
-
-
-    if (!matches) {
-        return 0;
-    }
-
-
-    return (
-        matches /
-        Math.max(
-            wordsA.size,
-            wordsB.size
+    return responses[
+        Math.floor(
+            Math.random() * responses.length
         )
-    ) * 100;
+    ];
 
 }
 
 
 /* =========================================
-   FIND ANSWER
+   TOKENIZE
 ========================================= */
 
-function findKnowledgeAnswer(text) {
+function tokenize(text) {
 
-    let best = null;
+    return normalizeText(text)
+        .split(" ")
+        .filter(Boolean);
 
+}
+
+
+/* =========================================
+   FIND INTENT
+========================================= */
+
+function findIntent(message) {
+
+    if (
+        !state.data ||
+        !Array.isArray(state.data.intents)
+    ) {
+
+        return null;
+
+    }
+
+
+    const normalized =
+        normalizeText(message);
+
+    const words =
+        tokenize(message);
+
+
+    let bestIntent = null;
     let bestScore = 0;
 
 
     for (
-        const item of knowledge
+        const intent of state.data.intents
     ) {
 
         if (
-            !Array.isArray(
-                item.questions
-            )
+            !Array.isArray(intent.keywords)
         ) {
             continue;
         }
 
 
+        let score = 0;
+
+
         for (
-            const question of item.questions
+            const keyword of intent.keywords
         ) {
 
-            const score =
-                calculateScore(
-                    question,
-                    text
-                );
+            const normalizedKeyword =
+                normalizeText(keyword);
 
+            if (!normalizedKeyword) {
+                continue;
+            }
+
+
+            /*
+                Dokładne dopasowanie
+            */
 
             if (
-                score > bestScore
+                normalized ===
+                normalizedKeyword
             ) {
 
-                bestScore =
-                    score;
+                score += 100;
 
-                best =
-                    item;
+                continue;
 
             }
+
+
+            /*
+                Cała fraza znajduje się
+                w wiadomości
+            */
+
+            if (
+                normalized.includes(
+                    normalizedKeyword
+                )
+            ) {
+
+                score += 25;
+
+            }
+
+
+            /*
+                Dopasowanie poszczególnych słów
+            */
+
+            const keywordWords =
+                tokenize(keyword);
+
+
+            for (
+                const keywordWord
+                of keywordWords
+            ) {
+
+                if (
+                    words.includes(keywordWord)
+                ) {
+
+                    score += 5;
+
+                }
+
+            }
+
+        }
+
+
+        /*
+            Lekka premia za krótkie
+            i konkretne zapytania.
+        */
+
+        if (
+            score > 0 &&
+            words.length <= 4
+        ) {
+
+            score += 2;
+
+        }
+
+
+        if (
+            score > bestScore
+        ) {
+
+            bestScore = score;
+            bestIntent = intent;
 
         }
 
     }
 
 
-    /*
-       Próg dopasowania.
-       Możesz go później zmienić.
-    */
-
-    if (
-        best &&
-        bestScore >= 35
-    ) {
-
-        return {
-            answer: best.answer,
-            score: bestScore,
-            item: best
-        };
-
-    }
-
-
-    return null;
+    return {
+        intent: bestIntent,
+        score: bestScore
+    };
 
 }
 
 
 /* =========================================
-   ESCAPE
+   AI RESPONSE
 ========================================= */
 
-function escapeHTML(text) {
+function getAIResponse(message) {
 
-    const div =
-        document.createElement("div");
+    if (!state.data) {
 
-    div.textContent =
-        text;
+        return {
+            text:
+                "Moja baza wiedzy nie została jeszcze załadowana.",
+            intent: null,
+            score: 0
+        };
 
-    return div.innerHTML;
+    }
+
+
+    const result =
+        findIntent(message);
+
+
+    /*
+        Brak odpowiedniego dopasowania.
+    */
+
+    if (
+        !result ||
+        !result.intent ||
+        result.score === 0
+    ) {
+
+        const unknown =
+            state.data.intents.find(
+                intent =>
+                    intent.id === "unknown"
+            );
+
+
+        return {
+
+            text: unknown
+                ? randomAnswer(
+                    unknown.responses
+                )
+                : "Nie znam jeszcze odpowiedzi na to pytanie.",
+
+            intent: "unknown",
+
+            score: 0
+
+        };
+
+    }
+
+
+    return {
+
+        text:
+            randomAnswer(
+                result.intent.responses
+            ),
+
+        intent:
+            result.intent.id,
+
+        score:
+            result.score
+
+    };
+
+}
+
+
+/* =========================================
+   LINK DETECTION
+========================================= */
+
+function linkify(text) {
+
+    const escaped =
+        text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+
+
+    const urlRegex =
+        /(https?:\/\/[^\s<]+)/g;
+
+
+    return escaped.replace(
+        urlRegex,
+        url => {
+
+            return `
+                <a
+                    href="${url}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    ${url}
+                </a>
+            `;
+
+        }
+    );
 
 }
 
@@ -1150,31 +1053,35 @@ function escapeHTML(text) {
 ========================================= */
 
 function addMessage(
-    role,
     text,
-    url = null
+    sender
 ) {
 
     if (welcome) {
-        welcome.style.display = "none";
+
+        welcome.style.display =
+            "none";
+
     }
 
 
     const message =
         document.createElement("div");
 
+
     message.className =
-        "message " + role;
+        `message ${sender}`;
 
 
     const avatar =
         document.createElement("div");
 
     avatar.className =
-        "avatar";
+        "message-avatar";
+
 
     avatar.textContent =
-        role === "user"
+        sender === "user"
             ? "Ty"
             : "K";
 
@@ -1186,119 +1093,41 @@ function addMessage(
         "message-content";
 
 
-    const name =
-        document.createElement("div");
+    if (sender === "assistant") {
 
-    name.className =
-        "message-name";
+        content.innerHTML =
+            linkify(text);
 
-    name.textContent =
-        role === "user"
-            ? "Ty"
-            : "KVGDV AI";
+    } else {
 
-
-    const textElement =
-        document.createElement("div");
-
-    textElement.className =
-        "message-text";
-
-    textElement.innerHTML =
-        escapeHTML(text);
-
-
-    content.appendChild(name);
-
-    content.appendChild(textElement);
-
-
-    if (url) {
-
-        const link =
-            document.createElement("a");
-
-        link.className =
-            "detected-link";
-
-        link.href =
-            url;
-
-        link.target =
-            "_blank";
-
-        link.rel =
-            "noopener noreferrer";
-
-        link.textContent =
-            "🔗 " + url;
-
-        content.appendChild(link);
-
-    }
-
-
-    if (role === "ai") {
-
-        const actions =
-            document.createElement("div");
-
-        actions.className =
-            "message-actions";
-
-
-        const copy =
-            document.createElement("button");
-
-        copy.className =
-            "message-action";
-
-        copy.textContent =
-            "Kopiuj";
-
-
-        copy.onclick = () => {
-
-            navigator.clipboard.writeText(
-                text
-            );
-
-            copy.textContent =
-                "Skopiowano ✓";
-
-
-            setTimeout(() => {
-
-                copy.textContent =
-                    "Kopiuj";
-
-            }, 1500);
-
-        };
-
-
-        actions.appendChild(copy);
-
-        content.appendChild(actions);
+        content.textContent =
+            text;
 
     }
 
 
     message.appendChild(avatar);
-
     message.appendChild(content);
 
     chatInner.appendChild(message);
 
 
-    chat.scrollTop =
-        chat.scrollHeight;
+    state.messages.push({
+        sender,
+        text
+    });
+
+
+    saveConversation();
+
+
+    scrollToBottom();
 
 }
 
 
 /* =========================================
-   TYPING
+   TYPING INDICATOR
 ========================================= */
 
 function showTyping() {
@@ -1306,218 +1135,165 @@ function showTyping() {
     const message =
         document.createElement("div");
 
-    message.id =
-        "typing";
-
     message.className =
-        "message ai";
+        "message assistant";
+
+    message.id =
+        "typingMessage";
 
 
-    message.innerHTML = `
+    const avatar =
+        document.createElement("div");
 
-        <div class="avatar">
-            K
+    avatar.className =
+        "message-avatar";
+
+    avatar.textContent =
+        "K";
+
+
+    const content =
+        document.createElement("div");
+
+    content.className =
+        "message-content";
+
+
+    content.innerHTML = `
+        <div class="typing">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-
-        <div class="message-content">
-
-            <div class="message-name">
-                KVGDV AI
-            </div>
-
-            <div class="typing">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-
-        </div>
-
     `;
 
 
+    message.appendChild(avatar);
+    message.appendChild(content);
+
     chatInner.appendChild(message);
 
-    chat.scrollTop =
-        chat.scrollHeight;
+
+    scrollToBottom();
 
 }
 
+
+/* =========================================
+   HIDE TYPING
+========================================= */
 
 function hideTyping() {
 
-    const element =
+    const typing =
         document.getElementById(
-            "typing"
+            "typingMessage"
         );
 
-    if (element) {
-        element.remove();
+
+    if (typing) {
+
+        typing.remove();
+
     }
 
 }
 
 
 /* =========================================
-   RESPONSE
-========================================= */
-
-function generateResponse(text) {
-
-    const url =
-        findURL(text);
-
-
-    /*
-       Najpierw szukamy wiedzy.
-    */
-
-    const result =
-        findKnowledgeAnswer(text);
-
-
-    if (result) {
-
-        return result.answer;
-
-    }
-
-
-    /*
-       Obsługa linku.
-    */
-
-    if (url) {
-
-        return (
-            "Wykryłem link:\n\n" +
-            url +
-            "\n\n" +
-
-            "Na razie potrafię rozpoznać link, " +
-            "ale nie mam jeszcze backendu, który " +
-            "pobiera jego zawartość. Możemy dodać " +
-            "to w następnej wersji."
-        );
-
-    }
-
-
-    /*
-       Brak wiedzy.
-    */
-
-    return (
-        "Nie mam jeszcze odpowiedzi na to pytanie " +
-        "w mojej lokalnej bazie wiedzy.\n\n" +
-
-        "Możesz mnie tego nauczyć w kolejnej " +
-        "wersji KVGDV AI."
-    );
-
-}
-
-
-/* =========================================
-   SAVE CHAT
-========================================= */
-
-function saveMessages() {
-
-    localStorage.setItem(
-        "kvgdv_ai_messages",
-        JSON.stringify(messages)
-    );
-
-}
-
-
-/* =========================================
-   SEND
+   SEND MESSAGE
 ========================================= */
 
 async function sendMessage() {
 
-    const text =
-        input.value.trim();
-
-
-    if (!text) {
+    if (state.isTyping) {
         return;
     }
 
 
-    const url =
-        findURL(text);
+    const message =
+        input.value.trim();
 
 
-    addMessage(
-        "user",
-        text,
-        url
-    );
-
-
-    messages.push({
-        role: "user",
-        text: text,
-        url: url,
-        time: Date.now()
-    });
-
-
-    saveMessages();
+    if (!message) {
+        return;
+    }
 
 
     input.value = "";
 
-    input.style.height =
-        "38px";
+    autoResize();
 
 
-    sendButton.disabled =
-        true;
+    addMessage(
+        message,
+        "user"
+    );
+
+
+    state.isTyping = true;
+
+    sendButton.disabled = true;
 
 
     showTyping();
 
 
-    await new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                450
+    /*
+        Małe opóźnienie sprawia,
+        że odpowiedź wygląda bardziej
+        naturalnie.
+    */
+
+    const delay =
+        Math.min(
+            900,
+            Math.max(
+                250,
+                message.length * 8
             )
-    );
+        );
 
 
-    const answer =
-        generateResponse(text);
+    await sleep(delay);
 
 
     hideTyping();
 
 
+    const result =
+        getAIResponse(message);
+
+
     addMessage(
-        "ai",
-        answer
+        result.text,
+        "assistant"
     );
 
 
-    messages.push({
-        role: "ai",
-        text: answer,
-        time: Date.now()
-    });
+    state.isTyping = false;
 
+    sendButton.disabled = false;
 
-    saveMessages();
-
-
-    sendButton.disabled =
-        false;
 
     input.focus();
+
+}
+
+
+/* =========================================
+   SLEEP
+========================================= */
+
+function sleep(ms) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
 
 }
 
@@ -1546,27 +1322,6 @@ input.addEventListener(
 
 
 /* =========================================
-   AUTO RESIZE
-========================================= */
-
-input.addEventListener(
-    "input",
-    () => {
-
-        input.style.height =
-            "38px";
-
-        input.style.height =
-            Math.min(
-                input.scrollHeight,
-                180
-            ) + "px";
-
-    }
-);
-
-
-/* =========================================
    SEND BUTTON
 ========================================= */
 
@@ -1577,54 +1332,138 @@ sendButton.addEventListener(
 
 
 /* =========================================
-   EXAMPLES
+   AUTO RESIZE
 ========================================= */
 
-function setupExamples() {
+function autoResize() {
 
-    document
-        .querySelectorAll(".example")
-        .forEach(button => {
+    input.style.height =
+        "auto";
 
-            button.onclick = () => {
 
-                input.value =
-                    button.dataset.text;
+    input.style.height =
+        Math.min(
+            input.scrollHeight,
+            150
+        ) + "px";
 
-                input.focus();
+}
 
-            };
 
+input.addEventListener(
+    "input",
+    autoResize
+);
+
+
+/* =========================================
+   SCROLL
+========================================= */
+
+function scrollToBottom() {
+
+    requestAnimationFrame(() => {
+
+        chat.scrollTo({
+            top: chat.scrollHeight,
+            behavior: "smooth"
         });
+
+    });
 
 }
 
 
 /* =========================================
-   LOAD OLD CHAT
+   SAVE CONVERSATION
 ========================================= */
 
-function loadMessages() {
+function saveConversation() {
 
-    if (!messages.length) {
-        return;
-    }
+    try {
 
-
-    if (welcome) {
-        welcome.style.display = "none";
-    }
-
-
-    messages.forEach(message => {
-
-        addMessage(
-            message.role,
-            message.text,
-            message.url || null
+        localStorage.setItem(
+            "kvgdv_ai_conversation",
+            JSON.stringify(
+                state.messages
+            )
         );
 
-    });
+    } catch (error) {
+
+        console.warn(
+            "Nie można zapisać rozmowy.",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   LOAD CONVERSATION
+========================================= */
+
+function loadConversation() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                "kvgdv_ai_conversation"
+            );
+
+
+        if (!saved) {
+            return;
+        }
+
+
+        const messages =
+            JSON.parse(saved);
+
+
+        if (
+            !Array.isArray(messages)
+        ) {
+
+            return;
+
+        }
+
+
+        for (
+            const message
+            of messages
+        ) {
+
+            if (
+                message &&
+                message.text &&
+                (
+                    message.sender === "user" ||
+                    message.sender === "assistant"
+                )
+            ) {
+
+                addMessage(
+                    message.text,
+                    message.sender
+                );
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Nie można odczytać historii.",
+            error
+        );
+
+    }
 
 }
 
@@ -1633,32 +1472,179 @@ function loadMessages() {
    NEW CHAT
 ========================================= */
 
-newChat.addEventListener(
+newChatButton.addEventListener(
     "click",
     () => {
 
-        if (
-            messages.length &&
-            !confirm(
-                "Rozpocząć nową rozmowę?"
-            )
-        ) {
-            return;
-        }
-
-
-        messages = [];
-
-
         localStorage.removeItem(
-            "kvgdv_ai_messages"
+            "kvgdv_ai_conversation"
         );
 
 
-        location.reload();
+        state.messages = [];
+
+
+        chatInner.innerHTML = "";
+
+
+        const newWelcome =
+            document.createElement(
+                "section"
+            );
+
+
+        newWelcome.className =
+            "welcome";
+
+
+        newWelcome.innerHTML = `
+            <div class="welcome-logo">
+                K
+            </div>
+
+            <h1>
+                KVGDV AI
+            </h1>
+
+            <p>
+                Twój lokalny eksperymentalny
+                asystent AI. Napisz wiadomość,
+                zadaj pytanie albo wklej link.
+            </p>
+
+            <div class="welcome-hint">
+                Enter — wyślij · Shift + Enter — nowa linia
+            </div>
+        `;
+
+
+        chatInner.appendChild(
+            newWelcome
+        );
+
+
+        input.focus();
 
     }
 );
+
+
+/* =========================================
+   LOAD JSON
+========================================= */
+
+async function loadKnowledge() {
+
+    try {
+
+        statusText.textContent =
+            "Ładowanie bazy...";
+
+
+        const response =
+            await fetch(
+                "./data/knowledge.json",
+                {
+                    cache: "no-cache"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        /*
+            Sprawdzamy nowy format.
+        */
+
+        if (
+            !data ||
+            !Array.isArray(data.intents)
+        ) {
+
+            throw new Error(
+                "Nieprawidłowy format knowledge.json"
+            );
+
+        }
+
+
+        state.data =
+            data;
+
+
+        const intentCount =
+            data.intents.length;
+
+
+        let responseCount = 0;
+
+
+        for (
+            const intent
+            of data.intents
+        ) {
+
+            if (
+                Array.isArray(
+                    intent.responses
+                )
+            ) {
+
+                responseCount +=
+                    intent.responses.length;
+
+            }
+
+        }
+
+
+        statusText.textContent =
+            "KVGDV AI · Online";
+
+
+        databaseInfo.textContent =
+            `Baza: ${intentCount} tematów · ${responseCount} odpowiedzi`;
+
+
+        console.log(
+            "KVGDV AI:",
+            "Baza załadowana.",
+            data
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "KVGDV AI:",
+            error
+        );
+
+
+        statusText.textContent =
+            "Błąd bazy";
+
+
+        databaseInfo.textContent =
+            "Baza: błąd ładowania";
+
+
+        state.data = null;
+
+    }
+
+}
 
 
 /* =========================================
@@ -1669,9 +1655,7 @@ async function start() {
 
     await loadKnowledge();
 
-    loadMessages();
-
-    setupExamples();
+    loadConversation();
 
     input.focus();
 
