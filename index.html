@@ -5,2480 +5,1680 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b0f14">
 
-<title>KVGDV Maps</title>
+<title>KVGDV AI 0.4</title>
 
 <style>
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-:root{
-  --bg:#0b0f14;
-  --panel:rgba(17,22,29,.94);
-  --border:rgba(255,255,255,.09);
-  --text:#f1f5f9;
-  --muted:#8b98a8;
-  --accent:#4f8cff;
-  --shadow:0 12px 40px rgba(0,0,0,.35);
+:root {
+    --bg: #0b0f14;
+    --panel: rgba(17,22,29,.95);
+    --panel2: #151b23;
+    --border: rgba(255,255,255,.09);
+    --text: #f1f5f9;
+    --muted: #8b98a8;
+    --accent: #4f8cff;
+    --accent-hover: #6b9eff;
+    --user: #1b2636;
 }
 
 html,
-body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
-  background:var(--bg);
-  color:var(--text);
+body {
+    width: 100%;
+    height: 100%;
 }
 
-button,
-input{
-  font:inherit;
+body {
+    overflow: hidden;
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 50% 15%,
+            rgba(79,140,255,.08),
+            transparent 35%
+        ),
+        var(--bg);
+
+    color: var(--text);
 }
 
-button{
-  border:0;
-  cursor:pointer;
+
+/* =========================================
+   APP
+========================================= */
+
+.app {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
 }
 
-/* ================= MAP ================= */
 
-#map{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  background:#10161d;
+/* =========================================
+   HEADER
+========================================= */
+
+.header {
+    height: 64px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 22px;
+
+    background: rgba(11,15,20,.9);
+
+    border-bottom: 1px solid var(--border);
+
+    backdrop-filter: blur(20px);
 }
 
-#mapCanvas{
-  position:absolute;
-  inset:0;
-
-  width:100%;
-  height:100%;
-
-  cursor:grab;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
 }
 
-#mapCanvas.dragging{
-  cursor:grabbing;
+.logo {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 10px;
+
+    background: var(--accent);
+
+    font-weight: 800;
+
+    box-shadow:
+        0 0 22px rgba(79,140,255,.25);
 }
 
-/* ================= TOP ================= */
-
-.topbar{
-  position:fixed;
-  z-index:20;
-
-  top:16px;
-  left:16px;
-  right:16px;
-
-  display:flex;
-  align-items:center;
-  gap:12px;
-
-  pointer-events:none;
+.brand-name {
+    font-size: 15px;
+    font-weight: 750;
 }
 
-.topbar>*{
-  pointer-events:auto;
+.brand-version {
+    margin-top: 1px;
+
+    color: var(--muted);
+
+    font-size: 10px;
 }
 
-.brand{
-  height:52px;
+.new-chat {
+    height: 38px;
 
-  display:flex;
-  align-items:center;
-  gap:11px;
+    padding: 0 13px;
 
-  padding:0 17px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
 
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:15px;
+    background: rgba(255,255,255,.035);
 
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
+    color: var(--text);
+
+    cursor: pointer;
+
+    transition: .15s;
 }
 
-.brand-icon{
-  width:30px;
-  height:30px;
-
-  display:grid;
-  place-items:center;
-
-  border-radius:9px;
-
-  background:var(--accent);
-
-  font-size:15px;
-  font-weight:800;
+.new-chat:hover {
+    background: rgba(255,255,255,.08);
 }
 
-.brand-name{
-  font-weight:750;
-  white-space:nowrap;
+
+/* =========================================
+   CHAT
+========================================= */
+
+.chat {
+    flex: 1;
+
+    overflow-y: auto;
 }
 
-.search{
-  height:52px;
-  width:min(500px,48vw);
+.chat-inner {
+    width: min(900px, 100%);
 
-  display:flex;
-  align-items:center;
-  gap:10px;
+    margin: auto;
 
-  padding:0 15px;
-
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:15px;
-
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
+    padding:
+        35px 20px
+        150px;
 }
 
-.search-icon{
-  color:var(--muted);
-  font-size:19px;
+
+/* =========================================
+   WELCOME
+========================================= */
+
+.welcome {
+    min-height: 65vh;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
 }
 
-.search input{
-  width:100%;
+.welcome-logo {
+    width: 64px;
+    height: 64px;
 
-  border:0;
-  outline:none;
+    display: grid;
+    place-items: center;
 
-  background:transparent;
-  color:var(--text);
+    margin-bottom: 20px;
 
-  font-size:14px;
+    border-radius: 18px;
+
+    background: var(--accent);
+
+    font-size: 27px;
+    font-weight: 800;
+
+    box-shadow:
+        0 0 40px rgba(79,140,255,.2);
 }
 
-.search input::placeholder{
-  color:#748090;
+.welcome h1 {
+    margin-bottom: 10px;
+
+    font-size: 30px;
+
+    letter-spacing: -.7px;
 }
 
-.search-shortcut{
-  padding:4px 7px;
+.welcome p {
+    max-width: 570px;
 
-  border:1px solid var(--border);
-  border-radius:7px;
+    color: var(--muted);
 
-  color:var(--muted);
+    font-size: 14px;
 
-  font-size:11px;
-  white-space:nowrap;
+    line-height: 1.6;
 }
 
-/* ================= LEFT ================= */
+.examples {
+    display: flex;
+    flex-wrap: wrap;
 
-.left-panel{
-  position:fixed;
-  z-index:15;
+    justify-content: center;
 
-  top:84px;
-  left:16px;
+    gap: 8px;
 
-  width:270px;
-
-  padding:10px;
-
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:17px;
-
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
+    margin-top: 25px;
 }
 
-.panel-section{
-  padding:8px;
+.example {
+    padding: 10px 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    background: rgba(255,255,255,.035);
+
+    color: #cbd5e1;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    transition: .15s;
 }
 
-.panel-title{
-  margin-bottom:8px;
-
-  color:var(--muted);
-
-  font-size:11px;
-  font-weight:700;
-
-  letter-spacing:.8px;
-  text-transform:uppercase;
+.example:hover {
+    background: rgba(255,255,255,.08);
 }
 
-.tool{
-  width:100%;
-  min-height:43px;
 
-  display:flex;
-  align-items:center;
-  gap:11px;
+/* =========================================
+   MESSAGE
+========================================= */
 
-  padding:0 11px;
+.message {
+    display: flex;
 
-  border-radius:11px;
+    gap: 13px;
 
-  background:transparent;
-  color:var(--text);
-
-  text-align:left;
+    margin-bottom: 28px;
 }
 
-.tool:hover{
-  background:rgba(255,255,255,.06);
+.avatar {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+    font-weight: 750;
 }
 
-.tool.active{
-  background:rgba(79,140,255,.13);
-  color:#9cbdff;
+.message.user .avatar {
+    background: #263449;
 }
 
-.tool-icon{
-  width:25px;
-  text-align:center;
-  font-size:17px;
+.message.ai .avatar {
+    background: var(--accent);
 }
 
-.tool-text{
-  font-size:13px;
-  font-weight:550;
+.message-content {
+    flex: 1;
+    min-width: 0;
 }
 
-/* ================= CONTROLS ================= */
+.message-name {
+    margin-bottom: 6px;
 
-.map-controls{
-  position:fixed;
-  z-index:15;
+    color: var(--muted);
 
-  right:16px;
-  bottom:104px;
-
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+    font-size: 11px;
+    font-weight: 650;
 }
 
-.control-group{
-  overflow:hidden;
+.message-text {
+    color: #e7edf5;
 
-  display:flex;
-  flex-direction:column;
+    font-size: 14px;
 
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:13px;
+    line-height: 1.7;
 
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
 }
 
-.map-btn{
-  width:46px;
-  height:46px;
+.message.user .message-text {
+    display: inline-block;
 
-  display:grid;
-  place-items:center;
+    padding: 11px 14px;
 
-  background:transparent;
-  color:var(--text);
+    border: 1px solid rgba(255,255,255,.05);
 
-  font-size:18px;
+    border-radius: 13px;
+
+    background: var(--user);
 }
 
-.map-btn:hover{
-  background:rgba(255,255,255,.07);
+
+/* =========================================
+   LINK
+========================================= */
+
+.detected-link {
+    display: inline-block;
+
+    max-width: 100%;
+
+    margin-top: 9px;
+
+    padding: 8px 10px;
+
+    border: 1px solid rgba(79,140,255,.2);
+
+    border-radius: 9px;
+
+    background: rgba(79,140,255,.07);
+
+    color: #9cbdff;
+
+    font-size: 12px;
+
+    text-decoration: none;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
 }
 
-.divider{
-  height:1px;
-  background:var(--border);
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.message-actions {
+    display: flex;
+
+    gap: 6px;
+
+    margin-top: 7px;
 }
 
-/* ================= LOCATION ================= */
+.message-action {
+    padding: 5px 7px;
 
-.location-btn{
-  position:fixed;
-  z-index:15;
+    border: 0;
+    border-radius: 7px;
 
-  right:16px;
-  bottom:16px;
+    background: transparent;
 
-  width:46px;
-  height:46px;
+    color: #718096;
 
-  border-radius:13px;
+    cursor: pointer;
 
-  background:var(--panel);
-  border:1px solid var(--border);
-
-  color:var(--text);
-
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
-
-  font-size:18px;
+    font-size: 11px;
 }
 
-/* ================= BOTTOM ================= */
+.message-action:hover {
+    background: rgba(255,255,255,.05);
 
-.bottom-bar{
-  position:fixed;
-  z-index:20;
-
-  left:16px;
-  right:16px;
-  bottom:16px;
-
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  pointer-events:none;
+    color: var(--text);
 }
 
-.bottom-bar>*{
-  pointer-events:auto;
+
+/* =========================================
+   LEARNING CARD
+========================================= */
+
+.learning {
+    margin-top: 12px;
+
+    padding: 13px;
+
+    border: 1px solid rgba(79,140,255,.2);
+
+    border-radius: 12px;
+
+    background: rgba(79,140,255,.06);
 }
 
-.status,
-.coordinates{
-  height:44px;
+.learning-title {
+    margin-bottom: 8px;
 
-  display:flex;
-  align-items:center;
+    color: #9cbdff;
 
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:12px;
-
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
-
-  color:var(--muted);
-
-  font-size:12px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
-.status{
-  gap:9px;
-  padding:0 13px;
+.learning-text {
+    margin-bottom: 10px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.5;
 }
 
-.status-dot{
-  width:8px;
-  height:8px;
+.learning-button {
+    padding: 8px 11px;
 
-  border-radius:50%;
+    border: 0;
+    border-radius: 8px;
 
-  background:#47d18c;
+    background: var(--accent);
 
-  box-shadow:
-    0 0 10px rgba(71,209,140,.6);
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 11px;
 }
 
-.coordinates{
-  padding:0 13px;
-
-  font-variant-numeric:tabular-nums;
+.learning-button:hover {
+    background: var(--accent-hover);
 }
 
-/* ================= PLACE CARD ================= */
 
-.place-card{
-  position:fixed;
-  z-index:18;
+/* =========================================
+   INPUT
+========================================= */
 
-  left:50%;
-  top:50%;
+.input-area {
+    position: fixed;
 
-  transform:translate(-50%,-100%);
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-  display:none;
+    padding:
+        15px
+        20px
+        20px;
 
-  padding:9px 13px;
-
-  background:var(--panel);
-
-  border:1px solid var(--border);
-  border-radius:11px;
-
-  box-shadow:var(--shadow);
-
-  backdrop-filter:blur(18px);
-
-  pointer-events:none;
+    background:
+        linear-gradient(
+            to top,
+            var(--bg) 65%,
+            transparent
+        );
 }
 
-.place-card.visible{
-  display:block;
+.input-wrap {
+    width: min(900px, 100%);
+
+    margin: auto;
 }
 
-.place-name{
-  font-size:13px;
-  font-weight:700;
+.input-box {
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 10px;
+
+    min-height: 58px;
+
+    padding:
+        9px
+        9px
+        9px
+        15px;
+
+    border: 1px solid rgba(255,255,255,.12);
+
+    border-radius: 17px;
+
+    background: rgba(17,22,29,.97);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.35);
+
+    backdrop-filter: blur(20px);
 }
 
-.place-type{
-  margin-top:2px;
+.input-box:focus-within {
+    border-color:
+        rgba(79,140,255,.45);
 
-  color:var(--muted);
-
-  font-size:10px;
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.35),
+        0 0 0 3px rgba(79,140,255,.08);
 }
 
-/* ================= MOBILE ================= */
+textarea {
+    flex: 1;
 
-@media(max-width:760px){
+    width: 100%;
 
-  .topbar{
-    left:10px;
-    right:10px;
-    top:10px;
-  }
+    min-height: 38px;
+    max-height: 180px;
 
-  .brand{
-    padding:0 13px;
-  }
+    resize: none;
 
-  .brand-name{
-    display:none;
-  }
+    border: 0;
+    outline: 0;
 
-  .search{
-    width:100%;
-  }
+    background: transparent;
 
-  .left-panel{
-    display:none;
-  }
+    color: var(--text);
 
-  .bottom-bar{
-    left:10px;
-    right:10px;
-    bottom:10px;
-  }
+    font-family: inherit;
 
-  .map-controls{
-    right:10px;
-    bottom:68px;
-  }
+    font-size: 14px;
 
-  .location-btn{
-    right:10px;
-    bottom:10px;
-  }
+    line-height: 1.5;
+}
 
-  .coordinates{
-    display:none;
-  }
+textarea::placeholder {
+    color: #687586;
+}
+
+.send {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 0;
+    border-radius: 11px;
+
+    background: var(--accent);
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 17px;
+
+    transition: .15s;
+}
+
+.send:hover {
+    background: var(--accent-hover);
+
+    transform: translateY(-1px);
+}
+
+.send:disabled {
+    opacity: .35;
+
+    cursor: default;
+
+    transform: none;
+}
+
+.input-info {
+    margin-top: 8px;
+
+    text-align: center;
+
+    color: #657181;
+
+    font-size: 10px;
+}
+
+
+/* =========================================
+   TYPING
+========================================= */
+
+.typing {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    height: 25px;
+}
+
+.typing span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #7e8da1;
+
+    animation: typing 1.2s infinite;
+}
+
+.typing span:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.typing span:nth-child(3) {
+    animation-delay: .3s;
+}
+
+@keyframes typing {
+
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: .4;
+    }
+
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .header {
+        height: 58px;
+
+        padding: 0 12px;
+    }
+
+    .chat-inner {
+        padding:
+            25px
+            13px
+            140px;
+    }
+
+    .welcome h1 {
+        font-size: 25px;
+    }
+
+    .message {
+        gap: 9px;
+    }
+
+    .avatar {
+        width: 31px;
+        height: 31px;
+    }
+
+    .message-text {
+        font-size: 13px;
+    }
+
+    .input-area {
+        padding:
+            10px
+            10px
+            13px;
+    }
 
 }
 
 </style>
 </head>
 
+
 <body>
 
-<main id="map">
-  <canvas id="mapCanvas"></canvas>
-</main>
+<div class="app">
 
 
-<header class="topbar">
+    <!-- HEADER -->
 
-  <div class="brand">
+    <header class="header">
 
-    <div class="brand-icon">
-      K
-    </div>
+        <div class="brand">
 
-    <div class="brand-name">
-      KVGDV Maps
-    </div>
+            <div class="logo">
+                K
+            </div>
 
-  </div>
+            <div>
+
+                <div class="brand-name">
+                    KVGDV AI
+                </div>
+
+                <div class="brand-version">
+                    Local Brain · 0.4
+                </div>
+
+            </div>
+
+        </div>
 
 
-  <div class="search">
+        <button
+            class="new-chat"
+            id="newChat"
+        >
+            ＋ Nowa rozmowa
+        </button>
 
-    <div class="search-icon">
-      ⌕
-    </div>
+    </header>
 
-    <input
-      id="searchInput"
-      type="search"
-      placeholder="Szukaj miejsca, adresu lub współrzędnych..."
-      autocomplete="off"
+
+    <!-- CHAT -->
+
+    <main
+        class="chat"
+        id="chat"
     >
 
-    <div class="search-shortcut">
-      Ctrl K
+        <div
+            class="chat-inner"
+            id="chatInner"
+        >
+
+            <section
+                class="welcome"
+                id="welcome"
+            >
+
+                <div class="welcome-logo">
+                    K
+                </div>
+
+                <h1>
+                    W czym mogę pomóc?
+                </h1>
+
+                <p>
+                    KVGDV AI 0.4 korzysta z lokalnej
+                    bazy wiedzy. Możesz normalnie
+                    prowadzić rozmowę i podawać linki.
+                </p>
+
+
+                <div class="examples">
+
+                    <button
+                        class="example"
+                        data-text="Cześć"
+                    >
+                        Cześć 👋
+                    </button>
+
+                    <button
+                        class="example"
+                        data-text="Kim jesteś?"
+                    >
+                        Kim jesteś?
+                    </button>
+
+                    <button
+                        class="example"
+                        data-text="Co potrafisz?"
+                    >
+                        Co potrafisz?
+                    </button>
+
+                    <button
+                        class="example"
+                        data-text="Czym jest HTML?"
+                    >
+                        Czym jest HTML?
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- INPUT -->
+
+    <div class="input-area">
+
+        <div class="input-wrap">
+
+            <div class="input-box">
+
+                <textarea
+                    id="messageInput"
+                    rows="1"
+                    placeholder="Napisz wiadomość..."
+                    autocomplete="off"
+                ></textarea>
+
+
+                <button
+                    class="send"
+                    id="sendButton"
+                    title="Wyślij"
+                >
+                    ↑
+                </button>
+
+            </div>
+
+
+            <div class="input-info">
+                Enter — wyślij · Shift + Enter — nowa linia
+            </div>
+
+        </div>
+
     </div>
-
-  </div>
-
-</header>
-
-
-<aside class="left-panel">
-
-  <div class="panel-section">
-
-    <div class="panel-title">
-      Mapa
-    </div>
-
-    <button class="tool active">
-      <span class="tool-icon">🗺️</span>
-      <span class="tool-text">
-        Mapa standardowa
-      </span>
-    </button>
-
-    <button class="tool">
-      <span class="tool-icon">🛰️</span>
-      <span class="tool-text">
-        Satelita
-      </span>
-    </button>
-
-    <button class="tool">
-      <span class="tool-icon">⛰️</span>
-      <span class="tool-text">
-        Teren
-      </span>
-    </button>
-
-  </div>
-
-
-  <div class="panel-section">
-
-    <div class="panel-title">
-      Narzędzia
-    </div>
-
-    <button class="tool">
-      <span class="tool-icon">📍</span>
-      <span class="tool-text">
-        Dodaj punkt
-      </span>
-    </button>
-
-    <button class="tool">
-      <span class="tool-icon">🧭</span>
-      <span class="tool-text">
-        Wyznacz trasę
-      </span>
-    </button>
-
-    <button class="tool">
-      <span class="tool-icon">📏</span>
-      <span class="tool-text">
-        Zmierz odległość
-      </span>
-    </button>
-
-  </div>
-
-</aside>
-
-
-<div class="map-controls">
-
-  <div class="control-group">
-
-    <button
-      class="map-btn"
-      id="zoomIn"
-    >
-      +
-    </button>
-
-    <div class="divider"></div>
-
-    <button
-      class="map-btn"
-      id="zoomOut"
-    >
-      −
-    </button>
-
-  </div>
-
-
-  <div class="control-group">
-
-    <button
-      class="map-btn"
-      id="layersButton"
-    >
-      ◈
-    </button>
-
-  </div>
 
 </div>
-
-
-<button
-  class="location-btn"
-  id="locationButton"
->
-  ◎
-</button>
-
-
-<div
-  class="place-card"
-  id="placeCard"
->
-
-  <div
-    class="place-name"
-    id="placeName"
-  >
-    Redlino
-  </div>
-
-  <div
-    class="place-type"
-    id="placeType"
-  >
-    Wieś
-  </div>
-
-</div>
-
-
-<footer class="bottom-bar">
-
-  <div class="status">
-
-    <span class="status-dot"></span>
-
-    <span id="engineStatus">
-      KVGDV Maps Engine
-    </span>
-
-  </div>
-
-
-  <div
-    class="coordinates"
-    id="coordinates"
-  >
-    Ładowanie mapy...
-  </div>
-
-</footer>
 
 
 <script>
 
-/* =====================================================
-   KVGDV MAPS ENGINE
-   GeoJSON / OpenStreetMap / Overpass Turbo
-===================================================== */
+/* =========================================
+   KVGDV AI 0.4
+   LOCAL BRAIN
+========================================= */
 
 
-const canvas =
-  document.getElementById("mapCanvas");
+const chat =
+    document.getElementById("chat");
 
-const ctx =
-  canvas.getContext("2d");
+const chatInner =
+    document.getElementById("chatInner");
 
+const input =
+    document.getElementById("messageInput");
 
-const engineStatus =
-  document.getElementById("engineStatus");
+const sendButton =
+    document.getElementById("sendButton");
 
-const coordinatesElement =
-  document.getElementById("coordinates");
+const newChat =
+    document.getElementById("newChat");
 
-const searchInput =
-  document.getElementById("searchInput");
+const welcome =
+    document.getElementById("welcome");
 
-const placeCard =
-  document.getElementById("placeCard");
 
-const placeName =
-  document.getElementById("placeName");
+let knowledge = [];
 
-const placeType =
-  document.getElementById("placeType");
-
-
-/* =====================================================
-   STATE
-===================================================== */
-
-const state = {
-
-  width:0,
-  height:0,
-
-  zoom:30000,
-
-  centerLat:54.025,
-  centerLon:15.90,
-
-  mouseX:0,
-  mouseY:0,
-
-  dragging:false,
-
-  lastMouseX:0,
-  lastMouseY:0,
-
-  geojson:null,
-
-  places:[],
-
-  bounds:null
-
-};
-
-
-/* =====================================================
-   RESIZE
-===================================================== */
-
-function resizeCanvas(){
-
-  const dpr =
-    window.devicePixelRatio || 1;
-
-  state.width =
-    window.innerWidth;
-
-  state.height =
-    window.innerHeight;
-
-  canvas.width =
-    state.width * dpr;
-
-  canvas.height =
-    state.height * dpr;
-
-  canvas.style.width =
-    state.width + "px";
-
-  canvas.style.height =
-    state.height + "px";
-
-  ctx.setTransform(
-    dpr,
-    0,
-    0,
-    dpr,
-    0,
-    0
-  );
-
-  render();
-
-}
-
-window.addEventListener(
-  "resize",
-  resizeCanvas
-);
-
-
-/* =====================================================
-   GEO → SCREEN
-===================================================== */
-
-function geoToScreen(
-  lat,
-  lon
-){
-
-  return {
-
-    x:
-      state.width / 2 +
-      (lon - state.centerLon) *
-      state.zoom,
-
-    y:
-      state.height / 2 -
-      (lat - state.centerLat) *
-      state.zoom
-
-  };
-
-}
-
-
-/* =====================================================
-   SCREEN → GEO
-===================================================== */
-
-function screenToGeo(
-  x,
-  y
-){
-
-  return {
-
-    lon:
-      state.centerLon +
-      (x - state.width / 2) /
-      state.zoom,
-
-    lat:
-      state.centerLat -
-      (y - state.height / 2) /
-      state.zoom
-
-  };
-
-}
-
-
-/* =====================================================
-   BACKGROUND
-===================================================== */
-
-function drawBackground(){
-
-  ctx.fillStyle =
-    "#10161d";
-
-  ctx.fillRect(
-    0,
-    0,
-    state.width,
-    state.height
-  );
-
-}
-
-
-/* =====================================================
-   GET HIGHWAY STYLE
-===================================================== */
-
-function getRoadStyle(
-  props
-){
-
-  const highway =
-    String(
-      props.highway || ""
-    ).toLowerCase();
-
-
-  if(
-    highway === "motorway"
-  ){
-
-    return {
-      color:"#d66b6b",
-      width:8
-    };
-
-  }
-
-
-  if(
-    highway === "trunk"
-  ){
-
-    return {
-      color:"#d69b5f",
-      width:7
-    };
-
-  }
-
-
-  if(
-    highway === "primary"
-  ){
-
-    return {
-      color:"#d6ad62",
-      width:6
-    };
-
-  }
-
-
-  if(
-    highway === "secondary"
-  ){
-
-    return {
-      color:"#8f9baa",
-      width:5
-    };
-
-  }
-
-
-  if(
-    highway === "tertiary"
-  ){
-
-    return {
-      color:"#707b89",
-      width:4
-    };
-
-  }
-
-
-  if(
-    highway === "residential"
-  ){
-
-    return {
-      color:"#4d5967",
-      width:3
-    };
-
-  }
-
-
-  if(
-    highway === "service"
-  ){
-
-    return {
-      color:"#3b4652",
-      width:2
-    };
-
-  }
-
-
-  return {
-
-    color:"#3b4652",
-    width:2
-
-  };
-
-}
-
-
-/* =====================================================
-   DRAW LINE
-===================================================== */
-
-function drawLineString(
-  coordinates,
-  props
-){
-
-  if(
-    !coordinates ||
-    coordinates.length < 2
-  ){
-
-    return;
-
-  }
-
-
-  const style =
-    getRoadStyle(
-      props
+let messages =
+    JSON.parse(
+        localStorage.getItem(
+            "kvgdv_ai_messages"
+        ) || "[]"
     );
 
 
-  ctx.beginPath();
+/* =========================================
+   LOAD KNOWLEDGE.JSON
+========================================= */
 
+async function loadKnowledge() {
 
-  coordinates.forEach(
-    (
-      coordinate,
-      index
-    )=>{
+    try {
 
-      const lon =
-        coordinate[0];
-
-      const lat =
-        coordinate[1];
-
-
-      const point =
-        geoToScreen(
-          lat,
-          lon
-        );
-
-
-      if(
-        index === 0
-      ){
-
-        ctx.moveTo(
-          point.x,
-          point.y
-        );
-
-      }else{
-
-        ctx.lineTo(
-          point.x,
-          point.y
-        );
-
-      }
-
-    }
-  );
-
-
-  ctx.lineCap =
-    "round";
-
-  ctx.lineJoin =
-    "round";
-
-  ctx.strokeStyle =
-    style.color;
-
-  ctx.lineWidth =
-    style.width;
-
-  ctx.stroke();
-
-
-  /*
-    Numer drogi
-  */
-
-  const ref =
-    props.ref;
-
-
-  if(
-    ref &&
-    state.zoom > 15000
-  ){
-
-    drawRoadLabel(
-      coordinates,
-      String(ref)
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   ROAD LABEL
-===================================================== */
-
-function drawRoadLabel(
-  coordinates,
-  text
-){
-
-  if(
-    !coordinates ||
-    coordinates.length < 2
-  ){
-
-    return;
-
-  }
-
-
-  const middle =
-    coordinates[
-      Math.floor(
-        coordinates.length / 2
-      )
-    ];
-
-
-  const p =
-    geoToScreen(
-      middle[1],
-      middle[0]
-    );
-
-
-  if(
-    p.x < -100 ||
-    p.x > state.width + 100 ||
-    p.y < -100 ||
-    p.y > state.height + 100
-  ){
-
-    return;
-
-  }
-
-
-  ctx.font =
-    "600 10px system-ui";
-
-
-  const width =
-    ctx.measureText(text).width + 8;
-
-
-  ctx.fillStyle =
-    "rgba(20,26,34,.9)";
-
-
-  ctx.fillRect(
-    p.x - width / 2,
-    p.y - 8,
-    width,
-    16
-  );
-
-
-  ctx.fillStyle =
-    "#dce5ef";
-
-
-  ctx.textAlign =
-    "center";
-
-  ctx.textBaseline =
-    "middle";
-
-
-  ctx.fillText(
-    text,
-    p.x,
-    p.y
-  );
-
-}
-
-
-/* =====================================================
-   POLYGON
-===================================================== */
-
-function drawPolygon(
-  rings
-){
-
-  if(
-    !rings
-  ){
-
-    return;
-
-  }
-
-
-  ctx.beginPath();
-
-
-  rings.forEach(
-    ring => {
-
-      ring.forEach(
-        (
-          coordinate,
-          index
-        )=>{
-
-          const point =
-            geoToScreen(
-              coordinate[1],
-              coordinate[0]
+        const response =
+            await fetch(
+                "./data/knowledge.json"
             );
 
+        if (!response.ok) {
 
-          if(
-            index === 0
-          ){
-
-            ctx.moveTo(
-              point.x,
-              point.y
+            throw new Error(
+                "Nie można załadować knowledge.json"
             );
 
-          }else{
-
-            ctx.lineTo(
-              point.x,
-              point.y
-            );
-
-          }
-
         }
-      );
 
-      ctx.closePath();
+        const data =
+            await response.json();
 
-    }
-  );
+        knowledge =
+            Array.isArray(data.knowledge)
+                ? data.knowledge
+                : [];
 
-
-  ctx.fillStyle =
-    "#142534";
-
-  ctx.fill();
-
-}
-
-
-/* =====================================================
-   GEOMETRY
-===================================================== */
-
-function drawGeometry(
-  geometry,
-  props
-){
-
-  if(
-    !geometry
-  ){
-
-    return;
-
-  }
-
-
-  switch(
-    geometry.type
-  ){
-
-    case "LineString":
-
-      drawLineString(
-        geometry.coordinates,
-        props
-      );
-
-      break;
-
-
-    case "MultiLineString":
-
-      geometry.coordinates.forEach(
-        line => {
-
-          drawLineString(
-            line,
-            props
-          );
-
-        }
-      );
-
-      break;
-
-
-    case "Polygon":
-
-      drawPolygon(
-        geometry.coordinates
-      );
-
-      break;
-
-
-    case "MultiPolygon":
-
-      geometry.coordinates.forEach(
-        polygon => {
-
-          drawPolygon(
-            polygon
-          );
-
-        }
-      );
-
-      break;
-
-  }
-
-}
-
-
-/* =====================================================
-   DRAW FEATURES
-===================================================== */
-
-function drawFeatures(){
-
-  if(
-    !state.geojson
-  ){
-
-    return;
-
-  }
-
-
-  const features =
-    state.geojson.features || [];
-
-
-  /*
-    Najpierw obiekty powierzchniowe
-  */
-
-  features.forEach(
-    feature => {
-
-      if(
-        !feature.geometry
-      ){
-
-        return;
-
-      }
-
-
-      if(
-        feature.geometry.type ===
-        "Polygon" ||
-        feature.geometry.type ===
-        "MultiPolygon"
-      ){
-
-        drawGeometry(
-          feature.geometry,
-          feature.properties || {}
+        console.log(
+            "KVGDV AI: załadowano",
+            knowledge.length,
+            "wpisów wiedzy."
         );
 
-      }
+    } catch (error) {
 
-    }
-  );
-
-
-  /*
-    Potem drogi
-  */
-
-  features.forEach(
-    feature => {
-
-      if(
-        !feature.geometry
-      ){
-
-        return;
-
-      }
-
-
-      if(
-        feature.geometry.type ===
-        "LineString" ||
-        feature.geometry.type ===
-        "MultiLineString"
-      ){
-
-        drawGeometry(
-          feature.geometry,
-          feature.properties || {}
+        console.error(
+            "KVGDV AI:",
+            error
         );
 
-      }
+        knowledge = [];
 
     }
-  );
-
-
-  /*
-    Na końcu miejscowości
-  */
-
-  drawPlaces();
 
 }
 
 
-/* =====================================================
-   PLACE SIZE
-===================================================== */
+/* =========================================
+   NORMALIZE
+========================================= */
 
-function getPlaceStyle(
-  type
-){
+function normalize(text) {
 
-  switch(
-    type
-  ){
-
-    case "city":
-
-      return {
-        radius:7,
-        size:17,
-        weight:"800"
-      };
-
-
-    case "town":
-
-      return {
-        radius:6,
-        size:15,
-        weight:"700"
-      };
-
-
-    case "village":
-
-      return {
-        radius:5,
-        size:13,
-        weight:"600"
-      };
-
-
-    case "hamlet":
-
-      return {
-        radius:4,
-        size:11,
-        weight:"500"
-      };
-
-
-    default:
-
-      return {
-        radius:4,
-        size:11,
-        weight:"500"
-      };
-
-  }
+    return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /[^a-z0-9ąćęłńóśźż\s]/gi,
+            " "
+        )
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
 
 }
 
 
-/* =====================================================
-   DRAW PLACES
-===================================================== */
+/* =========================================
+   URL
+========================================= */
 
-function drawPlaces(){
+function findURL(text) {
 
-  for(
-    const place of state.places
-  ){
+    const match =
+        text.match(
+            /https?:\/\/[^\s]+/i
+        );
 
-    const point =
-      geoToScreen(
-        place.lat,
-        place.lon
-      );
-
-
-    /*
-      Widoczność na ekranie
-    */
-
-    if(
-      point.x < -200 ||
-      point.x > state.width + 200 ||
-      point.y < -200 ||
-      point.y > state.height + 200
-    ){
-
-      continue;
-
+    if (!match) {
+        return null;
     }
 
-
-    const style =
-      getPlaceStyle(
-        place.type
-      );
-
-
-    /*
-      Przy małym zoomie pokazujemy
-      tylko większe miejscowości.
-    */
-
-    if(
-      state.zoom < 9000 &&
-      place.type !== "city"
-    ){
-
-      continue;
-
-    }
-
-
-    if(
-      state.zoom < 15000 &&
-      place.type === "hamlet"
-    ){
-
-      continue;
-
-    }
-
-
-    /*
-      Punkt
-    */
-
-    ctx.beginPath();
-
-    ctx.arc(
-      point.x,
-      point.y,
-      style.radius,
-      0,
-      Math.PI * 2
+    return match[0].replace(
+        /[.,!?;:)\]]+$/,
+        ""
     );
-
-    ctx.fillStyle =
-      "#4f8cff";
-
-    ctx.fill();
-
-
-    /*
-      Nazwa
-    */
-
-    ctx.font =
-      `${style.weight} ${style.size}px system-ui`;
-
-
-    ctx.textAlign =
-      "left";
-
-    ctx.textBaseline =
-      "middle";
-
-
-    /*
-      Cień tekstu
-    */
-
-    ctx.strokeStyle =
-      "rgba(0,0,0,.85)";
-
-    ctx.lineWidth =
-      4;
-
-    ctx.strokeText(
-      place.name,
-      point.x + style.radius + 7,
-      point.y
-    );
-
-
-    ctx.fillStyle =
-      "#f1f5f9";
-
-    ctx.fillText(
-      place.name,
-      point.x + style.radius + 7,
-      point.y
-    );
-
-  }
 
 }
 
 
-/* =====================================================
-   EXTRACT PLACES
-===================================================== */
+/* =========================================
+   SIMILARITY
+========================================= */
 
-function extractPlaces(){
+function calculateScore(
+    question,
+    userText
+) {
 
-  state.places = [];
+    const a =
+        normalize(question);
 
-
-  if(
-    !state.geojson ||
-    !state.geojson.features
-  ){
-
-    return;
-
-  }
+    const b =
+        normalize(userText);
 
 
-  for(
-    const feature of
-    state.geojson.features
-  ){
+    if (!a || !b) {
+        return 0;
+    }
 
-    if(
-      !feature.geometry
-    ){
 
-      continue;
+    if (a === b) {
+        return 100;
+    }
+
+
+    if (
+        b.includes(a) ||
+        a.includes(b)
+    ) {
+
+        return 80;
 
     }
 
 
-    if(
-      feature.geometry.type !==
-      "Point"
-    ){
+    const wordsA =
+        new Set(a.split(" "));
 
-      continue;
-
-    }
+    const wordsB =
+        new Set(b.split(" "));
 
 
-    const props =
-      feature.properties || {};
+    let matches = 0;
 
 
-    const type =
-      props.place ||
-      props["place:type"] ||
-      "";
+    wordsA.forEach(word => {
 
+        if (
+            word.length > 2 &&
+            wordsB.has(word)
+        ) {
 
-    /*
-      Tylko obiekty będące miejscowościami
-    */
+            matches++;
 
-    if(
-      !type
-    ){
-
-      continue;
-
-    }
-
-
-    const allowed = [
-
-      "city",
-      "town",
-      "village",
-      "hamlet",
-      "suburb",
-      "quarter",
-      "isolated_dwelling"
-
-    ];
-
-
-    if(
-      !allowed.includes(type)
-    ){
-
-      continue;
-
-    }
-
-
-    const name =
-      props.name ||
-      props["name:pl"] ||
-      props["name:pol"];
-
-
-    if(
-      !name
-    ){
-
-      continue;
-
-    }
-
-
-    state.places.push({
-
-      name:String(name),
-
-      type:String(type),
-
-      lat:
-        feature.geometry.coordinates[1],
-
-      lon:
-        feature.geometry.coordinates[0]
+        }
 
     });
 
-  }
+
+    if (!matches) {
+        return 0;
+    }
 
 
-  console.log(
-    "KVGDV: znaleziono miejscowości:",
-    state.places.length
-  );
-
-}
-
-
-/* =====================================================
-   FIND BOUNDS
-===================================================== */
-
-function findBounds(){
-
-  if(
-    !state.geojson ||
-    !state.geojson.features
-  ){
-
-    return;
-
-  }
-
-
-  let minLat =
-    Infinity;
-
-  let maxLat =
-    -Infinity;
-
-  let minLon =
-    Infinity;
-
-  let maxLon =
-    -Infinity;
-
-
-  function inspect(
-    coordinates
-  ){
-
-    if(
-      typeof coordinates[0] ===
-      "number"
-    ){
-
-      const lon =
-        coordinates[0];
-
-      const lat =
-        coordinates[1];
-
-
-      minLon =
-        Math.min(
-          minLon,
-          lon
-        );
-
-      maxLon =
+    return (
+        matches /
         Math.max(
-          maxLon,
-          lon
-        );
-
-      minLat =
-        Math.min(
-          minLat,
-          lat
-        );
-
-      maxLat =
-        Math.max(
-          maxLat,
-          lat
-        );
-
-      return;
-
-    }
-
-
-    coordinates.forEach(
-      inspect
-    );
-
-  }
-
-
-  state.geojson.features.forEach(
-    feature => {
-
-      if(
-        feature.geometry &&
-        feature.geometry.coordinates
-      ){
-
-        inspect(
-          feature.geometry.coordinates
-        );
-
-      }
-
-    }
-  );
-
-
-  if(
-    minLat === Infinity
-  ){
-
-    return;
-
-  }
-
-
-  state.bounds = {
-
-    minLat,
-    maxLat,
-    minLon,
-    maxLon
-
-  };
-
-}
-
-
-/* =====================================================
-   FIT MAP
-===================================================== */
-
-function fitMap(){
-
-  if(
-    !state.bounds
-  ){
-
-    return;
-
-  }
-
-
-  state.centerLat =
-    (
-      state.bounds.minLat +
-      state.bounds.maxLat
-    ) / 2;
-
-
-  state.centerLon =
-    (
-      state.bounds.minLon +
-      state.bounds.maxLon
-    ) / 2;
-
-
-  const latRange =
-    state.bounds.maxLat -
-    state.bounds.minLat;
-
-
-  const lonRange =
-    state.bounds.maxLon -
-    state.bounds.minLon;
-
-
-  const padding =
-    80;
-
-
-  const zoomX =
-    (
-      state.width -
-      padding * 2
-    ) /
-    lonRange;
-
-
-  const zoomY =
-    (
-      state.height -
-      padding * 2
-    ) /
-    latRange;
-
-
-  state.zoom =
-    Math.min(
-      zoomX,
-      zoomY
-    );
-
-
-  /*
-    Ograniczenia
-  */
-
-  state.zoom =
-    Math.max(
-      1000,
-      Math.min(
-        1000000,
-        state.zoom
-      )
-    );
-
-}
-
-
-/* =====================================================
-   RENDER
-===================================================== */
-
-function render(){
-
-  drawBackground();
-
-  drawFeatures();
-
-  updateCoordinates();
-
-}
-
-
-/* =====================================================
-   COORDINATES
-===================================================== */
-
-function updateCoordinates(){
-
-  const geo =
-    screenToGeo(
-      state.mouseX,
-      state.mouseY
-    );
-
-
-  coordinatesElement.textContent =
-    `${geo.lat.toFixed(6)}° N · ` +
-    `${geo.lon.toFixed(6)}° E`;
-
-}
-
-
-/* =====================================================
-   MOUSE DOWN
-===================================================== */
-
-canvas.addEventListener(
-  "mousedown",
-  event => {
-
-    state.dragging =
-      true;
-
-    state.lastMouseX =
-      event.clientX;
-
-    state.lastMouseY =
-      event.clientY;
-
-    canvas.classList.add(
-      "dragging"
-    );
-
-  }
-);
-
-
-/* =====================================================
-   MOUSE UP
-===================================================== */
-
-window.addEventListener(
-  "mouseup",
-  () => {
-
-    state.dragging =
-      false;
-
-    canvas.classList.remove(
-      "dragging"
-    );
-
-  }
-);
-
-
-/* =====================================================
-   MOUSE MOVE
-===================================================== */
-
-canvas.addEventListener(
-  "mousemove",
-  event => {
-
-    state.mouseX =
-      event.clientX;
-
-    state.mouseY =
-      event.clientY;
-
-
-    if(
-      state.dragging
-    ){
-
-      const dx =
-        event.clientX -
-        state.lastMouseX;
-
-      const dy =
-        event.clientY -
-        state.lastMouseY;
-
-
-      state.centerLon -=
-        dx / state.zoom;
-
-      state.centerLat +=
-        dy / state.zoom;
-
-
-      state.lastMouseX =
-        event.clientX;
-
-      state.lastMouseY =
-        event.clientY;
-
-
-      render();
-
-    }else{
-
-      updateCoordinates();
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   WHEEL
-===================================================== */
-
-canvas.addEventListener(
-  "wheel",
-  event => {
-
-    event.preventDefault();
-
-
-    const before =
-      screenToGeo(
-        event.clientX,
-        event.clientY
-      );
-
-
-    const factor =
-      event.deltaY < 0
-        ? 1.25
-        : 1 / 1.25;
-
-
-    state.zoom *=
-      factor;
-
-
-    state.zoom =
-      Math.max(
-        1000,
-        Math.min(
-          1000000,
-          state.zoom
+            wordsA.size,
+            wordsB.size
         )
-      );
+    ) * 100;
+
+}
 
 
-    const after =
-      screenToGeo(
-        event.clientX,
-        event.clientY
-      );
+/* =========================================
+   FIND ANSWER
+========================================= */
+
+function findKnowledgeAnswer(text) {
+
+    let best = null;
+
+    let bestScore = 0;
 
 
-    state.centerLon +=
-      before.lon -
-      after.lon;
+    for (
+        const item of knowledge
+    ) {
+
+        if (
+            !Array.isArray(
+                item.questions
+            )
+        ) {
+            continue;
+        }
 
 
-    state.centerLat +=
-      before.lat -
-      after.lat;
+        for (
+            const question of item.questions
+        ) {
+
+            const score =
+                calculateScore(
+                    question,
+                    text
+                );
 
 
-    render();
+            if (
+                score > bestScore
+            ) {
 
-  },
-  {
-    passive:false
-  }
-);
+                bestScore =
+                    score;
 
+                best =
+                    item;
 
-/* =====================================================
-   BUTTON ZOOM
-===================================================== */
-
-document
-  .getElementById("zoomIn")
-  .addEventListener(
-    "click",
-    () => {
-
-      state.zoom *= 1.25;
-
-      state.zoom =
-        Math.min(
-          state.zoom,
-          1000000
-        );
-
-      render();
-
-    }
-  );
-
-
-document
-  .getElementById("zoomOut")
-  .addEventListener(
-    "click",
-    () => {
-
-      state.zoom /= 1.25;
-
-      state.zoom =
-        Math.max(
-          state.zoom,
-          1000
-        );
-
-      render();
-
-    }
-  );
-
-
-/* =====================================================
-   LOCATION
-===================================================== */
-
-document
-  .getElementById("locationButton")
-  .addEventListener(
-    "click",
-    () => {
-
-      if(
-        !navigator.geolocation
-      ){
-
-        alert(
-          "Geolokalizacja nie jest obsługiwana."
-        );
-
-        return;
-
-      }
-
-
-      navigator.geolocation.getCurrentPosition(
-
-        position => {
-
-          state.centerLat =
-            position.coords.latitude;
-
-          state.centerLon =
-            position.coords.longitude;
-
-          state.zoom =
-            Math.max(
-              state.zoom,
-              50000
-            );
-
-          render();
-
-        },
-
-        () => {
-
-          alert(
-            "Nie udało się pobrać lokalizacji."
-          );
+            }
 
         }
 
-      );
-
     }
-  );
-
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-searchInput.addEventListener(
-  "keydown",
-  event => {
-
-    if(
-      event.key !== "Enter"
-    ){
-
-      return;
-
-    }
-
-
-    const query =
-      searchInput.value
-        .trim()
-        .toLowerCase();
-
-
-    if(
-      !query
-    ){
-
-      return;
-
-    }
-
-
-    const result =
-      state.places.find(
-        place =>
-          place.name
-            .toLowerCase()
-            .includes(query)
-      );
-
-
-    if(
-      !result
-    ){
-
-      alert(
-        "KVGDV Maps: nie znaleziono miejscowości."
-      );
-
-      return;
-
-    }
-
-
-    state.centerLat =
-      result.lat;
-
-    state.centerLon =
-      result.lon;
 
 
     /*
-      Przy wyszukiwaniu
-      mocno przybliżamy.
+       Próg dopasowania.
+       Możesz go później zmienić.
     */
 
-    state.zoom =
-      Math.max(
-        state.zoom,
-        50000
-      );
+    if (
+        best &&
+        bestScore >= 35
+    ) {
 
-
-    placeName.textContent =
-      result.name;
-
-
-    placeType.textContent =
-      result.type;
-
-
-    placeCard.classList.add(
-      "visible"
-    );
-
-
-    render();
-
-  }
-);
-
-
-/* =====================================================
-   CTRL + K
-===================================================== */
-
-document.addEventListener(
-  "keydown",
-  event => {
-
-    if(
-      (event.ctrlKey ||
-       event.metaKey) &&
-      event.key.toLowerCase() === "k"
-    ){
-
-      event.preventDefault();
-
-      searchInput.focus();
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   LOAD GEOJSON
-===================================================== */
-
-async function loadMapData(){
-
-  try{
-
-    engineStatus.textContent =
-      "Ładowanie mapy Zachodniopomorskiego...";
-
-
-    const response =
-      await fetch(
-        "./data/zachodniopomorskie.geojson"
-      );
-
-
-    if(
-      !response.ok
-    ){
-
-      throw new Error(
-        "HTTP " +
-        response.status
-      );
+        return {
+            answer: best.answer,
+            score: bestScore,
+            item: best
+        };
 
     }
 
 
-    const data =
-      await response.json();
-
-
-    if(
-      data.type !==
-      "FeatureCollection"
-    ){
-
-      throw new Error(
-        "Plik nie jest poprawnym GeoJSON FeatureCollection."
-      );
-
-    }
-
-
-    state.geojson =
-      data;
-
-
-    /*
-      Miejscowości
-    */
-
-    extractPlaces();
-
-
-    /*
-      Granice danych
-    */
-
-    findBounds();
-
-
-    /*
-      Dopasowanie całego województwa
-    */
-
-    fitMap();
-
-
-    engineStatus.textContent =
-      "KVGDV Maps · " +
-      state.places.length +
-      " miejsc · " +
-      data.features.length +
-      " obiektów";
-
-
-    console.log(
-      "KVGDV GeoJSON:",
-      data
-    );
-
-
-    console.log(
-      "Miejscowości:",
-      state.places.length
-    );
-
-
-    render();
-
-
-  }catch(error){
-
-    console.error(
-      "KVGDV Maps:",
-      error
-    );
-
-
-    engineStatus.textContent =
-      "KVGDV Maps · BŁĄD GEOJSON";
-
-
-    render();
-
-
-    alert(
-      "Nie udało się załadować GeoJSON.\n\n" +
-      error.message
-    );
-
-  }
+    return null;
 
 }
 
 
-/* =====================================================
+/* =========================================
+   ESCAPE
+========================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================
+   ADD MESSAGE
+========================================= */
+
+function addMessage(
+    role,
+    text,
+    url = null
+) {
+
+    if (welcome) {
+        welcome.style.display = "none";
+    }
+
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        "message " + role;
+
+
+    const avatar =
+        document.createElement("div");
+
+    avatar.className =
+        "avatar";
+
+    avatar.textContent =
+        role === "user"
+            ? "Ty"
+            : "K";
+
+
+    const content =
+        document.createElement("div");
+
+    content.className =
+        "message-content";
+
+
+    const name =
+        document.createElement("div");
+
+    name.className =
+        "message-name";
+
+    name.textContent =
+        role === "user"
+            ? "Ty"
+            : "KVGDV AI";
+
+
+    const textElement =
+        document.createElement("div");
+
+    textElement.className =
+        "message-text";
+
+    textElement.innerHTML =
+        escapeHTML(text);
+
+
+    content.appendChild(name);
+
+    content.appendChild(textElement);
+
+
+    if (url) {
+
+        const link =
+            document.createElement("a");
+
+        link.className =
+            "detected-link";
+
+        link.href =
+            url;
+
+        link.target =
+            "_blank";
+
+        link.rel =
+            "noopener noreferrer";
+
+        link.textContent =
+            "🔗 " + url;
+
+        content.appendChild(link);
+
+    }
+
+
+    if (role === "ai") {
+
+        const actions =
+            document.createElement("div");
+
+        actions.className =
+            "message-actions";
+
+
+        const copy =
+            document.createElement("button");
+
+        copy.className =
+            "message-action";
+
+        copy.textContent =
+            "Kopiuj";
+
+
+        copy.onclick = () => {
+
+            navigator.clipboard.writeText(
+                text
+            );
+
+            copy.textContent =
+                "Skopiowano ✓";
+
+
+            setTimeout(() => {
+
+                copy.textContent =
+                    "Kopiuj";
+
+            }, 1500);
+
+        };
+
+
+        actions.appendChild(copy);
+
+        content.appendChild(actions);
+
+    }
+
+
+    message.appendChild(avatar);
+
+    message.appendChild(content);
+
+    chatInner.appendChild(message);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+/* =========================================
+   TYPING
+========================================= */
+
+function showTyping() {
+
+    const message =
+        document.createElement("div");
+
+    message.id =
+        "typing";
+
+    message.className =
+        "message ai";
+
+
+    message.innerHTML = `
+
+        <div class="avatar">
+            K
+        </div>
+
+        <div class="message-content">
+
+            <div class="message-name">
+                KVGDV AI
+            </div>
+
+            <div class="typing">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+        </div>
+
+    `;
+
+
+    chatInner.appendChild(message);
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+function hideTyping() {
+
+    const element =
+        document.getElementById(
+            "typing"
+        );
+
+    if (element) {
+        element.remove();
+    }
+
+}
+
+
+/* =========================================
+   RESPONSE
+========================================= */
+
+function generateResponse(text) {
+
+    const url =
+        findURL(text);
+
+
+    /*
+       Najpierw szukamy wiedzy.
+    */
+
+    const result =
+        findKnowledgeAnswer(text);
+
+
+    if (result) {
+
+        return result.answer;
+
+    }
+
+
+    /*
+       Obsługa linku.
+    */
+
+    if (url) {
+
+        return (
+            "Wykryłem link:\n\n" +
+            url +
+            "\n\n" +
+
+            "Na razie potrafię rozpoznać link, " +
+            "ale nie mam jeszcze backendu, który " +
+            "pobiera jego zawartość. Możemy dodać " +
+            "to w następnej wersji."
+        );
+
+    }
+
+
+    /*
+       Brak wiedzy.
+    */
+
+    return (
+        "Nie mam jeszcze odpowiedzi na to pytanie " +
+        "w mojej lokalnej bazie wiedzy.\n\n" +
+
+        "Możesz mnie tego nauczyć w kolejnej " +
+        "wersji KVGDV AI."
+    );
+
+}
+
+
+/* =========================================
+   SAVE CHAT
+========================================= */
+
+function saveMessages() {
+
+    localStorage.setItem(
+        "kvgdv_ai_messages",
+        JSON.stringify(messages)
+    );
+
+}
+
+
+/* =========================================
+   SEND
+========================================= */
+
+async function sendMessage() {
+
+    const text =
+        input.value.trim();
+
+
+    if (!text) {
+        return;
+    }
+
+
+    const url =
+        findURL(text);
+
+
+    addMessage(
+        "user",
+        text,
+        url
+    );
+
+
+    messages.push({
+        role: "user",
+        text: text,
+        url: url,
+        time: Date.now()
+    });
+
+
+    saveMessages();
+
+
+    input.value = "";
+
+    input.style.height =
+        "38px";
+
+
+    sendButton.disabled =
+        true;
+
+
+    showTyping();
+
+
+    await new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                450
+            )
+    );
+
+
+    const answer =
+        generateResponse(text);
+
+
+    hideTyping();
+
+
+    addMessage(
+        "ai",
+        answer
+    );
+
+
+    messages.push({
+        role: "ai",
+        text: answer,
+        time: Date.now()
+    });
+
+
+    saveMessages();
+
+
+    sendButton.disabled =
+        false;
+
+    input.focus();
+
+}
+
+
+/* =========================================
+   ENTER
+========================================= */
+
+input.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   AUTO RESIZE
+========================================= */
+
+input.addEventListener(
+    "input",
+    () => {
+
+        input.style.height =
+            "38px";
+
+        input.style.height =
+            Math.min(
+                input.scrollHeight,
+                180
+            ) + "px";
+
+    }
+);
+
+
+/* =========================================
+   SEND BUTTON
+========================================= */
+
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
+
+
+/* =========================================
+   EXAMPLES
+========================================= */
+
+function setupExamples() {
+
+    document
+        .querySelectorAll(".example")
+        .forEach(button => {
+
+            button.onclick = () => {
+
+                input.value =
+                    button.dataset.text;
+
+                input.focus();
+
+            };
+
+        });
+
+}
+
+
+/* =========================================
+   LOAD OLD CHAT
+========================================= */
+
+function loadMessages() {
+
+    if (!messages.length) {
+        return;
+    }
+
+
+    if (welcome) {
+        welcome.style.display = "none";
+    }
+
+
+    messages.forEach(message => {
+
+        addMessage(
+            message.role,
+            message.text,
+            message.url || null
+        );
+
+    });
+
+}
+
+
+/* =========================================
+   NEW CHAT
+========================================= */
+
+newChat.addEventListener(
+    "click",
+    () => {
+
+        if (
+            messages.length &&
+            !confirm(
+                "Rozpocząć nową rozmowę?"
+            )
+        ) {
+            return;
+        }
+
+
+        messages = [];
+
+
+        localStorage.removeItem(
+            "kvgdv_ai_messages"
+        );
+
+
+        location.reload();
+
+    }
+);
+
+
+/* =========================================
    START
-===================================================== */
+========================================= */
 
-resizeCanvas();
+async function start() {
 
-loadMapData();
+    await loadKnowledge();
+
+    loadMessages();
+
+    setupExamples();
+
+    input.focus();
+
+}
+
+
+start();
 
 </script>
 
