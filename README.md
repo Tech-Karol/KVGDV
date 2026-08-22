@@ -2,7 +2,7 @@
 
 > Eksperymentalny projekt własnego asystenta AI rozwijanego od zera.
 
-**Current Version:** `0.4`  
+**Current Version:** `0.5`  
 **Project:** `KVGDV AI`  
 **Type:** Web AI / Local Brain  
 **Status:** 🟡 Development
