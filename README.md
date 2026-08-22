@@ -1,65 +1,46 @@
-like the project, consider giving the repository a star!
-🗺️ KVGDV Maps
+# 🧠 KVGDV AI
 
-KVGDV Maps to projekt własnej platformy mapowej tworzonej od podstaw.
+> Eksperymentalny projekt własnego asystenta AI rozwijanego od zera.
 
-Celem projektu jest stworzenie niezależnego systemu obejmującego aplikację mapową, własny silnik map, własne API, format danych oraz system wyszukiwania i routingu.
-
-🚧 Status projektu
-
-Wersja: "0.1.0"
-Status: Early Development
-
-Obecna wersja jest prototypem interfejsu użytkownika. Mapa jest obecnie demonstracyjnym rendererem UI — własny silnik mapowy i API będą rozwijane w kolejnych wersjach.
-
-✨ Planowane funkcje
-
-- 🗺️ własny renderer map
-- 🔎 wyszukiwanie miejsc i adresów
-- 📍 geolokalizacja użytkownika
-- 🧭 wyznaczanie tras
-- 📏 pomiar odległości
-- 🛰️ obsługa różnych warstw mapy
-- 📦 własny format danych mapowych
-- 🌐 KVGDV Maps API
-- 💾 mapy offline
-- 📱 aplikacja mobilna
-- 💻 aplikacja desktopowa
-- 🔐 system kont i synchronizacji w przyszłości
-
-🏗️ Docelowa architektura
-
-KVGDV Maps
-│
-├── KVGDV Maps App
-│
-├── KVGDV Map Engine
-│
-├── KVGDV Maps API
-│   ├── Search
-│   ├── Geocoding
-│   ├── Routing
-│   ├── Places
-│   └── Tiles
-│
-├── KVGDV Map Format
-│
-└── KVGDV Cloud
-
-🌐 GitHub Pages
-
-Pierwsze wersje projektu mogą działać bez własnego serwera.
-
-Frontend jest przygotowywany tak, aby można było uruchomić go bezpośrednio przez GitHub Pages.
-
-Docelowo aplikacja będzie komunikować się z własnym API KVGDV Maps.
-
-🎯 Cel
-
-KVGDV Maps ma być niezależną platformą mapową, rozwijaną od podstaw i kontrolowaną przez twórców projektu.
-
-Projekt zaczyna się od prostego interfejsu, ale docelowo ma zostać rozbudowany do kompletnego ekosystemu mapowego.
+**Current Version:** `0.4`  
+**Project:** `KVGDV AI`  
+**Type:** Web AI / Local Brain  
+**Status:** 🟡 Development
 
 ---
 
-KVGDV Maps — własne mapy. Własna technologia.
+## 📌 O projekcie
+
+**KVGDV AI** to eksperymentalny chatbot internetowy tworzony od podstaw.
+
+Projekt obecnie działa bez własnego backendu i wykorzystuje lokalną bazę wiedzy zapisaną w pliku JSON.
+
+Celem projektu jest stopniowe stworzenie własnego systemu AI — od prostego systemu odpowiedzi, przez pamięć i uczenie lokalne, aż po własny backend i model AI.
+
+---
+
+## ✨ Aktualne funkcje
+
+- 💬 Interfejs czatu
+- 🧠 Lokalna baza wiedzy
+- 🔎 Wyszukiwanie podobnych pytań
+- 🔗 Wykrywanie linków
+- 💾 Lokalna historia rozmowy
+- 📱 Responsywny interfejs
+- 🌐 Obsługa GitHub Pages
+- 🚫 Brak zewnętrznych bibliotek
+- 🚫 Brak backendu
+
+---
+
+## 📂 Struktura projektu
+
+```text
+KVGDV-AI/
+│
+├── index.html
+│
+├── data/
+│   └── knowledge.json
+│
+└── README.md
