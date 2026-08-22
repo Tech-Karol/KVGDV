@@ -1,0 +1,331 @@
+{
+  "version": "0.5",
+  "name": "KVGDV AI Local Brain",
+  "language": "pl",
+  "settings": {
+    "randomAnswers": true,
+    "maxAnswerLength": 500,
+    "caseInsensitive": true,
+    "ignorePunctuation": true
+  },
+
+  "intents": [
+
+    {
+      "id": "greeting",
+      "name": "Powitanie",
+      "keywords": [
+        "cześć",
+        "czesc",
+        "hej",
+        "siema",
+        "witaj",
+        "witam",
+        "dzień dobry",
+        "dzien dobry",
+        "dobry wieczór",
+        "dobry wieczor",
+        "yo"
+      ],
+      "responses": [
+        "Cześć! 👋 W czym mogę Ci pomóc?",
+        "Hej! Miło Cię widzieć. Co dziś robimy?",
+        "Cześć! Jestem KVGDV AI. Jak mogę Ci pomóc?",
+        "Hej! 👋 Jestem gotowy. O czym chcesz porozmawiać?",
+        "Witaj! Co mogę dla Ciebie zrobić?",
+        "Cześć! Napisz, czego potrzebujesz.",
+        "Hej! Co słychać? W czym mogę pomóc?"
+      ]
+    },
+
+    {
+      "id": "how_are_you",
+      "name": "Jak się masz",
+      "keywords": [
+        "jak się masz",
+        "jak sie masz",
+        "co tam",
+        "jak tam",
+        "jak u ciebie",
+        "co u ciebie",
+        "wszystko dobrze"
+      ],
+      "responses": [
+        "U mnie wszystko działa poprawnie. Dzięki za pytanie! 😄",
+        "Działam bez problemów. Możemy przejść do konkretów.",
+        "Wszystko w porządku. Jestem gotowy do rozmowy.",
+        "Dzięki, dobrze! A nad czym dziś pracujemy?"
+      ]
+    },
+
+    {
+      "id": "thanks",
+      "name": "Podziękowanie",
+      "keywords": [
+        "dzięki",
+        "dzieki",
+        "dziękuję",
+        "dziekuje",
+        "thx",
+        "dzięki wielkie",
+        "wielkie dzięki"
+      ],
+      "responses": [
+        "Nie ma za co! 😊",
+        "Jasne!",
+        "Nie ma problemu.",
+        "Cieszę się, że mogłem pomóc.",
+        "Spoko! Możemy działać dalej."
+      ]
+    },
+
+    {
+      "id": "goodbye",
+      "name": "Pożegnanie",
+      "keywords": [
+        "pa",
+        "papa",
+        "do widzenia",
+        "do zobaczenia",
+        "na razie",
+        "żegnaj",
+        "zegnaj",
+        "dobranoc"
+      ],
+      "responses": [
+        "Na razie! 👋",
+        "Do zobaczenia!",
+        "Trzymaj się! 👋",
+        "Do następnej rozmowy.",
+        "Miłego dnia!",
+        "Dobranoc! 🌙"
+      ]
+    },
+
+    {
+      "id": "identity",
+      "name": "Tożsamość AI",
+      "keywords": [
+        "kim jesteś",
+        "kim jestes",
+        "co to jest kvgdv ai",
+        "czym jesteś",
+        "czym jestes",
+        "co potrafisz",
+        "jesteś ai",
+        "jestes ai"
+      ],
+      "responses": [
+        "Jestem KVGDV AI — eksperymentalnym asystentem rozwijanym od podstaw.",
+        "Nazywam się KVGDV AI. Obecnie działam na bazie lokalnej wiedzy.",
+        "Jestem KVGDV AI. Potrafię prowadzić rozmowę i korzystać z lokalnej bazy wiedzy.",
+        "KVGDV AI to projekt własnego asystenta AI. Moja obecna wersja korzysta z lokalnej bazy odpowiedzi."
+      ]
+    },
+
+    {
+      "id": "capabilities",
+      "name": "Możliwości",
+      "keywords": [
+        "co potrafisz",
+        "co możesz",
+        "co mozesz",
+        "jakie masz funkcje",
+        "jak działasz",
+        "jak dzialasz",
+        "co umiesz"
+      ],
+      "responses": [
+        "Obecnie potrafię prowadzić rozmowę, rozpoznawać podstawowe intencje, korzystać z lokalnej bazy wiedzy i obsługiwać linki.",
+        "Moje możliwości są jeszcze rozwijane. Obecnie korzystam głównie z lokalnej bazy wiedzy.",
+        "Potrafię odpowiadać na znane pytania, rozpoznawać różne sposoby ich zadawania i prowadzić prostą rozmowę."
+      ]
+    },
+
+    {
+      "id": "help",
+      "name": "Prośba o pomoc",
+      "keywords": [
+        "pomóż mi",
+        "pomoz mi",
+        "pomoc",
+        "potrzebuję pomocy",
+        "potrzebuje pomocy",
+        "możesz mi pomóc",
+        "mozesz mi pomoc",
+        "pomóż",
+        "pomoz"
+      ],
+      "responses": [
+        "Jasne. Opisz problem, a spróbuję znaleźć rozwiązanie.",
+        "Oczywiście. Napisz, z czym masz problem.",
+        "Jasne! Podaj trochę więcej szczegółów.",
+        "Spróbuj opisać sytuację krok po kroku. Zobaczymy, co da się zrobić."
+      ]
+    },
+
+    {
+      "id": "programming",
+      "name": "Programowanie",
+      "keywords": [
+        "programowanie",
+        "programować",
+        "programowac",
+        "kod",
+        "javascript",
+        "html",
+        "css",
+        "python",
+        "programista",
+        "aplikacja",
+        "aplikację",
+        "aplikacje",
+        "strona internetowa"
+      ],
+      "responses": [
+        "Jasne. Możemy przeanalizować kod, znaleźć błąd albo zaplanować nową funkcję.",
+        "Jeżeli masz kod, wklej go tutaj razem z opisem problemu.",
+        "Mogę pomóc przeanalizować strukturę aplikacji i zaproponować rozwiązanie.",
+        "Opisz, co chcesz zbudować. Możemy rozłożyć projekt na konkretne elementy."
+      ]
+    },
+
+    {
+      "id": "html",
+      "name": "HTML",
+      "keywords": [
+        "co to html",
+        "czym jest html",
+        "html",
+        "język html",
+        "jezyk html"
+      ],
+      "responses": [
+        "HTML to język znaczników używany do tworzenia struktury stron internetowych.",
+        "HTML odpowiada przede wszystkim za strukturę strony — nagłówki, tekst, przyciski, formularze i inne elementy.",
+        "HTML jest podstawą większości stron internetowych. CSS odpowiada za wygląd, a JavaScript za zachowanie strony."
+      ]
+    },
+
+    {
+      "id": "javascript",
+      "name": "JavaScript",
+      "keywords": [
+        "co to javascript",
+        "czym jest javascript",
+        "javascript",
+        "js",
+        "język javascript",
+        "jezyk javascript"
+      ],
+      "responses": [
+        "JavaScript to język programowania często używany do tworzenia interaktywnych stron i aplikacji internetowych.",
+        "JavaScript pozwala stronie reagować na działania użytkownika i wykonywać logikę aplikacji.",
+        "W aplikacjach webowych JavaScript może odpowiadać między innymi za interakcje, dane, komunikację z API i działanie interfejsu."
+      ]
+    },
+
+    {
+      "id": "json",
+      "name": "JSON",
+      "keywords": [
+        "co to json",
+        "czym jest json",
+        "json",
+        "plik json",
+        "baza json"
+      ],
+      "responses": [
+        "JSON to tekstowy format zapisu danych. Jest często używany do przechowywania konfiguracji i wymiany danych między aplikacjami.",
+        "JSON pozwala przechowywać dane w uporządkowanej strukturze, na przykład obiekty, tablice, teksty, liczby i wartości logiczne.",
+        "W tym projekcie JSON może pełnić rolę lokalnej bazy wiedzy dla KVGDV AI."
+      ]
+    },
+
+    {
+      "id": "github",
+      "name": "GitHub",
+      "keywords": [
+        "github",
+        "git hub",
+        "repozytorium",
+        "repo",
+        "github pages",
+        "strona github"
+      ],
+      "responses": [
+        "GitHub służy między innymi do przechowywania kodu, kontroli wersji i współpracy nad projektami.",
+        "GitHub Pages pozwala hostować statyczne strony internetowe bezpośrednio z repozytorium.",
+        "Jeżeli projekt korzysta wyłącznie z HTML, CSS, JavaScript i plików danych, GitHub Pages może być wystarczającym hostingiem."
+      ]
+    },
+
+    {
+      "id": "ai",
+      "name": "Sztuczna inteligencja",
+      "keywords": [
+        "co to ai",
+        "czym jest ai",
+        "sztuczna inteligencja",
+        "sztuczna inteligencja co to",
+        "artificial intelligence",
+        "ai"
+      ],
+      "responses": [
+        "AI, czyli sztuczna inteligencja, obejmuje technologie pozwalające komputerom wykonywać zadania wymagające określonego poziomu inteligentnego przetwarzania.",
+        "Sztuczna inteligencja to szeroka dziedzina obejmująca między innymi uczenie maszynowe, przetwarzanie języka naturalnego i analizę danych.",
+        "W przypadku chatbotów AI może być wykorzystywana do rozumienia wiadomości i generowania odpowiedzi."
+      ]
+    },
+
+    {
+      "id": "neural_network",
+      "name": "Sieci neuronowe",
+      "keywords": [
+        "co to sieć neuronowa",
+        "co to siec neuronowa",
+        "sieć neuronowa",
+        "siec neuronowa",
+        "neural network",
+        "jak działa sieć neuronowa",
+        "jak dziala siec neuronowa"
+      ],
+      "responses": [
+        "Sieć neuronowa to model obliczeniowy inspirowany sposobem działania biologicznych sieci neuronowych. Składa się między innymi z warstw i parametrów uczonych na danych.",
+        "Sieć neuronowa uczy się zależności w danych poprzez dostosowywanie swoich parametrów podczas procesu treningu.",
+        "Nowoczesne modele językowe wykorzystują bardzo duże sieci neuronowe wyspecjalizowane między innymi w przetwarzaniu tekstu."
+      ]
+    },
+
+    {
+      "id": "project",
+      "name": "Projekt",
+      "keywords": [
+        "projekt",
+        "mój projekt",
+        "moj projekt",
+        "nad czym pracujesz",
+        "nad czym pracujemy",
+        "co robimy"
+      ],
+      "responses": [
+        "Obecnie rozwijamy KVGDV AI.",
+        "Pracujemy nad własnym asystentem AI i stopniowo rozbudowujemy jego możliwości.",
+        "KVGDV AI jest obecnie rozwijany jako eksperymentalny lokalny chatbot."
+      ]
+    },
+
+    {
+      "id": "unknown",
+      "name": "Nieznana wiadomość",
+      "keywords": [],
+      "responses": [
+        "Nie mam jeszcze wystarczającej wiedzy, żeby dobrze odpowiedzieć na to pytanie.",
+        "Tego jeszcze nie mam w mojej lokalnej bazie wiedzy.",
+        "Nie znam jeszcze odpowiedzi na to pytanie. Możesz dodać ją do mojej bazy wiedzy.",
+        "Nie rozpoznaję jeszcze tego tematu. Spróbuj sformułować pytanie trochę inaczej."
+      ]
+    }
+
+  ]
+}
